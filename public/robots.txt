@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://e-commerce-satyam-ecommerce.vercel.app/sitemap.xml
