@@ -8,15 +8,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const SEED_JSON_PATH = path.join(__dirname, "db.json");
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/adrsmart";
+const ATLAS_URI = "mongodb+srv://001satyamtiwari1999_db_user:6ZFnr7AC0NFdZNDp@cluster0.ebgrqln.mongodb.net/adrsmart?retryWrites=true&w=majority";
+const MONGODB_URI = process.env.MONGODB_URI || ATLAS_URI;
 
 export const connectMongoDB = async () => {
   try {
     mongoose.set("strictQuery", false);
     await mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 3000,
+      serverSelectionTimeoutMS: 10000,
     });
-    console.log(`🍃 Connected to MongoDB Database: ${MONGODB_URI}`);
+    console.log(`🍃 Connected to MongoDB Cloud Database!`);
 
     // Auto-sync products from db.json into MongoDB
     if (fs.existsSync(SEED_JSON_PATH)) {
