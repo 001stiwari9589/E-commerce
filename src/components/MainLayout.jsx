@@ -139,13 +139,15 @@ function MainLayout() {
   const handleLoginSuccess = (email) => {
     setUserEmail(email);
     safeLocalStorage.setItem("userEmail", email);
+    setView("home");
     triggerToast(`Successfully logged in as ${email}!`, "success");
   };
 
   const handleLogout = () => {
     setUserEmail(null);
     safeLocalStorage.removeItem("userEmail");
-    triggerToast("Logged out successfully.", "info");
+    setView("login");
+    triggerToast("Logged out successfully. Login again to continue.", "info");
   };
 
   // Checkout handling with backend API integration

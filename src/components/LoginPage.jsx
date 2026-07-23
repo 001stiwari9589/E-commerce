@@ -27,12 +27,8 @@ function LoginPage({ onLoginSuccess, onBack }) {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    if (!otp.trim()) {
-      setError("Please enter the 4-digit OTP.");
-      return;
-    }
-    if (otp !== "1234" && otp !== "0000") {
-      setError("Incorrect OTP! Use default test code 1234.");
+    if (!otp.trim() || otp.trim().length < 4) {
+      setError("Please enter a valid 4-digit OTP code.");
       return;
     }
     setError("");
@@ -44,7 +40,6 @@ function LoginPage({ onLoginSuccess, onBack }) {
     } finally {
       setIsLoading(false);
       onLoginSuccess(emailOrPhone);
-      onBack();
     }
   };
 
@@ -188,7 +183,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
                     maxLength={4}
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
-                    placeholder="Enter 4-Digit OTP (Hint: 1234)"
+                    placeholder="Enter 4-Digit OTP (e.g. 0000)"
                     className="w-full px-4 py-3 pr-12 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-gray-200 dark:border-zinc-700 rounded-xl focus:border-blue-500 dark:focus:border-amber-500 focus:bg-white dark:focus:bg-zinc-700 transition-all text-center tracking-widest font-black text-lg placeholder-gray-400 dark:placeholder-zinc-650 shadow-xs"
                   />
                   <button
@@ -211,14 +206,14 @@ function LoginPage({ onLoginSuccess, onBack }) {
                 </div>
                 <div className="flex justify-between items-center px-1">
                   <span className="text-[10px] text-emerald-600 dark:text-emerald-500 font-bold">
-                    Demo Mode: Use code 1234
+                    ✓ Enter any 4-Digit OTP (e.g. 0000)
                   </span>
                   <button
                     type="button"
-                    onClick={() => setOtp("1234")}
+                    onClick={() => setOtp("0000")}
                     className="text-xs font-bold text-blue-600 dark:text-amber-500 hover:underline cursor-pointer"
                   >
-                    Resend Code
+                    Auto-Fill 0000
                   </button>
                 </div>
               </div>

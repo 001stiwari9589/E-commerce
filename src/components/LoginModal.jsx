@@ -34,8 +34,8 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    if (otp !== "1234" && otp !== "0000") {
-      setError("Incorrect OTP! Use standard code 1234 to log in.");
+    if (!otp.trim() || otp.trim().length < 4) {
+      setError("Please enter a valid 4-digit OTP code.");
       return;
     }
     setError("");
