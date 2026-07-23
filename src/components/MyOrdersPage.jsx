@@ -46,7 +46,7 @@ const initialOrders = [
 ];
 
 function MyOrdersPage({ onBack, handleAddToCart, triggerToast }) {
-  const [orders, setOrders] = useState(initialOrders);
+  const [orders] = useState(initialOrders);
   const [selectedFilter, setSelectedFilter] = useState("all"); // 'all' | 'in-transit' | 'delivered'
   const [activeTrackingOrder, setActiveTrackingOrder] = useState(null);
 
@@ -202,6 +202,24 @@ function MyOrdersPage({ onBack, handleAddToCart, triggerToast }) {
                     className="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-slate-950 font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer"
                   >
                     {activeTrackingOrder === ord.id ? "Hide Live Timeline" : "Track Live Status 🚚"}
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      if (handleAddToCart) {
+                        handleAddToCart({
+                          id: parseInt(ord.id.replace("ORD-", ""), 10),
+                          name: ord.item,
+                          brand: ord.brand,
+                          price: ord.total,
+                          image: ord.image,
+                        });
+                      }
+                      triggerToast(`Added ${ord.item.split(" (")[0]} back to cart!`, "success");
+                    }}
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer"
+                  >
+                    🛒 Buy Again
                   </button>
 
                   <button

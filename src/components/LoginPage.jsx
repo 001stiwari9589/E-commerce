@@ -7,6 +7,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState("input"); // 'input' or 'otp'
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
 
@@ -26,23 +27,36 @@ function LoginPage({ onLoginSuccess, onBack }) {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
+    if (!otp.trim()) {
+      setError("Please enter the 4-digit OTP.");
+      return;
+    }
     if (otp !== "1234" && otp !== "0000") {
       setError("Incorrect OTP! Use default test code 1234.");
       return;
     }
     setError("");
-    await apiService.login(emailOrPhone, otp);
-    onLoginSuccess(emailOrPhone);
-    onBack();
+    setIsLoading(true);
+    try {
+      await apiService.login(emailOrPhone, otp);
+    } catch (err) {
+      console.error("Login error:", err);
+    } finally {
+      setIsLoading(false);
+      onLoginSuccess(emailOrPhone);
+      onBack();
+    }
   };
 
   const handleGoogleAccountSelect = async (account) => {
     setIsGoogleModalOpen(false);
-    const res = await apiService.loginWithGoogle(account);
-    if (res && res.success) {
-      onLoginSuccess(account.email);
-      onBack();
-    } else {
+    setIsLoading(true);
+    try {
+      await apiService.loginWithGoogle(account);
+    } catch (err) {
+      console.error("Google login error:", err);
+    } finally {
+      setIsLoading(false);
       onLoginSuccess(account.email);
       onBack();
     }
@@ -227,9 +241,20 @@ function LoginPage({ onLoginSuccess, onBack }) {
                 </button>
                 <button
                   type="submit"
-                  className="w-2/3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer transform active:scale-98 text-sm"
+                  disabled={isLoading}
+                  className="w-2/3 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer transform active:scale-98 text-sm flex items-center justify-center gap-2"
                 >
-                  Verify & Sign In
+                  {isLoading ? (
+                    <>
+                      <svg className="w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                      </svg>
+                      Verifying...
+                    </>
+                  ) : (
+                    "Verify & Sign In"
+                  )}
                 </button>
               </div>
             </form>

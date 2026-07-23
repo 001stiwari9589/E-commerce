@@ -52,17 +52,16 @@ function MainLayout() {
   const [toast, setToast] = useState(null);
 
   // Fetch products from backend server on mount or when category/search updates
-  const refreshProducts = async () => {
-    const apiProducts = await apiService.getProducts(activeCategory, searchQuery);
-    if (apiProducts) {
-      setProductsList(apiProducts);
-      setIsBackendConnected(true);
-    } else {
-      setIsBackendConnected(false);
-    }
-  };
-
   useEffect(() => {
+    const refreshProducts = async () => {
+      const apiProducts = await apiService.getProducts(activeCategory, searchQuery);
+      if (apiProducts) {
+        setProductsList(apiProducts);
+        setIsBackendConnected(true);
+      } else {
+        setIsBackendConnected(false);
+      }
+    };
     refreshProducts();
   }, [activeCategory, searchQuery]);
 
@@ -209,7 +208,8 @@ function MainLayout() {
     const res = await apiService.addProduct(productData);
     if (res && res.success) {
       triggerToast(`Product "${productData.name}" saved directly to Database! 🚀`, "success");
-      await refreshProducts();
+      const updatedList = await apiService.getProducts(activeCategory, searchQuery);
+      if (updatedList) setProductsList(updatedList);
     } else {
       triggerToast(`Product "${productData.name}" saved!`, "success");
     }
@@ -230,6 +230,7 @@ function MainLayout() {
         view={view}
         userEmail={userEmail}
         onLogout={handleLogout}
+        isBackendConnected={isBackendConnected}
       />
 
       {/* Categories Selection Bar */}
