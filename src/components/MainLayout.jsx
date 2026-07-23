@@ -202,6 +202,10 @@ function MainLayout() {
   };
 
   const handleBackNavigation = () => {
+    if (!userEmail) {
+      setView("login");
+      return;
+    }
     if (activeCategory && activeCategory !== "all") {
       setView("category");
     } else {
