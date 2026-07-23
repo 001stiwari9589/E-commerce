@@ -79,7 +79,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
           </svg>
         </div>
         <p className="text-[9px] text-blue-200 dark:text-zinc-550 font-bold uppercase tracking-wider">
-          ✦ AdrsMart Security Guarantee
+          ✦ ST Mart Security Guarantee
         </p>
       </div>
 
@@ -93,7 +93,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
             <div className="flex flex-col gap-5">
               <div>
                 <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">
-                  Welcome to AdrsMart
+                  Welcome to ST Mart
                 </h3>
                 <p className="text-xs text-slate-400 dark:text-zinc-500 mt-1">
                   Choose a sign in method to proceed.
@@ -251,7 +251,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
         {/* Footer */}
         <div className="mt-8 pt-4 border-t border-gray-100 dark:border-zinc-800/80 text-center">
           <span className="text-xs text-slate-400 dark:text-zinc-500">
-            New to AdrsMart?{" "}
+            New to ST Mart?{" "}
             <button
               type="button"
               onClick={() => {

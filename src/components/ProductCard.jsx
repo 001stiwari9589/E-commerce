@@ -53,7 +53,7 @@ function ProductCard({
       <div className="flex-1 flex flex-col justify-between mt-4">
         <div>
           <span className="text-[10px] font-bold text-blue-600 dark:text-amber-500 uppercase tracking-widest">
-            {product.brand || "AdrsMart Choice"}
+            {product.brand || "ST Mart Choice"}
           </span>
           <h2 className="text-sm font-bold text-slate-850 dark:text-white line-clamp-1 mt-0.5 group-hover:text-blue-600 dark:group-hover:text-amber-400 transition-colors">
             {product.name}

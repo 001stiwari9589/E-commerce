@@ -25,24 +25,24 @@ function TermsOfUsePage({ onBack }) {
           Terms Of Use
         </h1>
         <p className="text-sm sm:text-base text-slate-300 dark:text-zinc-300 mt-3 leading-relaxed max-w-2xl">
-          Rules, conditions, and rights governing the access and usage of AdrsMart platform services.
+          Rules, conditions, and rights governing the access and usage of ST Mart platform services.
         </p>
       </div>
 
       <div className="bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col gap-6 text-xs leading-relaxed text-slate-600 dark:text-zinc-300">
         <section className="flex flex-col gap-2">
           <h2 className="text-base font-extrabold text-slate-900 dark:text-white">1. User Agreement & Acceptable Use</h2>
-          <p>By accessing AdrsMart, you agree to comply with Indian e-commerce rules, IT Act regulations, and respectful code of conduct without attempting fraudulent activities or automated scraping.</p>
+          <p>By accessing ST Mart, you agree to comply with Indian e-commerce rules, IT Act regulations, and respectful code of conduct without attempting fraudulent activities or automated scraping.</p>
         </section>
 
         <section className="flex flex-col gap-2 border-t border-gray-100 dark:border-zinc-800 pt-4">
           <h2 className="text-base font-extrabold text-slate-900 dark:text-white">2. Product Pricing & Specifications</h2>
-          <p>Prices and stock availability are subject to seller updates. In case of pricing typographical errors, AdrsMart reserves the right to cancel unfulfilled orders with 100% refund.</p>
+          <p>Prices and stock availability are subject to seller updates. In case of pricing typographical errors, ST Mart reserves the right to cancel unfulfilled orders with 100% refund.</p>
         </section>
 
         <section className="flex flex-col gap-2 border-t border-gray-100 dark:border-zinc-800 pt-4">
           <h2 className="text-base font-extrabold text-slate-900 dark:text-white">3. Intellectual Property Rights</h2>
-          <p>All logos, UI components, code, graphics, and trademarks are owned by AdrsMart Private Limited.</p>
+          <p>All logos, UI components, code, graphics, and trademarks are owned by ST Mart Private Limited.</p>
         </section>
       </div>
     </div>

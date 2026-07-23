@@ -20,7 +20,7 @@ connectMongoDB();
 app.get("/api", (req, res) => {
   res.json({
     success: true,
-    message: "Welcome to AdrsMart API Gateway",
+    message: "Welcome to ST Mart API Gateway",
     availableEndpoints: {
       health: "/api/health",
       products: "/api/products",
@@ -283,7 +283,7 @@ app.post("/api/orders", async (req, res) => {
     const orderId = `ORD-${Date.now()}`;
     const newOrder = new Order({
       id: orderId,
-      userEmail: userEmail || "guest@adrsmart.com",
+      userEmail: userEmail || "guest@ST Mart.com",
       items,
       totalAmount: totalAmount || 0,
       shippingAddress: shippingAddress || "Default Address",
@@ -307,7 +307,7 @@ app.post("/api/orders", async (req, res) => {
 // Start Express Server
 app.listen(PORT, () => {
   console.log(`==================================================`);
-  console.log(`🚀 AdrsMart Express Backend running on port ${PORT}`);
+  console.log(`🚀 ST Mart Express Backend running on port ${PORT}`);
   console.log(`🍃 Database Engine: MongoDB + Mongoose`);
   console.log(`👉 API Base URL: http://localhost:${PORT}/api`);
   console.log(`👉 Health Check: http://localhost:${PORT}/api/health`);

@@ -156,7 +156,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   )}
 
                   <p className="text-[11px] text-slate-400 dark:text-zinc-500 leading-relaxed">
-                    By continuing, you agree to AdrsMart's{" "}
+                    By continuing, you agree to ST Mart's{" "}
                     <span className="text-blue-500 dark:text-amber-500 hover:underline cursor-pointer">Terms of Use</span>{" "}
                     and{" "}
                     <span className="text-blue-500 dark:text-amber-500 hover:underline cursor-pointer">Privacy Policy</span>.

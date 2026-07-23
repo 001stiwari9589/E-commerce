@@ -26,10 +26,10 @@ function AdvertisePage({ onBack, triggerToast }) {
 
       <div className="bg-gradient-to-r from-amber-500 via-orange-600 to-slate-950 p-8 sm:p-12 rounded-3xl text-white shadow-2xl relative overflow-hidden">
         <span className="bg-white/20 text-white text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-widest border border-white/20">
-          ✦ AdrsMart Ads Platform
+          ✦ ST Mart Ads Platform
         </span>
         <h1 className="text-3xl sm:text-5xl font-black tracking-tight mt-4 leading-tight">
-          Advertise With AdrsMart
+          Advertise With ST Mart
         </h1>
         <p className="text-sm sm:text-base text-amber-100 dark:text-zinc-300 mt-3 leading-relaxed max-w-2xl">
           Reach 50 Million+ active shoppers across India with targeted search ads, homepage banners, and sponsored product placements.

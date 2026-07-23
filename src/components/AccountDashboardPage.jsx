@@ -152,7 +152,7 @@ function AccountDashboardPage({ userEmail, onLogout, setView, onBack }) {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 9.563C9 9.252 9.252 9 9.563 9h4.874c.311 0 .563.252.563.563v4.874c0 .311-.252.563-.563.563H9.563A.563.563 0 019 14.437V9.563z" />
               </svg>
-              AdrsMart Pay & Gift Cards
+              ST Mart Pay & Gift Cards
             </button>
 
             <div className="border-t border-gray-100 dark:border-zinc-800 my-1 pt-1">
@@ -298,7 +298,7 @@ function AccountDashboardPage({ userEmail, onLogout, setView, onBack }) {
           {activeTab === "wallet" && (
             <div className="bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-2xl p-6 shadow-xs flex flex-col gap-6">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white border-b border-gray-100 dark:border-zinc-800 pb-4">
-                AdrsMart Wallet & Gift Cards
+                ST Mart Wallet & Gift Cards
               </h3>
 
               <div className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-zinc-800 dark:to-zinc-850 p-6 rounded-2xl text-white flex justify-between items-center shadow-lg">

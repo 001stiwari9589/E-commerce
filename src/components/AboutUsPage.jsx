@@ -26,7 +26,7 @@ function AboutUsPage({ onBack }) {
             ✦ Empowering Commerce
           </span>
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight mt-4 leading-tight">
-            About AdrsMart
+            About ST Mart
           </h1>
           <p className="text-sm sm:text-base text-blue-100 dark:text-zinc-300 mt-3 leading-relaxed">
             India’s fastest-growing e-commerce marketplace committed to delivering authentic products, lightning-fast shipping, and unmatched customer delight.

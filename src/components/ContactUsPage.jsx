@@ -131,7 +131,7 @@ function ContactUsPage({ onBack, triggerToast }) {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
               </svg>
               <div>
-                <h4 className="font-bold text-xs text-slate-800 dark:text-zinc-200">AdrsMart India Pvt. Ltd.</h4>
+                <h4 className="font-bold text-xs text-slate-800 dark:text-zinc-200">ST Mart India Pvt. Ltd.</h4>
                 <p className="text-xs text-slate-400 dark:text-zinc-500 leading-relaxed mt-0.5">
                   Embassy Tech Village, Outer Ring Road,<br />
                   Devarabeesanahalli Village, Bengaluru,<br />

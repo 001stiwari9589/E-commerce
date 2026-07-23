@@ -34,7 +34,7 @@ function GiftCardsPage({ onBack, triggerToast }) {
           ✦ Instant e-Gift Cards
         </span>
         <h1 className="text-3xl sm:text-5xl font-black tracking-tight mt-4 leading-tight">
-          AdrsMart Gift Cards
+          ST Mart Gift Cards
         </h1>
         <p className="text-sm sm:text-base text-pink-100 dark:text-zinc-300 mt-3 leading-relaxed max-w-2xl">
           Give the gift of choice! Instantly email digital gift cards for birthdays, anniversaries, or celebrations.
@@ -45,7 +45,7 @@ function GiftCardsPage({ onBack, triggerToast }) {
         {/* Gift Card Preview */}
         <div className="bg-gradient-to-tr from-blue-700 via-indigo-600 to-purple-700 p-8 rounded-3xl text-white shadow-xl flex flex-col justify-between min-h-[220px] relative overflow-hidden">
           <div className="flex items-center justify-between z-10">
-            <span className="font-extrabold italic text-xl tracking-wider">AdrsMart✦ Gift Card</span>
+            <span className="font-extrabold italic text-xl tracking-wider">ST Mart✦ Gift Card</span>
             <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-extrabold">Instant Delivery</span>
           </div>
 

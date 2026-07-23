@@ -9,7 +9,7 @@ function Footer({ setView }) {
           <button onClick={() => setView && setView("contact")} className="text-left hover:underline hover:text-white cursor-pointer">Contact Us</button>
           <button onClick={() => setView && setView("about")} className="text-left hover:underline hover:text-white cursor-pointer">About Us</button>
           <button onClick={() => setView && setView("careers")} className="text-left hover:underline hover:text-white cursor-pointer">Careers</button>
-          <button onClick={() => setView && setView("stories")} className="text-left hover:underline hover:text-white cursor-pointer">AdrsMart Stories</button>
+          <button onClick={() => setView && setView("stories")} className="text-left hover:underline hover:text-white cursor-pointer">ST Mart Stories</button>
           <button onClick={() => setView && setView("press")} className="text-left hover:underline hover:text-white cursor-pointer">Press Releases</button>
         </div>
 
@@ -44,7 +44,7 @@ function Footer({ setView }) {
         <div className="col-span-2 md:col-span-1 border-t md:border-t-0 md:border-l border-zinc-800 pt-6 md:pt-0 md:pl-6 flex flex-col gap-3">
           <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Registered Office</h4>
           <p className="leading-relaxed text-zinc-500 text-[11px]">
-            AdrsMart Private Limited,<br />
+            ST Mart Private Limited,<br />
             Buildings Alyssa, Begonia &amp; Clove Embassy Tech Village,<br />
             Outer Ring Road, Devarabeesanahalli Village,<br />
             Bengaluru, 560103, Karnataka, India.
@@ -56,8 +56,8 @@ function Footer({ setView }) {
       {/* Bottom copyright line */}
       <div className="border-t border-zinc-850/80 py-6 px-6 text-center text-[11px] text-zinc-650 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-7xl mx-auto">
         <div className="flex items-center gap-1">
-          <span className="font-extrabold italic text-zinc-200">AdrsMart✦</span>
-          <span>© 2026 AdrsMart.com. All rights reserved.</span>
+          <span className="font-extrabold italic text-zinc-200">ST Mart✦</span>
+          <span>© 2026 ST Mart.com. All rights reserved.</span>
         </div>
         <div className="flex items-center gap-6">
           <button onClick={() => setView && setView("seller")} className="hover:underline hover:text-white cursor-pointer">Become a Seller Link</button>

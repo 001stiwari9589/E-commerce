@@ -37,7 +37,7 @@ function PrivacyPolicyPage({ onBack }) {
 
         <section className="flex flex-col gap-2 border-t border-gray-100 dark:border-zinc-800 pt-4">
           <h2 className="text-base font-extrabold text-slate-900 dark:text-white">2. No Selling of Data</h2>
-          <p>AdrsMart will never sell, rent, or trade your personal information to third-party advertisers or unauthorized data brokers.</p>
+          <p>ST Mart will never sell, rent, or trade your personal information to third-party advertisers or unauthorized data brokers.</p>
         </section>
 
         <section className="flex flex-col gap-2 border-t border-gray-100 dark:border-zinc-800 pt-4">

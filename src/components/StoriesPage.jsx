@@ -12,7 +12,7 @@ function StoriesPage({ onBack }) {
       title: "From a Small Jaipur Workshop to Shipping 50,000 Handicrafts Worldwide",
       author: "Rajesh Sharma",
       date: "July 12, 2026",
-      snippet: "How AdrsMart Marketplace helped Rajasthan Artisans digitize traditional craftsmanship and reach global buyers directly.",
+      snippet: "How ST Mart Marketplace helped Rajasthan Artisans digitize traditional craftsmanship and reach global buyers directly.",
       readTime: "5 min read",
       gradient: "from-amber-500 to-orange-600"
     },
@@ -20,7 +20,7 @@ function StoriesPage({ onBack }) {
       id: 2,
       tag: "Engineering",
       title: "How We Scaled Our Flash Sale Engine to Handle 100,000 Requests/Sec",
-      author: "AdrsMart Tech Team",
+      author: "ST Mart Tech Team",
       date: "June 28, 2026",
       snippet: "A deep dive into our distributed caching, database indexing, and low-latency checkout pipeline.",
       readTime: "8 min read",
@@ -52,13 +52,13 @@ function StoriesPage({ onBack }) {
 
       <div className="bg-gradient-to-r from-purple-700 via-indigo-800 to-slate-900 dark:from-zinc-900 dark:via-zinc-850 dark:to-zinc-950 p-8 sm:p-12 rounded-3xl text-white shadow-2xl relative overflow-hidden">
         <span className="bg-white/20 text-white text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-widest border border-white/20">
-          ✦ AdrsMart Stories
+          ✦ ST Mart Stories
         </span>
         <h1 className="text-3xl sm:text-5xl font-black tracking-tight mt-4 leading-tight">
           Stories, Innovation & Impact
         </h1>
         <p className="text-sm sm:text-base text-purple-100 dark:text-zinc-300 mt-3 leading-relaxed max-w-2xl">
-          Discover stories of seller empowerment, cutting-edge technology, and green initiatives powering AdrsMart across India.
+          Discover stories of seller empowerment, cutting-edge technology, and green initiatives powering ST Mart across India.
         </p>
       </div>
 

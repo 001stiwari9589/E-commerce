@@ -156,16 +156,16 @@ function MainLayout() {
     const result = await apiService.createOrder({
       items: cartItems,
       totalAmount,
-      userEmail: userEmail || "guest@adrsmart.com",
+      userEmail: userEmail || "guest@ST Mart.com",
     });
 
     setCartItems([]);
     setView("home");
 
     if (result.success) {
-      triggerToast(`Order ${result.order.id} placed successfully! Thank you for shopping with AdrsMart.`, "success");
+      triggerToast(`Order ${result.order.id} placed successfully! Thank you for shopping with ST Mart.`, "success");
     } else {
-      triggerToast("Order placed locally! Thank you for shopping with AdrsMart.", "success");
+      triggerToast("Order placed locally! Thank you for shopping with ST Mart.", "success");
     }
   };
 

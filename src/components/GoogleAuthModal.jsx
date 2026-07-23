@@ -8,7 +8,7 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
 
   const defaultAccounts = [
     {
-      name: "AdrsMart User",
+      name: "ST Mart User",
       email: "user.google@gmail.com",
       avatar: "https://lh3.googleusercontent.com/a/default-user=s96-c",
     },
@@ -70,7 +70,7 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
 
         <div className="py-4">
           <h4 className="text-lg font-black text-slate-900 dark:text-white">Choose an account</h4>
-          <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">to continue to AdrsMart Store</p>
+          <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">to continue to ST Mart Store</p>
 
           {!isCustomMode ? (
             <div className="flex flex-col gap-2 mt-4">

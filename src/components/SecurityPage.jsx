@@ -25,7 +25,7 @@ function SecurityPage({ onBack }) {
           Security & Safety First
         </h1>
         <p className="text-sm sm:text-base text-blue-100 dark:text-zinc-300 mt-3 leading-relaxed max-w-2xl">
-          How AdrsMart protects your personal information, payment credentials, and shopping safety.
+          How ST Mart protects your personal information, payment credentials, and shopping safety.
         </p>
       </div>
 
@@ -50,7 +50,7 @@ function SecurityPage({ onBack }) {
           <div className="text-2xl mb-1">⚠️</div>
           <h3 className="font-extrabold text-base text-slate-900 dark:text-white">Anti-Scam Alert</h3>
           <p className="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">
-            AdrsMart employees will NEVER ask for your credit card OTP, account password, or UPI PIN over phone or SMS.
+            ST Mart employees will NEVER ask for your credit card OTP, account password, or UPI PIN over phone or SMS.
           </p>
         </div>
       </div>

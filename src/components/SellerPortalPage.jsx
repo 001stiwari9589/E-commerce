@@ -52,7 +52,7 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
             ✦ 0% Commission for 30 Days
           </span>
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight mt-4 leading-tight">
-            Sell on AdrsMart &amp; Grow Your Business 10x
+            Sell on ST Mart &amp; Grow Your Business 10x
           </h1>
           <p className="text-sm sm:text-base text-emerald-100 dark:text-zinc-300 mt-3 leading-relaxed">
             Join 100,000+ successful Indian sellers reaching over 50 crore registered customers nationwide.
@@ -67,7 +67,7 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
             📦
           </div>
           <h4 className="font-extrabold text-sm text-slate-900 dark:text-white mt-1">19,000+ Pincodes</h4>
-          <p className="text-xs text-slate-500 dark:text-zinc-400">Deliver products to every corner of India with AdrsMart Logistics.</p>
+          <p className="text-xs text-slate-500 dark:text-zinc-400">Deliver products to every corner of India with ST Mart Logistics.</p>
         </div>
 
         <div className="bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 p-5 rounded-2xl flex flex-col gap-2 shadow-xs">

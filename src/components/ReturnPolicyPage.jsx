@@ -22,7 +22,7 @@ function ReturnPolicyPage({ onBack }) {
           ✦ Legal & Policy
         </span>
         <h1 className="text-3xl sm:text-5xl font-black tracking-tight mt-4 leading-tight">
-          AdrsMart Return Policy
+          ST Mart Return Policy
         </h1>
         <p className="text-sm sm:text-base text-slate-300 dark:text-zinc-300 mt-3 leading-relaxed max-w-2xl">
           Comprehensive guideline detailing eligible items, timelines, conditions, and replacement policies.

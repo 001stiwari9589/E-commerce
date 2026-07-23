@@ -8,21 +8,21 @@ function PressReleasesPage({ onBack }) {
   const pressItems = [
     {
       date: "July 10, 2026",
-      title: "AdrsMart Launches AI-Powered Personal Shopper & Ultra-Fast 24-Hour Delivery in Top Metro Cities",
+      title: "ST Mart Launches AI-Powered Personal Shopper & Ultra-Fast 24-Hour Delivery in Top Metro Cities",
       category: "Corporate Announcement",
-      summary: "AdrsMart introduces next-generation AI recommendation models along with 24-hour fulfillment centers operating across Bengaluru, Mumbai, and Delhi NCR."
+      summary: "ST Mart introduces next-generation AI recommendation models along with 24-hour fulfillment centers operating across Bengaluru, Mumbai, and Delhi NCR."
     },
     {
       date: "May 18, 2026",
-      title: "AdrsMart Onboards 25,000+ Rural Artisans Under National Craft Empowerment Drive",
+      title: "ST Mart Onboards 25,000+ Rural Artisans Under National Craft Empowerment Drive",
       category: "Community Impact",
-      summary: "Partnering with state craft boards, AdrsMart enables rural micro-entrepreneurs to sell direct-to-consumer with zero onboarding fees."
+      summary: "Partnering with state craft boards, ST Mart enables rural micro-entrepreneurs to sell direct-to-consumer with zero onboarding fees."
     },
     {
       date: "March 04, 2026",
-      title: "AdrsMart Reports 180% YoY Growth in Annual Electronics & Smart Appliance Sales",
+      title: "ST Mart Reports 180% YoY Growth in Annual Electronics & Smart Appliance Sales",
       category: "Financial Results",
-      summary: "Driven by affordable EMI plans and seamless exchange offers, AdrsMart solidifies its leadership position in consumer electronics."
+      summary: "Driven by affordable EMI plans and seamless exchange offers, ST Mart solidifies its leadership position in consumer electronics."
     }
   ];
 
@@ -43,10 +43,10 @@ function PressReleasesPage({ onBack }) {
           ✦ Newsroom & Press Releases
         </span>
         <h1 className="text-3xl sm:text-5xl font-black tracking-tight mt-4 leading-tight">
-          AdrsMart Press Room
+          ST Mart Press Room
         </h1>
         <p className="text-sm sm:text-base text-slate-300 dark:text-zinc-300 mt-3 leading-relaxed max-w-2xl">
-          Official news, company updates, media resources, and corporate press releases from AdrsMart India.
+          Official news, company updates, media resources, and corporate press releases from ST Mart India.
         </p>
       </div>
 
@@ -78,9 +78,9 @@ function PressReleasesPage({ onBack }) {
       <div className="bg-blue-50 dark:bg-zinc-850 border border-blue-150 dark:border-zinc-800 p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
           <h4 className="font-bold text-sm text-slate-900 dark:text-white">Media & PR Inquiries</h4>
-          <p className="text-xs text-slate-500 dark:text-zinc-400">For press kits, interviews, and official statements contact press@adrsmart.com</p>
+          <p className="text-xs text-slate-500 dark:text-zinc-400">For press kits, interviews, and official statements contact press@ST Mart.com</p>
         </div>
-        <a href="mailto:press@adrsmart.com" className="bg-blue-600 dark:bg-amber-500 text-white dark:text-zinc-950 px-5 py-2 rounded-xl text-xs font-bold shrink-0 hover:bg-blue-700 transition-colors">
+        <a href="mailto:press@ST Mart.com" className="bg-blue-600 dark:bg-amber-500 text-white dark:text-zinc-950 px-5 py-2 rounded-xl text-xs font-bold shrink-0 hover:bg-blue-700 transition-colors">
           Contact Press Office
         </a>
       </div>

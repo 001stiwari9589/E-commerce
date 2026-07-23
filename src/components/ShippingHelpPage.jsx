@@ -44,7 +44,7 @@ function ShippingHelpPage({ onBack }) {
           <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-amber-950/40 text-blue-600 dark:text-amber-400 flex items-center justify-center font-black">
             ⚡
           </div>
-          <h3 className="font-extrabold text-base text-slate-900 dark:text-white">AdrsMart Express</h3>
+          <h3 className="font-extrabold text-base text-slate-900 dark:text-white">ST Mart Express</h3>
           <p className="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">
             Same-day or next-day delivery available for select electronics and essentials in metro cities.
           </p>
@@ -66,7 +66,7 @@ function ShippingHelpPage({ onBack }) {
           Shipping Policies at a Glance
         </h2>
         <ul className="flex flex-col gap-3 text-xs text-slate-600 dark:text-zinc-300 leading-relaxed list-disc pl-5">
-          <li><strong>Free Shipping:</strong> Applicable on all items with the "AdrsMart Assured" badge when order total exceeds ₹499.</li>
+          <li><strong>Free Shipping:</strong> Applicable on all items with the "ST Mart Assured" badge when order total exceeds ₹499.</li>
           <li><strong>Packaging Integrity:</strong> All high-value items are shipped in tamper-evident sealed boxes with OTP verification at delivery.</li>
           <li><strong>Pincode Verification:</strong> Enter your pincode on product detail pages to get exact estimated delivery dates before placing an order.</li>
         </ul>

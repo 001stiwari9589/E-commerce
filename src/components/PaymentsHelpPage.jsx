@@ -9,7 +9,7 @@ function PaymentsHelpPage({ onBack }) {
 
   const paymentFaqs = [
     {
-      q: "What payment methods are supported on AdrsMart?",
+      q: "What payment methods are supported on ST Mart?",
       a: "We support UPI (Google Pay, PhonePe, Paytm, BHIM), Credit/Debit Cards (Visa, Mastercard, RuPay, Maestro), Netbanking across all major banks, Cash on Delivery (COD), and No-Cost EMI options."
     },
     {
@@ -22,7 +22,7 @@ function PaymentsHelpPage({ onBack }) {
     },
     {
       q: "Are my credit card details secure?",
-      a: "Yes! AdrsMart uses PCI-DSS Level 1 compliant payment gateways with 256-bit SSL encryption. We never store your full card number or CVV on our servers."
+      a: "Yes! ST Mart uses PCI-DSS Level 1 compliant payment gateways with 256-bit SSL encryption. We never store your full card number or CVV on our servers."
     }
   ];
 
@@ -46,7 +46,7 @@ function PaymentsHelpPage({ onBack }) {
           Payments & Options
         </h1>
         <p className="text-sm sm:text-base text-emerald-100 dark:text-zinc-300 mt-3 leading-relaxed max-w-2xl">
-          Everything you need to know about payment methods, safety, refunds, and zero-cost EMI on AdrsMart.
+          Everything you need to know about payment methods, safety, refunds, and zero-cost EMI on ST Mart.
         </p>
       </div>
 

@@ -100,7 +100,7 @@ function CartPage({
                           </button>
                         </div>
                         <p className="text-xs text-slate-400 dark:text-zinc-500 mt-1">
-                          Seller: AdrsMart Retailer
+                          Seller: ST Mart Retailer
                         </p>
 
                         {/* Prices */}
