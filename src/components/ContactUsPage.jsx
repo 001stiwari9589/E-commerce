@@ -47,7 +47,7 @@ function ContactUsPage({ onBack, triggerToast }) {
           </div>
           <div>
             <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 block">Toll-Free Helpline</span>
-            <span className="font-extrabold text-sm text-slate-900 dark:text-white">1800-200-ADRS (2377)</span>
+            <span className="font-extrabold text-sm text-slate-900 dark:text-white">1800-200-STMART (7862)</span>
           </div>
         </div>
       </div>
@@ -146,7 +146,7 @@ function ContactUsPage({ onBack, triggerToast }) {
               </svg>
               <div>
                 <h4 className="font-bold text-xs text-slate-800 dark:text-zinc-200">Email Support</h4>
-                <p className="text-xs text-slate-400 dark:text-zinc-500 mt-0.5">support@adrs-mart.com</p>
+                <p className="text-xs text-slate-400 dark:text-zinc-500 mt-0.5">support@st-mart.com</p>
               </div>
             </div>
           </div>

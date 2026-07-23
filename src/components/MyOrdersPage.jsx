@@ -13,7 +13,7 @@ const initialOrders = [
     brand: "Apple",
     image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=500&auto=format&fit=crop&q=60",
     trackingNo: "AWB-78291039",
-    courier: "AdrsExpress Logistics",
+    courier: "STExpress Logistics",
   },
   {
     id: "ORD-839120",

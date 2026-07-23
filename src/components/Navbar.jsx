@@ -46,7 +46,7 @@ function Navbar({
             className="flex flex-col items-start cursor-pointer group text-left"
           >
             <span className="text-xl md:text-2xl font-black italic tracking-wide flex items-center gap-0.5 leading-none">
-              Adrs  <span className="text-yellow-400">Mart</span>
+              ST  <span className="text-yellow-400">Mart</span>
             </span>
             <span className="text-[9px] font-bold italic text-gray-150 flex items-center gap-1.5 group-hover:text-yellow-300 transition-colors leading-none mt-0.5">
               Explore <span className="text-yellow-400 font-extrabold">Plus✦</span>

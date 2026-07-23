@@ -56,7 +56,7 @@ function GiftCardsPage({ onBack, triggerToast }) {
 
           <div className="flex items-center justify-between z-10 border-t border-white/20 pt-4 text-xs">
             <span>Valid for 1 Year across all products</span>
-            <span className="font-bold">CODE: GIFT-2026-ADRS</span>
+            <span className="font-bold">CODE: GIFT-2026-ST</span>
           </div>
 
           <div className="absolute -right-8 -bottom-8 w-40 h-40 bg-white/10 rounded-full blur-xl pointer-events-none"></div>

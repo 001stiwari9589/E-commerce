@@ -236,7 +236,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
           {/* Create Account footer */}
           <div className="mt-8 pt-4 border-t border-gray-100 dark:border-zinc-800/80 text-center">
             <span className="text-xs text-slate-400 dark:text-zinc-500">
-              New to FlipMart?{" "}
+              New to ST Mart?{" "}
               <button
                 type="button"
                 onClick={() => {
