@@ -152,28 +152,40 @@ function HeroCarousel({ onSelectCategory }) {
             <div className="flex items-center justify-center relative w-[170px] sm:w-[320px] md:w-[420px] h-[260px] sm:h-[340px] md:h-[380px] z-10 shrink-0 select-none">
               
               {/* Image 1 (Main Right Card - Laptop / Primary) */}
-              <div className="absolute top-2 sm:top-6 right-0 sm:right-2 w-32 h-32 sm:w-44 sm:h-44 md:w-56 md:h-56 rounded-2xl sm:rounded-3xl bg-white dark:bg-zinc-800 p-1.5 sm:p-2.5 shadow-2xl border-4 border-white dark:border-zinc-700 transform rotate-6 hover:rotate-0 hover:scale-105 transition-all duration-300 z-20">
+              <div className="absolute top-2 sm:top-6 right-0 sm:right-2 w-28 h-28 sm:w-44 sm:h-44 md:w-56 md:h-56 rounded-2xl sm:rounded-3xl bg-white dark:bg-zinc-800 p-1.5 sm:p-2.5 shadow-2xl border-4 border-white dark:border-zinc-700 transform rotate-6 hover:rotate-0 hover:scale-105 transition-all duration-300 z-20">
                 <img
                   src={slide.images[0]}
                   alt={`${slide.title} 1`}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60";
+                  }}
                   className="w-full h-full object-cover rounded-xl sm:rounded-2xl"
                 />
               </div>
 
               {/* Image 2 (Front Overlapping Center Card - Headphones / Secondary) */}
-              <div className="absolute bottom-2 sm:bottom-6 left-0 sm:left-4 w-28 h-28 sm:w-38 sm:h-38 md:w-48 md:h-48 rounded-2xl sm:rounded-3xl bg-white dark:bg-zinc-800 p-1.5 sm:p-2.5 shadow-2xl border-4 border-white dark:border-zinc-700 transform -rotate-6 hover:rotate-0 hover:scale-105 transition-all duration-300 z-30">
+              <div className="absolute bottom-2 sm:bottom-6 left-0 sm:left-4 w-24 h-24 sm:w-38 sm:h-38 md:w-48 md:h-48 rounded-2xl sm:rounded-3xl bg-white dark:bg-zinc-800 p-1.5 sm:p-2.5 shadow-2xl border-4 border-white dark:border-zinc-700 transform -rotate-6 hover:rotate-0 hover:scale-105 transition-all duration-300 z-30">
                 <img
                   src={slide.images[1]}
                   alt={`${slide.title} 2`}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60";
+                  }}
                   className="w-full h-full object-cover rounded-xl sm:rounded-2xl"
                 />
               </div>
 
               {/* Image 3 (Background Top Left Card - Watch / Tertiary) */}
-              <div className="absolute top-0 left-6 sm:left-12 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-2xl sm:rounded-3xl bg-white dark:bg-zinc-800 p-1.5 sm:p-2 shadow-xl border-4 border-white/90 dark:border-zinc-700 transform -rotate-12 hover:rotate-0 hover:scale-105 transition-all duration-300 z-10 opacity-95">
+              <div className="absolute top-0 left-4 sm:left-12 w-20 h-20 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-2xl sm:rounded-3xl bg-white dark:bg-zinc-800 p-1.5 sm:p-2 shadow-xl border-4 border-white/90 dark:border-zinc-700 transform -rotate-12 hover:rotate-0 hover:scale-105 transition-all duration-300 z-10 opacity-95">
                 <img
                   src={slide.images[2]}
                   alt={`${slide.title} 3`}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&auto=format&fit=crop&q=60";
+                  }}
                   className="w-full h-full object-cover rounded-xl sm:rounded-2xl"
                 />
               </div>

@@ -260,7 +260,7 @@ function MainLayout() {
       )}
 
       {/* Main Content Area */}
-      <main className={`flex-1 max-w-7xl mx-auto w-full px-4 py-6 flex flex-col gap-6 ${view === "login" ? "justify-center items-center my-auto min-h-[85vh]" : ""}`}>
+      <main className={`flex-1 max-w-7xl mx-auto w-full px-3 sm:px-6 py-4 sm:py-6 flex flex-col gap-6 ${view === "login" ? "justify-center items-center my-auto min-h-[85vh] sm:min-h-[80vh] px-3 sm:px-6" : ""}`}>
         
         {/* Dynamic Page Switcher */}
         {view === "home" && (

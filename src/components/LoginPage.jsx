@@ -58,33 +58,58 @@ function LoginPage({ onLoginSuccess, onBack }) {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-2xl shadow-lg overflow-hidden grid grid-cols-1 md:grid-cols-5 animate-fade-in text-slate-800 dark:text-zinc-150 transition-colors my-10">
+    <div className="w-full max-w-md md:max-w-3xl mx-auto bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-5 animate-fade-in text-slate-800 dark:text-zinc-150 transition-colors my-4 sm:my-8">
       <GoogleAuthModal
         isOpen={isGoogleModalOpen}
         onClose={() => setIsGoogleModalOpen(false)}
         onSelectAccount={handleGoogleAccountSelect}
       />
 
-      {/* Left branding banner */}
-      <div className="hidden md:flex md:col-span-2 bg-blue-600 dark:bg-zinc-850 p-8 flex-col justify-between text-white">
-        <div>
-          <h2 className="text-2xl font-black">Login / Register</h2>
+      {/* Mobile Top Branding Banner (Visible on mobile/tablet screens < md) */}
+      <div className="flex md:hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 dark:from-zinc-850 dark:to-zinc-900 p-6 flex-col gap-2 text-white shadow-md relative overflow-hidden">
+        <div className="flex items-center justify-between z-10">
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-black italic tracking-wide">
+              ST <span className="text-yellow-400">Mart</span>
+            </span>
+            <span className="bg-yellow-400 text-blue-950 font-black text-[9px] px-2 py-0.5 rounded-full uppercase tracking-wider">
+              ✦ Secure
+            </span>
+          </div>
+          <span className="text-[10px] font-bold text-blue-100 dark:text-zinc-400 bg-white/10 px-2.5 py-1 rounded-full backdrop-blur-xs">
+            Quick Sign In
+          </span>
+        </div>
+        <p className="text-xs text-blue-100 dark:text-zinc-400 z-10 font-medium">
+          Get access to Orders, Wishlist & Instant Checkout
+        </p>
+        <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full blur-lg pointer-events-none"></div>
+      </div>
+
+      {/* Left branding banner (Desktop >= md) */}
+      <div className="hidden md:flex md:col-span-2 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 dark:from-zinc-850 dark:to-zinc-900 p-8 md:p-10 flex-col justify-between text-white relative overflow-hidden">
+        <div className="z-10">
+          <span className="text-2xl font-black italic tracking-wide block mb-4">
+            ST <span className="text-yellow-400">Mart</span>
+          </span>
+          <h2 className="text-2xl font-black leading-tight">Login / Register</h2>
           <p className="text-xs text-blue-100 dark:text-zinc-400 mt-3 leading-relaxed">
             Get access to your Orders, Wishlist, Recommendations, and secure checkout.
           </p>
         </div>
-        <div className="opacity-15 self-center my-6">
+        <div className="opacity-15 self-center my-6 z-10">
           <svg className="w-24 h-24" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" />
           </svg>
         </div>
-        <p className="text-[9px] text-blue-200 dark:text-zinc-550 font-bold uppercase tracking-wider">
-          ✦ ST Mart Security Guarantee
+        <p className="text-[10px] text-blue-200 dark:text-zinc-450 font-bold uppercase tracking-wider z-10 flex items-center gap-1">
+          <span className="text-yellow-400">✦</span> 100% ST Mart Security Guarantee
         </p>
+        <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
       </div>
 
       {/* Right panel inputs */}
-      <div className="md:col-span-3 p-8 flex flex-col justify-between relative bg-white dark:bg-zinc-900">
+      <div className="md:col-span-3 p-6 sm:p-8 md:p-10 flex flex-col justify-between relative bg-white dark:bg-zinc-900">
 
         {/* Dedicated mandatory login container */}
 
