@@ -221,36 +221,40 @@ function MainLayout() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-zinc-950 text-slate-800 dark:text-zinc-150 transition-colors font-sans">
       
-      {/* Top Header Navbar */}
-      <Navbar
-        cartCount={cartItems.reduce((acc, item) => acc + item.qty, 0)}
-        wishlistCount={wishlistItems.length}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        isDarkMode={isDarkMode}
-        toggleDarkMode={() => setIsDarkMode(!isDarkMode)}
-        setView={setView}
-        view={view}
-        userEmail={userEmail}
-        onLogout={handleLogout}
-        isBackendConnected={isBackendConnected}
-      />
+      {/* Top Header Navbar (Hidden on Login screen) */}
+      {view !== "login" && (
+        <Navbar
+          cartCount={cartItems.reduce((acc, item) => acc + item.qty, 0)}
+          wishlistCount={wishlistItems.length}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          isDarkMode={isDarkMode}
+          toggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+          setView={setView}
+          view={view}
+          userEmail={userEmail}
+          onLogout={handleLogout}
+          isBackendConnected={isBackendConnected}
+        />
+      )}
 
-      {/* Categories Selection Bar */}
-      <CategoryBar
-        activeCategory={activeCategory}
-        setActiveCategory={(cat) => {
-          setActiveCategory(cat);
-          if (cat === "all") {
-            setView("home");
-          } else {
-            setView("category");
-          }
-        }}
-      />
+      {/* Categories Selection Bar (Hidden on Login screen) */}
+      {view !== "login" && (
+        <CategoryBar
+          activeCategory={activeCategory}
+          setActiveCategory={(cat) => {
+            setActiveCategory(cat);
+            if (cat === "all") {
+              setView("home");
+            } else {
+              setView("category");
+            }
+          }}
+        />
+      )}
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6 flex flex-col gap-6">
+      <main className={`flex-1 max-w-7xl mx-auto w-full px-4 py-6 flex flex-col gap-6 ${view === "login" ? "justify-center items-center my-auto min-h-[85vh]" : ""}`}>
         
         {/* Dynamic Page Switcher */}
         {view === "home" && (
