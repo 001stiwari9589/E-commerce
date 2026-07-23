@@ -36,7 +36,6 @@ function MainLayout() {
   // Global States
   const [productsList, setProductsList] = useState(PRODUCTS_DATABASE);
   const [isBackendConnected, setIsBackendConnected] = useState(false);
-  const [view, setView] = useState("home"); // 'home' | 'category' | 'product-detail' | 'cart' | 'login' | 'wishlist' | 'account'
   const [cartItems, setCartItems] = useState([]);
   const [wishlistItems, setWishlistItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -48,6 +47,10 @@ function MainLayout() {
   const [activeProductDetails, setActiveProductDetails] = useState(null); // Selected product object
   const [userEmail, setUserEmail] = useState(() => {
     return safeLocalStorage.getItem("userEmail") || null;
+  });
+  const [view, setView] = useState(() => {
+    const savedUser = safeLocalStorage.getItem("userEmail");
+    return savedUser ? "home" : "login";
   });
   const [toast, setToast] = useState(null);
 

@@ -94,12 +94,13 @@ function LoginPage({ onLoginSuccess, onBack }) {
         {/* Back link in login */}
         <button
           onClick={onBack}
-          className="absolute top-4 right-4 flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-zinc-300 cursor-pointer transition-colors"
+          className="absolute top-4 right-4 flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-blue-600 dark:text-zinc-400 dark:hover:text-amber-400 cursor-pointer transition-colors px-2 py-1 rounded-md bg-slate-100 dark:bg-zinc-800"
+          title="Browse store as guest"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          <span>Skip to Store</span>
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
           </svg>
-          Cancel
         </button>
 
         <div className="my-auto">
