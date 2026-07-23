@@ -109,22 +109,30 @@ function Navbar({
               )}
             </button>
 
-            {/* HAMBURGER TOGGLE BUTTON WITH CLOSE (X) ICON */}
+            {/* HAMBURGER TOGGLE BUTTON WITH PROMINENT YELLOW BADGE & CLOSE (X) ICON */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-1.5 rounded-lg bg-blue-700 dark:bg-zinc-850 hover:bg-blue-800 text-white cursor-pointer transition-all active:scale-90 flex items-center justify-center"
+              className={`px-2.5 py-1.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow-lg border transition-all active:scale-95 cursor-pointer ${
+                isMobileMenuOpen
+                  ? "bg-rose-600 border-rose-500 text-white"
+                  : "bg-yellow-400 hover:bg-yellow-300 border-yellow-300 text-blue-950"
+              }`}
               title={isMobileMenuOpen ? "Close Menu" : "Open Menu"}
             >
               {isMobileMenuOpen ? (
-                /* Close (X) Icon */
-                <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  <span>CLOSE</span>
+                </>
               ) : (
-                /* Hamburger 3-Line Icon */
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                  </svg>
+                  <span>MENU</span>
+                </>
               )}
             </button>
           </div>
