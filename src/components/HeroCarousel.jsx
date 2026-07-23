@@ -109,7 +109,7 @@ function HeroCarousel({ onSelectCategory }) {
 
   return (
     <div
-      className="relative w-full h-[360px] sm:h-[420px] md:h-[460px] overflow-hidden rounded-2xl shadow-2xl group border border-white/15"
+      className="relative w-full h-[280px] sm:h-[420px] md:h-[460px] overflow-hidden rounded-2xl shadow-2xl group border border-white/15"
       onMouseEnter={stopTimer}
       onMouseLeave={startTimer}
     >
@@ -121,20 +121,20 @@ function HeroCarousel({ onSelectCategory }) {
         {slides.map((slide) => (
           <div
             key={slide.id}
-            className={`w-full h-full shrink-0 flex items-center justify-between bg-gradient-to-r ${slide.gradient} text-white px-6 sm:px-10 md:px-16 py-6 relative overflow-hidden`}
+            className={`w-full h-full shrink-0 flex items-center justify-between bg-gradient-to-r ${slide.gradient} text-white px-4 sm:px-10 md:px-16 py-4 sm:py-6 relative overflow-hidden`}
           >
             {/* Background Glow */}
             <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
 
             {/* Left Content */}
             <div className="flex-1 max-w-lg z-10 flex flex-col items-start justify-center h-full animate-fade-in pr-2">
-              <span className="bg-white/20 dark:bg-white/10 text-white text-xs font-extrabold px-3.5 py-1 rounded-full uppercase tracking-wider mb-3 border border-white/20 backdrop-blur-xs shadow-xs">
+              <span className="bg-white/20 dark:bg-white/10 text-white text-[10px] sm:text-xs font-extrabold px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-full uppercase tracking-wider mb-1.5 sm:mb-3 border border-white/20 backdrop-blur-xs shadow-xs">
                 {slide.badge}
               </span>
-              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-2 leading-tight">
+              <h2 className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-1 sm:mb-2 leading-tight">
                 {slide.title}
               </h2>
-              <p className="text-base sm:text-2xl md:text-3xl font-extrabold text-yellow-300 dark:text-amber-400 mb-2">
+              <p className="text-sm sm:text-2xl md:text-3xl font-extrabold text-yellow-300 dark:text-amber-400 mb-1.5 sm:mb-2">
                 {slide.subtitle}
               </p>
               <p className="text-xs sm:text-base text-gray-100/90 mb-6 hidden sm:block max-w-md leading-relaxed">
@@ -142,14 +142,14 @@ function HeroCarousel({ onSelectCategory }) {
               </p>
               <button
                 onClick={() => onSelectCategory(slide.category)}
-                className={`px-6 sm:px-8 py-2.5 sm:py-3.5 rounded-2xl shadow-xl hover:shadow-2xl font-black text-xs sm:text-sm tracking-wide transform hover:-translate-y-1 transition-all cursor-pointer ${slide.accentColor}`}
+                className={`px-4 sm:px-8 py-2 sm:py-3.5 rounded-xl sm:rounded-2xl shadow-xl hover:shadow-2xl font-black text-xs sm:text-sm tracking-wide transform hover:-translate-y-1 transition-all cursor-pointer ${slide.accentColor}`}
               >
                 {slide.buttonText}
               </button>
             </div>
 
-            {/* Right Multiple Images Showcase Collage (Enlarged High-Impact Cards) */}
-            <div className="flex items-center justify-center relative w-[170px] sm:w-[320px] md:w-[420px] h-[260px] sm:h-[340px] md:h-[380px] z-10 shrink-0 select-none">
+            {/* Right Multiple Images Showcase Collage */}
+            <div className="flex items-center justify-center relative w-[130px] sm:w-[320px] md:w-[420px] h-[200px] sm:h-[340px] md:h-[380px] z-10 shrink-0 select-none">
               
               {/* Image 1 (Main Right Card - Laptop / Primary) */}
               <div className="absolute top-2 sm:top-6 right-0 sm:right-2 w-28 h-28 sm:w-44 sm:h-44 md:w-56 md:h-56 rounded-2xl sm:rounded-3xl bg-white dark:bg-zinc-800 p-1.5 sm:p-2.5 shadow-2xl border-4 border-white dark:border-zinc-700 transform rotate-6 hover:rotate-0 hover:scale-105 transition-all duration-300 z-20">

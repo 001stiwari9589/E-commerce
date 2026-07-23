@@ -241,6 +241,8 @@ function MainLayout() {
           userEmail={userEmail}
           onLogout={handleLogout}
           isBackendConnected={isBackendConnected}
+          activeCategory={activeCategory}
+          setActiveCategory={setActiveCategory}
         />
       )}
 
