@@ -100,19 +100,6 @@ function Footer({ setView }) {
           </a>
         </div>
 
-        {/* Column 5: Office Address */}
-        <div className="flex flex-col gap-3 border-t lg:border-t-0 lg:border-l border-zinc-800 pt-6 lg:pt-0 lg:pl-6">
-          <h4 className="text-sm sm:text-base font-black text-yellow-400 uppercase tracking-wider border-b border-zinc-800 pb-2">
-            Registered Office
-          </h4>
-          <p className="leading-relaxed text-zinc-400 text-xs sm:text-sm font-medium">
-            <strong className="text-white block mb-1">ST Mart Private Limited</strong>
-            Buildings Alyssa, Begonia &amp; Clove Embassy Tech Village,<br />
-            Outer Ring Road, Devarabeesanahalli,<br />
-            Bengaluru, 560103, Karnataka, India.
-          </p>
-        </div>
-
       </div>
 
       {/* Bottom Copyright & Extra Links Bar */}
