@@ -146,24 +146,6 @@ function LoginPage({ onLoginSuccess, onBack }) {
             </p>
           </div>
 
-          <div className="my-8 flex flex-col gap-3">
-            <div className="flex items-center gap-3 p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10">
-              <span className="text-xl">🚀</span>
-              <div>
-                <p className="text-xs font-bold text-white">Real-Time Security OTP</p>
-                <p className="text-[11px] text-blue-200">Instant verification to your Email Inbox</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10">
-              <span className="text-xl">🛡️</span>
-              <div>
-                <p className="text-xs font-bold text-white">256-Bit SSL Protection</p>
-                <p className="text-[11px] text-blue-200">Your privacy and data are 100% encrypted</p>
-              </div>
-            </div>
-          </div>
-
           <div className="pt-4 border-t border-white/10 text-center lg:text-left">
             <span className="text-[11px] font-bold text-blue-200 uppercase tracking-wider">
               ✦ 100% ST MART SECURITY GUARANTEE

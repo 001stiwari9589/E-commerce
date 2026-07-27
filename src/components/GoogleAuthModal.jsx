@@ -11,7 +11,6 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
 
     const handleCredentialResponse = (response) => {
       try {
-        // Decode JWT ID Token payload from Google
         const base64Url = response.credential.split(".")[1];
         const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
         const jsonPayload = decodeURIComponent(
@@ -34,15 +33,14 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
 
     if (window.google?.accounts?.id) {
       window.google.accounts.id.initialize({
-        client_id: "958901801100-stmartdemo.apps.googleusercontent.com", // ST Mart Google OAuth Client ID
+        client_id: "958901801100-stmartdemo.apps.googleusercontent.com",
         callback: handleCredentialResponse,
         auto_select: true,
       });
 
-      // Render official Google Sign-In button
       if (googleBtnRef.current) {
         window.google.accounts.id.renderButton(googleBtnRef.current, {
-          theme: "outline",
+          theme: "filled_blue",
           size: "large",
           width: 320,
           text: "continue_with",
@@ -50,7 +48,6 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
         });
       }
 
-      // Prompt One-Tap Google login prompt
       window.google.accounts.id.prompt();
     }
   }, [isOpen, onSelectAccount]);
@@ -76,22 +73,14 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
     });
   };
 
-  const handleQuickSelect = (email, name) => {
-    onSelectAccount({
-      name,
-      email,
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`,
-    });
-  };
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
       <div className="absolute inset-0 cursor-pointer" onClick={onClose}></div>
 
-      <div className="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl overflow-hidden p-6 text-slate-800 dark:text-zinc-150 animate-zoom-in border border-gray-150 dark:border-zinc-800">
+      <div className="relative w-full max-w-md bg-zinc-950 text-white rounded-3xl shadow-2xl overflow-hidden p-6 animate-zoom-in border border-zinc-800">
         
         {/* Google Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-zinc-800">
+        <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
           <div className="flex items-center gap-2.5">
             <svg className="w-6 h-6" viewBox="0 0 24 24">
               <path
@@ -111,12 +100,12 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
               />
             </svg>
-            <span className="font-extrabold text-base text-slate-900 dark:text-white">Sign in with Google</span>
+            <span className="font-extrabold text-base text-white">Sign in with Google</span>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 cursor-pointer font-bold"
+            className="p-1 text-zinc-400 hover:text-white cursor-pointer font-bold"
           >
             ✕
           </button>
@@ -124,8 +113,8 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
 
         <div className="py-4 flex flex-col gap-4">
           <div>
-            <h4 className="text-lg font-black text-slate-900 dark:text-white">Google One-Tap Login</h4>
-            <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+            <h4 className="text-lg font-black text-white">Google One-Tap Login</h4>
+            <p className="text-xs text-zinc-400 mt-0.5">
               Select your logged-in Google account from browser
             </p>
           </div>
@@ -134,14 +123,14 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
           <div className="flex justify-center my-1" ref={googleBtnRef}></div>
 
           <div className="relative my-1">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200 dark:border-zinc-800"></div></div>
-            <div className="relative flex justify-center text-xs uppercase"><span className="bg-white dark:bg-zinc-900 px-2 text-slate-400 dark:text-zinc-500 font-bold">Or Enter Gmail</span></div>
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-zinc-800"></div></div>
+            <div className="relative flex justify-center text-xs uppercase"><span className="bg-zinc-950 px-2 text-zinc-500 font-bold">Or Enter Gmail</span></div>
           </div>
 
           {/* Direct Input for any active Gmail account */}
           <form onSubmit={handleCustomSubmit} className="flex flex-col gap-3">
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1">
+              <label className="block text-xs font-bold text-zinc-300 mb-1">
                 Your Gmail Address
               </label>
               <input
@@ -153,14 +142,14 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
                   setError("");
                 }}
                 placeholder="e.g. yourname@gmail.com"
-                className="w-full px-4 py-3 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-gray-300 dark:border-zinc-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-amber-500 placeholder:text-slate-400 dark:placeholder:text-zinc-500"
+                className="w-full px-4 py-3 bg-zinc-900 text-white border border-zinc-800 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder:text-zinc-600"
               />
               {error && <p className="text-xs font-bold text-rose-500 mt-1">{error}</p>}
             </div>
 
             <button
               type="submit"
-              className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-slate-950 rounded-xl font-extrabold text-xs shadow-lg hover:shadow-xl transition-all cursor-pointer uppercase tracking-wider transform active:scale-98"
+              className="w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-zinc-950 rounded-xl font-extrabold text-xs shadow-lg hover:shadow-xl transition-all cursor-pointer uppercase tracking-wider transform active:scale-98"
             >
               Sign In as Browser Google Account &rarr;
             </button>
@@ -168,8 +157,8 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
 
         </div>
 
-        <div className="pt-3 border-t border-gray-100 dark:border-zinc-800 text-center">
-          <span className="text-[10px] font-semibold text-slate-400 dark:text-zinc-500">
+        <div className="pt-3 border-t border-zinc-800 text-center">
+          <span className="text-[10px] font-semibold text-zinc-500">
             Protected by Google OAuth 2.0 Identity Protocol
           </span>
         </div>
