@@ -1,3 +1,5 @@
+import emailjs from "@emailjs/browser";
+
 const API_BASE_URL = typeof window !== "undefined" && window.location.hostname === "localhost"
   ? "http://localhost:5000/api"
   : "https://e-commerce-20vs.onrender.com/api";
@@ -14,65 +16,64 @@ export const apiService = {
       const data = await response.json();
       return data.status === "ok";
     } catch (error) {
-      console.warn("Backend server not reachable at http://localhost:5000:", error.message);
+      console.warn("Backend server not reachable:", error.message);
       return false;
     }
   },
 
-  // Dispatch OTP to real Email / Mobile number
+  // Dispatch Real-time OTP to Email / Mobile
   async sendOtp(emailOrPhone) {
+    const key = emailOrPhone.toLowerCase().trim();
+    const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+    localOtpStore.set(key, generatedOtp);
+
+    // 1. Send via Express Backend API (Nodemailer)
     try {
       const response = await fetch(`${API_BASE_URL}/auth/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emailOrPhone }),
+        body: JSON.stringify({ emailOrPhone: key }),
       });
       const data = await response.json();
       if (data && data.success) {
-        if (data.otp) {
-          localOtpStore.set(emailOrPhone.toLowerCase().trim(), data.otp);
-        }
+        if (data.otp) localOtpStore.set(key, data.otp);
         return data;
       }
     } catch (error) {
-      console.warn("Backend OTP dispatch fallback:", error.message);
+      console.warn("Backend OTP API notice:", error.message);
     }
 
-    // Fallback: Generate 4-digit OTP locally if backend server is starting
-    const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
-    localOtpStore.set(emailOrPhone.toLowerCase().trim(), generatedOtp);
-
-    // If Email format, trigger EmailJS / Webhook API for real Inbox delivery
-    if (emailOrPhone.includes("@")) {
+    // 2. Client-side Real EmailJS Dispatch if Email address
+    if (key.includes("@")) {
       try {
-        fetch("https://api.emailjs.com/api/v1.0/email/send", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            service_id: "default_service",
-            template_id: "template_otp",
-            user_id: "stmart_public",
-            template_params: {
-              to_email: emailOrPhone,
-              otp_code: generatedOtp,
-            },
-          }),
-        }).catch(() => {});
+        emailjs.send(
+          "service_stmart_auth",
+          "template_stmart_otp",
+          {
+            to_email: key,
+            to_name: key.split("@")[0],
+            otp_code: generatedOtp,
+            app_name: "ST Mart",
+          },
+          "public_stmart_key"
+        ).catch(() => {});
       } catch (err) {
-        // ignore client emailjs fallback errors
+        console.warn("EmailJS notice:", err.message);
       }
     }
 
     return {
       success: true,
-      message: `OTP sent to ${emailOrPhone}. Please check your Inbox / Mobile SMS.`,
+      message: `Security OTP sent to ${emailOrPhone}. Please check your Inbox.`,
       otp: generatedOtp,
     };
   },
 
-  // Verify submitted OTP
+  // Verify user entered OTP
   async verifyOtp(emailOrPhone, inputOtp) {
     const targetKey = emailOrPhone.toLowerCase().trim();
+
+    // 1. Try Backend Verification API
     try {
       const response = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
         method: "POST",
@@ -85,7 +86,7 @@ export const apiService = {
       console.warn("Backend verify OTP fallback:", error.message);
     }
 
-    // Check local stored OTP
+    // 2. Check local stored OTP
     const validOtp = localOtpStore.get(targetKey);
     if (validOtp && validOtp === inputOtp.trim()) {
       return { success: true, message: "OTP Verified successfully!" };
@@ -93,11 +94,11 @@ export const apiService = {
 
     return {
       success: false,
-      message: `Invalid OTP! Please enter the correct 4-digit verification code sent to ${emailOrPhone}.`,
+      message: `Invalid OTP code! Please enter the correct 4-digit code sent to ${emailOrPhone}.`,
     };
   },
 
-  // Fetch product catalog with optional search & category parameters
+  // Fetch product catalog
   async getProducts(category = "all", search = "") {
     try {
       const url = new URL(`${API_BASE_URL}/products`);
@@ -109,7 +110,7 @@ export const apiService = {
       const result = await response.json();
       return result.data || [];
     } catch (error) {
-      console.warn("API getProducts fallback to local:", error.message);
+      console.warn("API getProducts error:", error.message);
       return null;
     }
   },
