@@ -31,6 +31,8 @@ import GiftCardsPage from "./GiftCardsPage";
 import { PRODUCTS_DATABASE } from "../data/products";
 import { safeLocalStorage } from "../utils/localStorage";
 import { apiService } from "../services/api";
+import CheckoutModal from "./CheckoutModal";
+import ReceiptModal from "./ReceiptModal";
 
 function MainLayout() {
   // Global States
@@ -53,6 +55,13 @@ function MainLayout() {
     return savedUser ? "home" : "login";
   });
   const [toast, setToast] = useState(null);
+
+  // Checkout & Receipt States
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isReceiptOpen, setIsReceiptOpen] = useState(false);
+  const [activeCheckoutItems, setActiveCheckoutItems] = useState([]);
+  const [completedOrder, setCompletedOrder] = useState(null);
+  const [userOrders, setUserOrders] = useState([]);
 
   // Fetch products from backend server on mount or when category/search updates
   useEffect(() => {
@@ -150,32 +159,37 @@ function MainLayout() {
     triggerToast("Logged out successfully. Login again to continue.", "info");
   };
 
-  // Checkout handling with backend API integration
-  const handleCheckout = async () => {
-    const totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.qty, 0);
-    const result = await apiService.createOrder({
-      items: cartItems,
-      totalAmount,
-      userEmail: userEmail || "guest@ST Mart.com",
-    });
-
-    setCartItems([]);
-    setView("home");
-
-    if (result.success) {
-      triggerToast(`Order ${result.order.id} placed successfully! Thank you for shopping with ST Mart.`, "success");
-    } else {
-      triggerToast("Order placed locally! Thank you for shopping with ST Mart.", "success");
+  // Interactive Multi-step Checkout handling
+  const handleCheckout = (customItems = null) => {
+    const itemsToProcess = customItems || cartItems;
+    if (!itemsToProcess || itemsToProcess.length === 0) {
+      triggerToast("Your cart is empty!", "warning");
+      return;
     }
+    setActiveCheckoutItems(itemsToProcess);
+    setIsCheckoutOpen(true);
   };
 
-  // Buy Now flow from detail page
+  // Buy Now flow from detail page or product card
   const handleBuyNow = (product) => {
-    const alreadyInCart = cartItems.find((item) => item.id === product.id);
-    if (!alreadyInCart) {
-      setCartItems((prev) => [...prev, { ...product, qty: 1 }]);
-    }
-    setView("cart");
+    setActiveCheckoutItems([{ ...product, qty: 1 }]);
+    setIsCheckoutOpen(true);
+  };
+
+  // Callback when order is placed successfully in CheckoutModal
+  const handleOrderSuccess = (order) => {
+    // If order includes items from cart, clear cart
+    setCartItems([]);
+    setUserOrders((prev) => [order, ...prev]);
+    setCompletedOrder(order);
+    setIsCheckoutOpen(false);
+    setIsReceiptOpen(true);
+  };
+
+  // Open ReceiptModal for any order (from My Orders or Receipt history)
+  const handleOpenReceiptModal = (order) => {
+    setCompletedOrder(order);
+    setIsReceiptOpen(true);
   };
 
   // Filter products by active category & search query
@@ -372,6 +386,8 @@ function MainLayout() {
             onBack={() => setView("home")}
             handleAddToCart={handleAddToCart}
             triggerToast={triggerToast}
+            userOrders={userOrders}
+            onOpenReceipt={handleOpenReceiptModal}
           />
         )}
 
@@ -427,6 +443,24 @@ function MainLayout() {
 
       {/* Footer Area (Render everywhere except LoginPage) */}
       {view !== "login" && <Footer setView={setView} />}
+
+      {/* Interactive Checkout Modal (Address & Payment Gateway) */}
+      <CheckoutModal
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        cartItems={activeCheckoutItems}
+        userEmail={userEmail}
+        onOrderSuccess={handleOrderSuccess}
+        triggerToast={triggerToast}
+      />
+
+      {/* Tax Invoice & Order Receipt Modal (Printable) */}
+      <ReceiptModal
+        isOpen={isReceiptOpen}
+        onClose={() => setIsReceiptOpen(false)}
+        order={completedOrder}
+        onViewOrders={() => setView("orders")}
+      />
 
       {/* Toast popup notifications */}
       {toast && (

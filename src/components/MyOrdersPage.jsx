@@ -45,23 +45,86 @@ const initialOrders = [
   },
 ];
 
-function MyOrdersPage({ onBack, handleAddToCart, triggerToast }) {
-  const [orders] = useState(initialOrders);
+function MyOrdersPage({ onBack, handleAddToCart, triggerToast, userOrders = [], onOpenReceipt }) {
+  const [orders, setOrders] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState("all"); // 'all' | 'in-transit' | 'delivered'
   const [activeTrackingOrder, setActiveTrackingOrder] = useState(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+
+    // Format any new user orders placed in current session
+    const formattedUserOrders = userOrders.map((o) => ({
+      id: o.id,
+      date: new Date(o.createdAt || Date.now()).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }),
+      expectedDelivery: "In 2-4 Business Days",
+      status: o.status || "Placed",
+      statusStep: 1,
+      statusColor: "blue",
+      total: o.totalAmount,
+      item:
+        o.items && o.items[0]
+          ? `${o.items[0].name}${o.items.length > 1 ? ` (+${o.items.length - 1} more items)` : ""}`
+          : "ST Mart Product",
+      brand: o.items && o.items[0] ? o.items[0].brand || "ST Mart" : "ST Mart",
+      image:
+        o.items && o.items[0]
+          ? o.items[0].image
+          : "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500",
+      trackingNo: o.transactionId || `AWB-${Math.floor(10000000 + Math.random() * 90000000)}`,
+      courier: "STExpress Logistics",
+      rawOrder: o,
+    }));
+
+    setOrders([...formattedUserOrders, ...initialOrders]);
+  }, [userOrders]);
 
   const filteredOrders = orders.filter((ord) => {
-    if (selectedFilter === "in-transit") return ord.status === "In Transit";
+    if (selectedFilter === "in-transit") return ord.status === "In Transit" || ord.status === "Placed";
     if (selectedFilter === "delivered") return ord.status === "Delivered";
     return true;
   });
 
-  const handleDownloadInvoice = (orderId) => {
-    triggerToast(`Tax Invoice PDF for Order ${orderId} downloaded!`, "success");
+  const handleInvoiceClick = (ord) => {
+    if (ord.rawOrder && onOpenReceipt) {
+      onOpenReceipt(ord.rawOrder);
+    } else {
+      // Fallback object for sample orders
+      const mockOrderObj = {
+        id: ord.id,
+        invoiceNo: `INV-2026-${ord.id.replace("ORD-", "")}`,
+        createdAt: new Date().toISOString(),
+        shippingAddress: {
+          fullName: "Valued Customer",
+          phone: "9876543210",
+          streetAddress: "Connaught Place, Central Delhi",
+          city: "New Delhi",
+          state: "Delhi",
+          pincode: "110001",
+        },
+        paymentMethod: "UPI Payment (GPay)",
+        transactionId: ord.trackingNo,
+        totalAmount: ord.total,
+        deliveryCharge: 0,
+        items: [
+          {
+            name: ord.item,
+            brand: ord.brand,
+            qty: 1,
+            price: ord.total,
+          },
+        ],
+      };
+      if (onOpenReceipt) {
+        onOpenReceipt(mockOrderObj);
+      } else if (triggerToast) {
+        triggerToast(`Tax Invoice PDF for ${ord.id} generated!`, "success");
+      }
+    }
   };
 
   return (
@@ -223,10 +286,10 @@ function MyOrdersPage({ onBack, handleAddToCart, triggerToast }) {
                   </button>
 
                   <button
-                    onClick={() => handleDownloadInvoice(ord.id)}
+                    onClick={() => handleInvoiceClick(ord)}
                     className="px-4 py-2 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-750 text-slate-800 dark:text-zinc-200 font-bold text-xs rounded-xl transition-all cursor-pointer"
                   >
-                    📄 Invoice
+                    📄 Tax Invoice / रसीद
                   </button>
                 </div>
               </div>

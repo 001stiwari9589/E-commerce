@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 
-function OtpInput({ length = 6, value = "", onChange, showOtp = true, autoFocus = true }) {
+function OtpInput({ length = 4, value = "", onChange, showOtp = true, autoFocus = true }) {
   const inputRefs = useRef([]);
 
   // Ensure digits array matches length

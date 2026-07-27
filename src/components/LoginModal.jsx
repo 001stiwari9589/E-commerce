@@ -38,8 +38,12 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    if (!otp.trim() || otp.trim().length < 6) {
-      setError("Please enter a valid 6-digit OTP code.");
+    if (!otp.trim() || otp.trim().length < 4) {
+      setError("Please enter complete 4-digit OTP code.");
+      return;
+    }
+    if (otp.trim() !== "0000") {
+      setError("Invalid OTP! Please enter correct OTP: 0000");
       return;
     }
     setError("");
@@ -200,22 +204,22 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   </div>
 
                   <OtpInput
-                    length={6}
+                    length={4}
                     value={otp}
                     onChange={setOtp}
                     showOtp={showOtp}
                   />
 
                   <div className="flex justify-between items-center px-1 mt-1">
-                    <span className="text-[10px] text-slate-400 dark:text-zinc-500">
-                      OTP expires in 2:00 mins
+                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
+                      ✓ Valid OTP is: 0000
                     </span>
                     <button
                       type="button"
-                      onClick={() => setOtp("123456")}
+                      onClick={() => setOtp("0000")}
                       className="text-xs font-bold text-blue-600 dark:text-amber-500 hover:underline cursor-pointer"
                     >
-                      Auto-fill 123456
+                      Auto-fill 0000
                     </button>
                   </div>
                 </div>
