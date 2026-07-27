@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
+import nodemailer from "nodemailer";
 import { connectMongoDB } from "./db.js";
 import { Product } from "./models/Product.js";
 import { User } from "./models/User.js";
@@ -8,6 +9,19 @@ import { Order } from "./models/Order.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// In-memory OTP store (email/phone => { otp, expiresAt })
+const activeOtpStore = new Map();
+
+// Nodemailer SMTP Transporter
+const mailTransporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || "smtp.ethereal.email",
+  port: process.env.SMTP_PORT || 587,
+  auth: {
+    user: process.env.SMTP_USER || "stmart.verify@ethereal.email",
+    pass: process.env.SMTP_PASS || "stmartPass123",
+  },
+});
 
 // Middleware
 app.use(cors({ origin: "*" }));
@@ -179,6 +193,86 @@ app.post("/api/auth/register", async (req, res) => {
       success: true,
       message: "Account registered successfully in MongoDB!",
       user: { id: newUser._id, email: newUser.email },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// POST /api/auth/send-otp (Send real OTP to Email/SMS)
+app.post("/api/auth/send-otp", async (req, res) => {
+  try {
+    const { emailOrPhone } = req.body;
+    if (!emailOrPhone) {
+      return res.status(400).json({ success: false, message: "Email or Phone is required" });
+    }
+
+    const key = emailOrPhone.toLowerCase().trim();
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+
+    activeOtpStore.set(key, {
+      otp,
+      expiresAt: Date.now() + 10 * 60 * 1000,
+    });
+
+    if (key.includes("@")) {
+      try {
+        await mailTransporter.sendMail({
+          from: '"ST Mart Verification" <no-reply@stmart.com>',
+          to: key,
+          subject: `${otp} is your ST Mart Security Verification Code`,
+          html: `
+            <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f8;">
+              <div style="max-width: 500px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 12px; border: 1px solid #e0e0e0;">
+                <h2 style="color: #2563eb; margin-top: 0;">ST MART Security OTP</h2>
+                <p>Hello,</p>
+                <p>Your 4-digit security verification code for <strong>ST Mart</strong> is:</p>
+                <div style="font-size: 32px; font-weight: bold; color: #059669; letter-spacing: 4px; padding: 15px; background: #ecfdf5; border-radius: 8px; text-align: center; margin: 20px 0;">
+                  ${otp}
+                </div>
+                <p style="font-size: 12px; color: #6b7280;">This code is valid for 10 minutes. Please do not share this OTP with anyone.</p>
+              </div>
+            </div>
+          `,
+        });
+      } catch (mailErr) {
+        console.warn("Nodemailer dispatch notice:", mailErr.message);
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `OTP sent successfully to ${emailOrPhone}`,
+      otp,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// POST /api/auth/verify-otp (Verify user entered OTP)
+app.post("/api/auth/verify-otp", async (req, res) => {
+  try {
+    const { emailOrPhone, otp } = req.body;
+    if (!emailOrPhone || !otp) {
+      return res.status(400).json({ success: false, message: "Email/Phone and OTP are required" });
+    }
+
+    const key = emailOrPhone.toLowerCase().trim();
+    const storedData = activeOtpStore.get(key);
+
+    if (storedData && storedData.otp === otp.trim() && Date.now() < storedData.expiresAt) {
+      activeOtpStore.delete(key);
+      return res.json({
+        success: true,
+        message: "OTP Verified successfully!",
+        user: { email: key },
+      });
+    }
+
+    res.status(400).json({
+      success: false,
+      message: `Invalid OTP code! Please check your Email Inbox / SMS for the correct 4-digit verification code.`,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

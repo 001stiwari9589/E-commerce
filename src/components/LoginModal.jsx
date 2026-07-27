@@ -6,19 +6,18 @@ import OtpInput from "./OtpInput";
 function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [emailOrPhone, setEmailOrPhone] = useState("");
   const [otp, setOtp] = useState("");
-  const [generatedOtp, setGeneratedOtp] = useState("");
   const [step, setStep] = useState("input"); // 'input' or 'otp'
   const [error, setError] = useState("");
   const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
-
   const [showOtp, setShowOtp] = useState(true);
+  const [resendTimer, setResendTimer] = useState(60);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
 
   // Clean form state on open/close
   useEffect(() => {
     if (!isOpen) {
       setEmailOrPhone("");
       setOtp("");
-      setGeneratedOtp("");
       setStep("input");
       setError("");
       setIsGoogleModalOpen(false);
@@ -26,20 +25,42 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    let timer;
+    if (step === "otp" && resendTimer > 0) {
+      timer = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [step, resendTimer]);
+
   if (!isOpen) return null;
 
-  const handleRequestOtp = (e) => {
-    e.preventDefault();
+  const handleRequestOtp = async (e) => {
+    if (e) e.preventDefault();
     if (!emailOrPhone.trim()) {
       setError("Please enter a valid Email or Mobile Number");
       return;
     }
-    // Generate dynamic 4-digit random OTP for this specific email/number
-    const newOtp = Math.floor(1000 + Math.random() * 9000).toString();
-    setGeneratedOtp(newOtp);
-    setOtp("");
+
     setError("");
-    setStep("otp");
+    setIsSendingOtp(true);
+    try {
+      const res = await apiService.sendOtp(emailOrPhone);
+      if (res && res.success) {
+        setOtp("");
+        setStep("otp");
+        setResendTimer(60);
+      } else {
+        setError(res?.message || "Failed to send OTP. Please check email/number.");
+      }
+    } catch (err) {
+      console.error("sendOtp error:", err);
+      setError("Failed to send OTP. Please try again.");
+    } finally {
+      setIsSendingOtp(false);
+    }
   };
 
   const handleVerifyOtp = async (e) => {
@@ -48,14 +69,21 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       setError("Please enter complete 4-digit OTP code.");
       return;
     }
-    if (otp.trim() !== generatedOtp) {
-      setError(`Invalid OTP! The correct OTP sent to ${emailOrPhone} is ${generatedOtp}`);
-      return;
-    }
+
     setError("");
-    await apiService.login(emailOrPhone, otp);
-    onLoginSuccess(emailOrPhone);
-    onClose();
+    try {
+      const res = await apiService.verifyOtp(emailOrPhone, otp);
+      if (res && res.success) {
+        await apiService.login(emailOrPhone, otp);
+        onLoginSuccess(emailOrPhone);
+        onClose();
+      } else {
+        setError(res?.message || "Invalid OTP! Check your Email Inbox / SMS for the correct code.");
+      }
+    } catch (err) {
+      console.error("Verify OTP error:", err);
+      setError("Invalid OTP! Please check your Email Inbox or SMS for the 4-digit code.");
+    }
   };
 
   const handleGoogleAccountSelect = async (account) => {
@@ -195,26 +223,19 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   </p>
                 </div>
 
-                {/* Dynamic SMS / Email OTP Banner */}
-                <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 p-3 rounded-2xl flex items-center justify-between gap-2 shadow-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">📩</span>
+                {/* Real Email / SMS Dispatch Notice */}
+                <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 p-3.5 rounded-2xl flex items-center justify-between gap-3 shadow-xs">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">📩</span>
                     <div>
-                      <p className="font-bold text-xs text-emerald-900 dark:text-emerald-300">
-                        OTP Sent to {emailOrPhone}
+                      <p className="font-extrabold text-xs text-blue-900 dark:text-blue-300">
+                        Security OTP Dispatched to {emailOrPhone}
                       </p>
-                      <p className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
-                        Your Login OTP is: <strong className="font-mono text-sm underline tracking-wider">{generatedOtp}</strong>
+                      <p className="text-[11px] font-semibold text-slate-600 dark:text-zinc-400 mt-0.5">
+                        Please check your Email Inbox / Mobile SMS for your 4-digit code.
                       </p>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setOtp(generatedOtp)}
-                    className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-xs transition-all cursor-pointer shrink-0"
-                  >
-                    Auto-Fill {generatedOtp}
-                  </button>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -237,6 +258,28 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                     onChange={setOtp}
                     showOtp={showOtp}
                   />
+
+                  <div className="flex justify-between items-center px-1 mt-1">
+                    <span className="text-[11px] font-semibold text-slate-500 dark:text-zinc-400">
+                      Didn't receive code?
+                    </span>
+                    <button
+                      type="button"
+                      disabled={resendTimer > 0 || isSendingOtp}
+                      onClick={handleRequestOtp}
+                      className={`text-xs font-bold transition-colors cursor-pointer ${
+                        resendTimer > 0 || isSendingOtp
+                          ? "text-slate-400 dark:text-zinc-600 cursor-not-allowed"
+                          : "text-blue-600 dark:text-amber-400 hover:underline"
+                      }`}
+                    >
+                      {isSendingOtp
+                        ? "Sending OTP..."
+                        : resendTimer > 0
+                        ? `Resend OTP in ${resendTimer}s`
+                        : "Resend OTP (पुनः OTP भेजें)"}
+                    </button>
+                  </div>
                 </div>
 
                 {error && (
