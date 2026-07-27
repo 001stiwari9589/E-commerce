@@ -28,8 +28,8 @@ function LoginPage({ onLoginSuccess, onBack }) {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    if (!otp.trim() || otp.trim().length < 4) {
-      setError("Please enter a valid 4-digit OTP code.");
+    if (!otp.trim() || otp.trim().length < 6) {
+      setError("Please enter a valid 6-digit OTP code.");
       return;
     }
     setError("");
@@ -185,7 +185,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
             <form onSubmit={handleVerifyOtp} className="flex flex-col gap-6">
               <div>
                 <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">
-                  Enter 4-Digit OTP
+                  Enter 6-Digit OTP
                 </h3>
                 <p className="text-xs text-slate-400 dark:text-zinc-500 mt-1">
                   Sent code to <span className="font-bold text-slate-700 dark:text-zinc-300">{emailOrPhone}</span>.
@@ -195,7 +195,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center px-0.5">
                   <span className="text-xs font-bold text-slate-600 dark:text-zinc-400">
-                    4-Digit Verification Code
+                    6-Digit Verification Code
                   </span>
                   <button
                     type="button"
@@ -207,7 +207,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
                 </div>
 
                 <OtpInput
-                  length={4}
+                  length={6}
                   value={otp}
                   onChange={setOtp}
                   showOtp={showOtp}
@@ -215,14 +215,14 @@ function LoginPage({ onLoginSuccess, onBack }) {
 
                 <div className="flex justify-between items-center px-1 mt-1">
                   <span className="text-[10px] text-emerald-600 dark:text-emerald-500 font-bold">
-                    ✓ Enter any 4-Digit OTP (e.g. 0000)
+                    ✓ Enter any 6-Digit OTP (e.g. 000000)
                   </span>
                   <button
                     type="button"
-                    onClick={() => setOtp("0000")}
+                    onClick={() => setOtp("000000")}
                     className="text-xs font-bold text-blue-600 dark:text-amber-500 hover:underline cursor-pointer"
                   >
-                    Auto-Fill 0000
+                    Auto-Fill 000000
                   </button>
                 </div>
               </div>

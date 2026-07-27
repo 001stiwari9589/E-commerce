@@ -38,8 +38,8 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    if (!otp.trim() || otp.trim().length < 4) {
-      setError("Please enter a valid 4-digit OTP code.");
+    if (!otp.trim() || otp.trim().length < 6) {
+      setError("Please enter a valid 6-digit OTP code.");
       return;
     }
     setError("");
@@ -188,7 +188,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                 <div className="flex flex-col gap-2">
                   <div className="flex justify-between items-center px-0.5">
                     <span className="text-xs font-bold text-slate-600 dark:text-zinc-400">
-                      4-Digit Verification Code
+                      6-Digit Verification Code
                     </span>
                     <button
                       type="button"
@@ -200,7 +200,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   </div>
 
                   <OtpInput
-                    length={4}
+                    length={6}
                     value={otp}
                     onChange={setOtp}
                     showOtp={showOtp}
@@ -212,10 +212,10 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                     </span>
                     <button
                       type="button"
-                      onClick={() => setOtp("1234")}
+                      onClick={() => setOtp("123456")}
                       className="text-xs font-bold text-blue-600 dark:text-amber-500 hover:underline cursor-pointer"
                     >
-                      Auto-fill 1234
+                      Auto-fill 123456
                     </button>
                   </div>
                 </div>
