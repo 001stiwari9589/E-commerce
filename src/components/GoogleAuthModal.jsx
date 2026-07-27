@@ -2,36 +2,44 @@ import { useState } from "react";
 
 function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
   const [customEmail, setCustomEmail] = useState("");
-  const [isCustomMode, setIsCustomMode] = useState(false);
+  const [error, setError] = useState("");
 
   if (!isOpen) return null;
 
-  const defaultAccounts = [
-    {
-      name: "ST Mart User",
-      email: "user.google@gmail.com",
-      avatar: "https://lh3.googleusercontent.com/a/default-user=s96-c",
-    },
-    {
-      name: "Demo Customer",
-      email: "demo.shopper@gmail.com",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
-    },
-  ];
-
   const handleCustomSubmit = (e) => {
     e.preventDefault();
-    if (!customEmail.trim()) return;
-    const formattedEmail = customEmail.includes("@") ? customEmail : `${customEmail}@gmail.com`;
+    if (!customEmail.trim()) {
+      setError("Please enter your Gmail address");
+      return;
+    }
+    const cleanInput = customEmail.trim().toLowerCase();
+    const formattedEmail = cleanInput.includes("@") ? cleanInput : `${cleanInput}@gmail.com`;
+    
+    if (!formattedEmail.endsWith("@gmail.com") && !formattedEmail.includes("@")) {
+      setError("Please enter a valid Gmail address (e.g. name@gmail.com)");
+      return;
+    }
+
+    const namePart = formattedEmail.split("@")[0];
+    const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+
     onSelectAccount({
-      name: formattedEmail.split("@")[0],
+      name: formattedName,
       email: formattedEmail,
-      avatar: "https://lh3.googleusercontent.com/a/default-user=s96-c",
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${namePart}`,
+    });
+  };
+
+  const handleQuickSelect = (email, name) => {
+    onSelectAccount({
+      name,
+      email,
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`,
     });
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-xs animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-fade-in">
       <div className="absolute inset-0 cursor-pointer" onClick={onClose}></div>
 
       <div className="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl overflow-hidden p-6 text-slate-800 dark:text-zinc-150 animate-zoom-in border border-gray-150 dark:border-zinc-800">
@@ -57,94 +65,92 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
               />
             </svg>
-            <span className="font-extrabold text-sm text-slate-800 dark:text-white">Sign in with Google</span>
+            <span className="font-extrabold text-base text-slate-900 dark:text-white">Sign in with Google</span>
           </div>
 
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 dark:hover:text-zinc-300 cursor-pointer p-1"
+            className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 cursor-pointer font-bold"
           >
             ✕
           </button>
         </div>
 
-        <div className="py-4">
-          <h4 className="text-lg font-black text-slate-900 dark:text-white">Choose an account</h4>
-          <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">to continue to ST Mart Store</p>
+        <div className="py-4 flex flex-col gap-4">
+          <div>
+            <h4 className="text-lg font-black text-slate-900 dark:text-white">Choose or Enter Google Account</h4>
+            <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+              Enter your own Gmail address to sign in instantly with Google
+            </p>
+          </div>
 
-          {!isCustomMode ? (
-            <div className="flex flex-col gap-2 mt-4">
-              {defaultAccounts.map((acc, i) => (
-                <button
-                  key={i}
-                  onClick={() => onSelectAccount(acc)}
-                  className="flex items-center gap-3.5 p-3 rounded-2xl border border-gray-150 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800/80 active:bg-slate-100 dark:active:bg-zinc-800 focus:outline-none transition-colors cursor-pointer text-left w-full group"
-                >
-                  <img
-                    src={acc.avatar}
-                    alt={acc.name}
-                    className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-zinc-700"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <h5 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-amber-500 transition-colors">
-                      {acc.name}
-                    </h5>
-                    <p className="text-xs text-slate-500 dark:text-zinc-400 truncate">{acc.email}</p>
-                  </div>
-                  <span className="text-xs font-bold text-blue-600 dark:text-amber-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                    Select ➔
-                  </span>
-                </button>
-              ))}
-
-              <button
-                onClick={() => setIsCustomMode(true)}
-                className="flex items-center gap-3.5 p-3 rounded-2xl border border-dashed border-gray-300 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800/80 transition-all cursor-pointer text-left w-full mt-1"
-              >
-                <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-zinc-800 flex items-center justify-center font-black text-slate-500 text-lg">
-                  +
-                </div>
-                <div>
-                  <h5 className="text-sm font-bold text-slate-800 dark:text-zinc-200">Use another Google account</h5>
-                  <p className="text-xs text-slate-400 dark:text-zinc-500">Sign in with custom @gmail.com</p>
-                </div>
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={handleCustomSubmit} className="flex flex-col gap-4 mt-4">
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-500 dark:text-zinc-400">Enter Google Email Address</label>
+          {/* Form to type any real Gmail account */}
+          <form onSubmit={handleCustomSubmit} className="flex flex-col gap-3">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1">
+                Your Gmail Address (गूगल ईमेल दर्ज करें)
+              </label>
+              <div className="relative">
                 <input
-                  type="email"
+                  type="text"
                   required
                   value={customEmail}
-                  onChange={(e) => setCustomEmail(e.target.value)}
-                  placeholder="yourname@gmail.com"
-                  className="px-4 py-3 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-gray-200 dark:border-zinc-700 rounded-xl text-sm font-semibold focus:border-blue-500 dark:focus:border-amber-500"
+                  onChange={(e) => {
+                    setCustomEmail(e.target.value);
+                    setError("");
+                  }}
+                  placeholder="e.g. yourname@gmail.com"
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-gray-300 dark:border-zinc-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-amber-500 placeholder:text-slate-400 dark:placeholder:text-zinc-500"
                 />
               </div>
+              {error && <p className="text-xs font-bold text-rose-500 mt-1">{error}</p>}
+            </div>
 
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsCustomMode(false)}
-                  className="w-1/3 py-2.5 border border-gray-200 dark:border-zinc-700 rounded-xl text-xs font-bold text-slate-600 dark:text-zinc-300"
-                >
-                  Back
-                </button>
-                <button
-                  type="submit"
-                  className="w-2/3 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md"
-                >
-                  Continue
-                </button>
-              </div>
-            </form>
-          )}
+            <button
+              type="submit"
+              className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-slate-950 rounded-xl font-extrabold text-xs shadow-lg hover:shadow-xl transition-all cursor-pointer uppercase tracking-wider transform active:scale-98"
+            >
+              Sign In with this Google Account &rarr;
+            </button>
+          </form>
+
+          <div className="relative my-1">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200 dark:border-zinc-800"></div></div>
+            <div className="relative flex justify-center text-xs uppercase"><span className="bg-white dark:bg-zinc-900 px-2 text-slate-400 dark:text-zinc-500 font-bold">Or Quick Select</span></div>
+          </div>
+
+          {/* Quick Select Buttons */}
+          <div className="flex flex-col gap-2">
+            {[
+              { name: "Personal Google Account", email: "satyam.user@gmail.com" },
+              { name: "Work / Business Account", email: "official.mart@gmail.com" },
+            ].map((acc, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => handleQuickSelect(acc.email, acc.name)}
+                className="flex items-center justify-between p-3 rounded-2xl border border-gray-200 dark:border-zinc-800 hover:border-blue-500 dark:hover:border-amber-500 bg-slate-50 dark:bg-zinc-850 hover:bg-white dark:hover:bg-zinc-800 transition-all cursor-pointer text-left group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-amber-950/40 text-blue-600 dark:text-amber-400 font-black flex items-center justify-center text-sm">
+                    {acc.email.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-amber-400">
+                      {acc.name}
+                    </p>
+                    <p className="text-[11px] text-slate-500 dark:text-zinc-400">{acc.email}</p>
+                  </div>
+                </div>
+                <span className="text-xs font-bold text-blue-600 dark:text-amber-400">Select &rarr;</span>
+              </button>
+            ))}
+          </div>
+
         </div>
 
         <div className="pt-3 border-t border-gray-100 dark:border-zinc-800 text-center">
-          <span className="text-[10px] text-slate-400 dark:text-zinc-550">
+          <span className="text-[10px] font-semibold text-slate-400 dark:text-zinc-500">
             Protected by Google OAuth 2.0 Identity Protocol
           </span>
         </div>

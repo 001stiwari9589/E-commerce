@@ -6,6 +6,7 @@ import OtpInput from "./OtpInput";
 function LoginPage({ onLoginSuccess, onBack }) {
   const [emailOrPhone, setEmailOrPhone] = useState("");
   const [otp, setOtp] = useState("");
+  const [sentOtp, setSentOtp] = useState("");
   const [step, setStep] = useState("input"); // 'input' or 'otp'
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -40,6 +41,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
     try {
       const res = await apiService.sendOtp(emailOrPhone);
       if (res && res.success) {
+        setSentOtp(res.otp || "");
         setOtp("");
         setStep("otp");
         setResendTimer(60);
@@ -227,20 +229,45 @@ function LoginPage({ onLoginSuccess, onBack }) {
                 </p>
               </div>
 
-              {/* Real Email / SMS Dispatch Notice */}
-              <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 p-4 rounded-2xl flex items-center justify-between gap-3 shadow-xs">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">📩</span>
-                  <div>
-                    <p className="font-extrabold text-xs text-blue-900 dark:text-blue-300">
-                      Security OTP Dispatched to {emailOrPhone}
-                    </p>
-                    <p className="text-[11px] font-semibold text-slate-600 dark:text-zinc-400 mt-0.5">
-                      Please check your Email Inbox / Mobile SMS for your 4-digit code.
-                    </p>
+              {/* Real Mobile SMS or Email Dispatch Notice */}
+              {!emailOrPhone.includes("@") ? (
+                <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 p-3.5 rounded-2xl flex items-center justify-between gap-2 shadow-xs">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">📱</span>
+                    <div>
+                      <p className="font-extrabold text-xs text-amber-900 dark:text-amber-300">
+                        SMS Alert Sent to +91 {emailOrPhone}
+                      </p>
+                      <p className="text-[11px] font-extrabold text-amber-800 dark:text-amber-400 mt-0.5">
+                        Your Mobile SMS OTP: <strong className="font-mono text-sm underline tracking-wider">{sentOtp}</strong>
+                      </p>
+                    </div>
+                  </div>
+                  {sentOtp && (
+                    <button
+                      type="button"
+                      onClick={() => setOtp(sentOtp)}
+                      className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl shadow-xs transition-all cursor-pointer shrink-0"
+                    >
+                      Auto-Fill SMS
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 p-4 rounded-2xl flex items-center justify-between gap-3 shadow-xs">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">📩</span>
+                    <div>
+                      <p className="font-extrabold text-xs text-blue-900 dark:text-blue-300">
+                        Security OTP Dispatched to {emailOrPhone}
+                      </p>
+                      <p className="text-[11px] font-semibold text-slate-600 dark:text-zinc-400 mt-0.5">
+                        Please check your Email Inbox for your 4-digit code.
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center px-0.5">
