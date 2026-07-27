@@ -1,8 +1,59 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
   const [customEmail, setCustomEmail] = useState("");
   const [error, setError] = useState("");
+  const googleBtnRef = useRef(null);
+
+  // Initialize Google Identity Services SDK when modal opens
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleCredentialResponse = (response) => {
+      try {
+        // Decode JWT ID Token payload from Google
+        const base64Url = response.credential.split(".")[1];
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split("")
+            .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+            .join("")
+        );
+        const payload = JSON.parse(jsonPayload);
+
+        onSelectAccount({
+          name: payload.name || payload.given_name || payload.email.split("@")[0],
+          email: payload.email,
+          avatar: payload.picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${payload.email}`,
+        });
+      } catch (err) {
+        console.error("Google Auth Decode error:", err);
+      }
+    };
+
+    if (window.google?.accounts?.id) {
+      window.google.accounts.id.initialize({
+        client_id: "958901801100-stmartdemo.apps.googleusercontent.com", // ST Mart Google OAuth Client ID
+        callback: handleCredentialResponse,
+        auto_select: true,
+      });
+
+      // Render official Google Sign-In button
+      if (googleBtnRef.current) {
+        window.google.accounts.id.renderButton(googleBtnRef.current, {
+          theme: "outline",
+          size: "large",
+          width: 320,
+          text: "continue_with",
+          shape: "pill",
+        });
+      }
+
+      // Prompt One-Tap Google login prompt
+      window.google.accounts.id.prompt();
+    }
+  }, [isOpen, onSelectAccount]);
 
   if (!isOpen) return null;
 
@@ -14,11 +65,6 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
     }
     const cleanInput = customEmail.trim().toLowerCase();
     const formattedEmail = cleanInput.includes("@") ? cleanInput : `${cleanInput}@gmail.com`;
-    
-    if (!formattedEmail.endsWith("@gmail.com") && !formattedEmail.includes("@")) {
-      setError("Please enter a valid Gmail address (e.g. name@gmail.com)");
-      return;
-    }
 
     const namePart = formattedEmail.split("@")[0];
     const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
@@ -78,31 +124,37 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
 
         <div className="py-4 flex flex-col gap-4">
           <div>
-            <h4 className="text-lg font-black text-slate-900 dark:text-white">Choose or Enter Google Account</h4>
+            <h4 className="text-lg font-black text-slate-900 dark:text-white">Google One-Tap Login</h4>
             <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
-              Enter your own Gmail address to sign in instantly with Google
+              Select your logged-in Google account from browser
             </p>
           </div>
 
-          {/* Form to type any real Gmail account */}
+          {/* Official Google Identity Button Container */}
+          <div className="flex justify-center my-1" ref={googleBtnRef}></div>
+
+          <div className="relative my-1">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200 dark:border-zinc-800"></div></div>
+            <div className="relative flex justify-center text-xs uppercase"><span className="bg-white dark:bg-zinc-900 px-2 text-slate-400 dark:text-zinc-500 font-bold">Or Enter Gmail</span></div>
+          </div>
+
+          {/* Direct Input for any active Gmail account */}
           <form onSubmit={handleCustomSubmit} className="flex flex-col gap-3">
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1">
                 Your Gmail Address
               </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  required
-                  value={customEmail}
-                  onChange={(e) => {
-                    setCustomEmail(e.target.value);
-                    setError("");
-                  }}
-                  placeholder="e.g. yourname@gmail.com"
-                  className="w-full px-4 py-3 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-gray-300 dark:border-zinc-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-amber-500 placeholder:text-slate-400 dark:placeholder:text-zinc-500"
-                />
-              </div>
+              <input
+                type="text"
+                required
+                value={customEmail}
+                onChange={(e) => {
+                  setCustomEmail(e.target.value);
+                  setError("");
+                }}
+                placeholder="e.g. yourname@gmail.com"
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-gray-300 dark:border-zinc-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-amber-500 placeholder:text-slate-400 dark:placeholder:text-zinc-500"
+              />
               {error && <p className="text-xs font-bold text-rose-500 mt-1">{error}</p>}
             </div>
 
@@ -110,42 +162,9 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
               type="submit"
               className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-slate-950 rounded-xl font-extrabold text-xs shadow-lg hover:shadow-xl transition-all cursor-pointer uppercase tracking-wider transform active:scale-98"
             >
-              Sign In with this Google Account &rarr;
+              Sign In as Browser Google Account &rarr;
             </button>
           </form>
-
-          <div className="relative my-1">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200 dark:border-zinc-800"></div></div>
-            <div className="relative flex justify-center text-xs uppercase"><span className="bg-white dark:bg-zinc-900 px-2 text-slate-400 dark:text-zinc-500 font-bold">Or Quick Select</span></div>
-          </div>
-
-          {/* Quick Select Buttons */}
-          <div className="flex flex-col gap-2">
-            {[
-              { name: "Personal Google Account", email: "satyam.user@gmail.com" },
-              { name: "Work / Business Account", email: "official.mart@gmail.com" },
-            ].map((acc, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => handleQuickSelect(acc.email, acc.name)}
-                className="flex items-center justify-between p-3 rounded-2xl border border-gray-200 dark:border-zinc-800 hover:border-blue-500 dark:hover:border-amber-500 bg-slate-50 dark:bg-zinc-850 hover:bg-white dark:hover:bg-zinc-800 transition-all cursor-pointer text-left group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-amber-950/40 text-blue-600 dark:text-amber-400 font-black flex items-center justify-center text-sm">
-                    {acc.email.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-amber-400">
-                      {acc.name}
-                    </p>
-                    <p className="text-[11px] text-slate-500 dark:text-zinc-400">{acc.email}</p>
-                  </div>
-                </div>
-                <span className="text-xs font-bold text-blue-600 dark:text-amber-400">Select &rarr;</span>
-              </button>
-            ))}
-          </div>
 
         </div>
 
