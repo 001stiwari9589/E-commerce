@@ -88,7 +88,7 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
           <form onSubmit={handleCustomSubmit} className="flex flex-col gap-3">
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1">
-                Your Gmail Address (गूगल ईमेल दर्ज करें)
+                Your Gmail Address
               </label>
               <div className="relative">
                 <input
