@@ -6,6 +6,7 @@ import OtpInput from "./OtpInput";
 function LoginPage({ onLoginSuccess, onBack }) {
   const [emailOrPhone, setEmailOrPhone] = useState("");
   const [otp, setOtp] = useState("");
+  const [generatedOtp, setGeneratedOtp] = useState("");
   const [step, setStep] = useState("input"); // 'input' or 'otp'
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +23,10 @@ function LoginPage({ onLoginSuccess, onBack }) {
       setError("Please enter a valid Email or Mobile Number");
       return;
     }
+    // Generate dynamic 4-digit random OTP for this specific email/number
+    const newOtp = Math.floor(1000 + Math.random() * 9000).toString();
+    setGeneratedOtp(newOtp);
+    setOtp("");
     setError("");
     setStep("otp");
   };
@@ -32,8 +37,8 @@ function LoginPage({ onLoginSuccess, onBack }) {
       setError("Please enter complete 4-digit OTP code.");
       return;
     }
-    if (otp.trim() !== "0000") {
-      setError("Invalid OTP! Please enter correct OTP: 0000");
+    if (otp.trim() !== generatedOtp) {
+      setError(`Invalid OTP! The correct OTP sent to ${emailOrPhone} is ${generatedOtp}`);
       return;
     }
     setError("");
@@ -189,11 +194,33 @@ function LoginPage({ onLoginSuccess, onBack }) {
             <form onSubmit={handleVerifyOtp} className="flex flex-col gap-6">
               <div>
                 <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">
-                  Enter 6-Digit OTP
+                  Enter 4-Digit Verification OTP
                 </h3>
-                <p className="text-xs text-slate-400 dark:text-zinc-500 mt-1">
-                  Sent code to <span className="font-bold text-slate-700 dark:text-zinc-300">{emailOrPhone}</span>.
+                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
+                  Sent OTP code to <span className="font-bold text-slate-800 dark:text-zinc-200">{emailOrPhone}</span>
                 </p>
+              </div>
+
+              {/* Dynamic SMS / Email OTP Banner */}
+              <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 p-3 rounded-2xl flex items-center justify-between gap-2 shadow-xs">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">📩</span>
+                  <div>
+                    <p className="font-bold text-xs text-emerald-900 dark:text-emerald-300">
+                      OTP Sent to {emailOrPhone}
+                    </p>
+                    <p className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
+                      Your Login OTP is: <strong className="font-mono text-sm underline tracking-wider">{generatedOtp}</strong>
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setOtp(generatedOtp)}
+                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-xs transition-all cursor-pointer shrink-0"
+                >
+                  Auto-Fill {generatedOtp}
+                </button>
               </div>
 
               <div className="flex flex-col gap-2">
@@ -216,19 +243,6 @@ function LoginPage({ onLoginSuccess, onBack }) {
                   onChange={setOtp}
                   showOtp={showOtp}
                 />
-
-                <div className="flex justify-between items-center px-1 mt-1">
-                  <span className="text-[10px] text-emerald-600 dark:text-emerald-500 font-bold">
-                    ✓ Valid Security OTP is: 0000
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setOtp("0000")}
-                    className="text-xs font-bold text-blue-600 dark:text-amber-500 hover:underline cursor-pointer"
-                  >
-                    Auto-Fill 0000
-                  </button>
-                </div>
               </div>
 
               {error && (
