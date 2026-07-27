@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import GoogleAuthModal from "./GoogleAuthModal";
 import { apiService } from "../services/api";
+import OtpInput from "./OtpInput";
 
 function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [emailOrPhone, setEmailOrPhone] = useState("");
@@ -8,6 +9,8 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [step, setStep] = useState("input"); // 'input' or 'otp'
   const [error, setError] = useState("");
   const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
+
+  const [showOtp, setShowOtp] = useState(true);
 
   // Clean form state on open/close
   useEffect(() => {
@@ -17,6 +20,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       setStep("input");
       setError("");
       setIsGoogleModalOpen(false);
+      setShowOtp(true);
     }
   }, [isOpen]);
 
@@ -181,17 +185,28 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   </p>
                 </div>
 
-                <div className="flex flex-col gap-1.5">
-                  <input
-                    type="password"
-                    required
-                    maxLength={4}
+                <div className="flex flex-col gap-2">
+                  <div className="flex justify-between items-center px-0.5">
+                    <span className="text-xs font-bold text-slate-600 dark:text-zinc-400">
+                      4-Digit Verification Code
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowOtp(!showOtp)}
+                      className="text-xs font-semibold text-slate-500 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-amber-400 flex items-center gap-1 cursor-pointer"
+                    >
+                      {showOtp ? "Hide" : "Show"} Code
+                    </button>
+                  </div>
+
+                  <OtpInput
+                    length={4}
                     value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    placeholder="Enter 4-Digit OTP (Hint: 1234)"
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-gray-200 dark:border-zinc-700 rounded-xl focus:border-blue-500 dark:focus:border-amber-500 focus:bg-white dark:focus:bg-zinc-850 transition-all text-center tracking-widest font-extrabold text-lg placeholder-gray-400 dark:placeholder-zinc-650 shadow-xs"
+                    onChange={setOtp}
+                    showOtp={showOtp}
                   />
-                  <div className="flex justify-between items-center px-1">
+
+                  <div className="flex justify-between items-center px-1 mt-1">
                     <span className="text-[10px] text-slate-400 dark:text-zinc-500">
                       OTP expires in 2:00 mins
                     </span>
@@ -200,7 +215,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                       onClick={() => setOtp("1234")}
                       className="text-xs font-bold text-blue-600 dark:text-amber-500 hover:underline cursor-pointer"
                     >
-                      Resend OTP
+                      Auto-fill 1234
                     </button>
                   </div>
                 </div>
