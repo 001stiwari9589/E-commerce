@@ -262,17 +262,16 @@ function LoginPage({ onLoginSuccess, onBack }) {
                     type="button"
                     disabled={resendTimer > 0 || isSendingOtp}
                     onClick={handleRequestOtp}
-                    className={`text-xs font-bold transition-colors cursor-pointer ${
-                      resendTimer > 0 || isSendingOtp
+                    className={`text-xs font-bold transition-colors cursor-pointer ${resendTimer > 0 || isSendingOtp
                         ? "text-slate-400 dark:text-zinc-600 cursor-not-allowed"
                         : "text-blue-600 dark:text-amber-400 hover:underline"
-                    }`}
+                      }`}
                   >
                     {isSendingOtp
                       ? "Sending OTP..."
                       : resendTimer > 0
-                      ? `Resend OTP in ${resendTimer}s`
-                      : "Resend OTP (पुनः OTP भेजें)"}
+                        ? `Resend OTP in ${resendTimer}s`
+                        : ""}
                   </button>
                 </div>
               </div>
@@ -315,27 +314,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
             </form>
           )}
         </div>
-
-        {/* Footer */}
-        <div className="mt-8 pt-4 border-t border-gray-100 dark:border-zinc-800/80 text-center">
-          <span className="text-xs text-slate-400 dark:text-zinc-500">
-            New to ST Mart?{" "}
-            <button
-              type="button"
-              onClick={() => {
-                setError("");
-                setEmailOrPhone("customer@example.com");
-                setStep("input");
-              }}
-              className="font-bold text-blue-600 dark:text-amber-500 hover:underline cursor-pointer"
-            >
-              Create dynamic account
-            </button>
-          </span>
-        </div>
-
       </div>
-
     </div>
   );
 }

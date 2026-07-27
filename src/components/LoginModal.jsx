@@ -114,7 +114,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
       {/* Main Container */}
       <div className="relative w-full max-w-2xl bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-5 animate-zoom-in text-slate-800 dark:text-zinc-150 max-h-[90vh]">
-        
+
         {/* Left Side: Blue Branding panel */}
         <div className="hidden md:flex md:col-span-2 bg-blue-600 dark:bg-zinc-800 p-8 flex-col justify-between text-white relative">
           <div>
@@ -136,7 +136,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
         {/* Right Side: Inputs and Action */}
         <div className="md:col-span-3 p-8 flex flex-col justify-between relative bg-white dark:bg-zinc-900">
-          
+
           {/* Close button top right */}
           <button
             onClick={onClose}
@@ -259,17 +259,16 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                       type="button"
                       disabled={resendTimer > 0 || isSendingOtp}
                       onClick={handleRequestOtp}
-                      className={`text-xs font-bold transition-colors cursor-pointer ${
-                        resendTimer > 0 || isSendingOtp
+                      className={`text-xs font-bold transition-colors cursor-pointer ${resendTimer > 0 || isSendingOtp
                           ? "text-slate-400 dark:text-zinc-600 cursor-not-allowed"
                           : "text-blue-600 dark:text-amber-400 hover:underline"
-                      }`}
+                        }`}
                     >
                       {isSendingOtp
                         ? "Sending OTP..."
                         : resendTimer > 0
-                        ? `Resend OTP in ${resendTimer}s`
-                        : "Resend OTP (पुनः OTP भेजें)"}
+                          ? `Resend OTP in ${resendTimer}s`
+                          : ""}
                     </button>
                   </div>
                 </div>
@@ -300,24 +299,6 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                 </div>
               </form>
             )}
-          </div>
-
-          {/* Create Account footer */}
-          <div className="mt-8 pt-4 border-t border-gray-100 dark:border-zinc-800/80 text-center">
-            <span className="text-xs text-slate-400 dark:text-zinc-500">
-              New to ST Mart?{" "}
-              <button
-                type="button"
-                onClick={() => {
-                  setError("");
-                  setEmailOrPhone("user@example.com");
-                  setStep("input");
-                }}
-                className="font-bold text-blue-600 dark:text-amber-500 hover:underline cursor-pointer"
-              >
-                Create an account
-              </button>
-            </span>
           </div>
 
         </div>
