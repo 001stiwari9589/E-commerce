@@ -206,7 +206,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                 <button
                   type="button"
                   onClick={() => setIsGoogleModalOpen(true)}
-                  className="w-full flex items-center justify-center gap-2.5 py-3 bg-white dark:bg-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-750 text-slate-800 dark:text-white border border-gray-200 dark:border-zinc-700 font-bold rounded-xl text-xs transition-all cursor-pointer transform active:scale-98"
+                  className="w-full flex items-center justify-center gap-2.5 py-3 bg-white dark:bg-zinc-800 hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-800 dark:text-white border border-slate-200 dark:border-zinc-700 hover:border-slate-300 dark:hover:border-zinc-600 font-bold rounded-xl text-xs transition-all cursor-pointer transform active:scale-98"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
