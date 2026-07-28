@@ -195,7 +195,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   disabled={isSendingOtp}
                   className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-slate-950 rounded-xl font-bold text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all cursor-pointer transform active:scale-98"
                 >
-                  {isSendingOtp ? "Sending Security OTP..." : "Get OTP Code &rarr;"}
+                  {isSendingOtp ? "Sending Security OTP..." : "Get OTP"}
                 </button>
 
                 <div className="relative my-1">

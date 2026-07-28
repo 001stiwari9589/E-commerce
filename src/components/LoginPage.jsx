@@ -196,7 +196,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
                   disabled={isSendingOtp}
                   className="w-full py-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-slate-950 rounded-2xl font-black text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transition-all cursor-pointer transform active:scale-98"
                 >
-                  {isSendingOtp ? "Dispatching Security OTP..." : "Get OTP Verification Code &rarr;"}
+                  {isSendingOtp ? "Dispatching Security OTP..." : "Get OTP"}
                 </button>
 
                 <div className="relative my-2">
