@@ -14,6 +14,8 @@ function LoginPage({ onLoginSuccess, onBack }) {
   const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
   const [resendTimer, setResendTimer] = useState(60);
   const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [receivedOtp, setReceivedOtp] = useState("");
+  const [showSmsToast, setShowSmsToast] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -42,10 +44,43 @@ function LoginPage({ onLoginSuccess, onBack }) {
     try {
       const res = await apiService.sendOtp(emailOrPhone);
       if (res && res.success) {
+        const isMobile = !emailOrPhone.includes("@");
+        const code = res.otp || "";
         setOtp("");
+        setReceivedOtp(code);
+        setShowSmsToast(true);
         setStep("otp");
         setResendTimer(60);
-        setSuccessMsg(`📩 Verification OTP sent to ${emailOrPhone}. Check your inbox.`);
+        setSuccessMsg(
+          isMobile
+            ? `📱 SMS Verification Code dispatched to ${emailOrPhone}.`
+            : `📩 Email Verification Code sent to ${emailOrPhone}.`
+        );
+
+        // Native Browser OS Push Notification if permitted
+        if ("Notification" in window) {
+          if (Notification.permission === "granted") {
+            try {
+              new Notification("💬 ST Mart SMS OTP", {
+                body: `Your OTP for ${emailOrPhone} is: ${code}`,
+              });
+            } catch (nErr) {
+              console.warn("Notification error:", nErr);
+            }
+          } else if (Notification.permission !== "denied") {
+            Notification.requestPermission().then((perm) => {
+              if (perm === "granted") {
+                try {
+                  new Notification("💬 ST Mart SMS OTP", {
+                    body: `Your OTP for ${emailOrPhone} is: ${code}`,
+                  });
+                } catch (nErr) {
+                  console.warn("Notification error:", nErr);
+                }
+              }
+            });
+          }
+        }
       } else {
         setError(res?.message || "Failed to send OTP. Please check email/number.");
       }
@@ -103,6 +138,41 @@ function LoginPage({ onLoginSuccess, onBack }) {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-slate-900 dark:bg-black relative overflow-hidden">
       
+      {/* Real-time Mobile SMS Push Toast Notification Banner */}
+      {showSmsToast && receivedOtp && (
+        <div className="fixed top-5 right-5 z-50 max-w-sm w-[90%] sm:w-full bg-slate-900 dark:bg-zinc-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-700 dark:border-amber-500/40 animate-slide-down flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="p-1 bg-blue-600 dark:bg-amber-500 text-white dark:text-slate-950 rounded-lg text-[10px] font-black uppercase">💬 SMS</span>
+              <span className="text-xs font-bold text-slate-200">ST-MART-SMS</span>
+              <span className="text-[10px] text-slate-400">Just now</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowSmsToast(false)}
+              className="text-slate-400 hover:text-white text-xs font-bold px-1 cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="text-xs text-slate-300 leading-relaxed">
+            Security OTP for <span className="font-bold text-white">{emailOrPhone}</span> is <span className="font-black text-amber-400 text-sm tracking-wider px-1.5 py-0.5 bg-zinc-800 rounded">{receivedOtp}</span>.
+          </div>
+          <div className="flex justify-end gap-2 mt-1">
+            <button
+              type="button"
+              onClick={() => {
+                setOtp(receivedOtp);
+                setShowSmsToast(false);
+              }}
+              className="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-black shadow-sm transition-all cursor-pointer transform active:scale-95 flex items-center gap-1"
+            >
+              ⚡ Auto-Fill OTP ({receivedOtp})
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Dynamic Ambient Background Glow */}
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/30 rounded-full blur-3xl pointer-events-none"></div>
       <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl pointer-events-none"></div>
@@ -225,14 +295,30 @@ function LoginPage({ onLoginSuccess, onBack }) {
                     Enter 4-Digit Verification OTP
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
-                    Sent code to <span className="font-bold text-slate-900 dark:text-white">{emailOrPhone}</span>. Please check your Email Inbox.
+                    Sent code to <span className="font-bold text-slate-900 dark:text-white">{emailOrPhone}</span> via {emailOrPhone.includes("@") ? "Email" : "Mobile SMS"}.
                   </p>
                 </div>
 
                 {successMsg && (
-                  <p className="text-xs font-bold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40 p-3 rounded-xl border border-blue-200 dark:border-blue-900/50">
-                    {successMsg}
-                  </p>
+                  <div className="text-xs font-bold text-blue-700 dark:text-amber-300 bg-blue-50 dark:bg-amber-950/40 p-3.5 rounded-xl border border-blue-200 dark:border-amber-900/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                    <div>
+                      <p>{successMsg}</p>
+                      {receivedOtp && (
+                        <p className="mt-1 text-slate-700 dark:text-slate-200">
+                          Security OTP Code: <span className="font-black text-blue-800 dark:text-amber-400 text-sm bg-blue-100 dark:bg-zinc-800 px-2 py-0.5 rounded tracking-widest">{receivedOtp}</span>
+                        </p>
+                      )}
+                    </div>
+                    {receivedOtp && (
+                      <button
+                        type="button"
+                        onClick={() => setOtp(receivedOtp)}
+                        className="shrink-0 text-[11px] bg-blue-600 hover:bg-blue-700 text-white dark:bg-amber-500 dark:hover:bg-amber-600 dark:text-slate-950 px-3 py-1.5 rounded-lg font-black tracking-wide cursor-pointer transition-colors shadow-xs"
+                      >
+                        Auto-Fill Code
+                      </button>
+                    )}
+                  </div>
                 )}
 
                 <div className="flex flex-col gap-3">
