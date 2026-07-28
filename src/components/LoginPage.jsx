@@ -44,25 +44,20 @@ function LoginPage({ onLoginSuccess, onBack }) {
     try {
       const res = await apiService.sendOtp(emailOrPhone);
       if (res && res.success) {
-        const isMobile = !emailOrPhone.includes("@");
         const code = res.otp || "";
         setOtp("");
         setReceivedOtp(code);
         setShowSmsToast(true);
         setStep("otp");
         setResendTimer(60);
-        setSuccessMsg(
-          isMobile
-            ? `📱 SMS Verification Code dispatched to ${emailOrPhone}.`
-            : `📩 Email Verification Code sent to ${emailOrPhone}.`
-        );
+        setSuccessMsg("Security OTP Code Dispatched");
 
         // Native Browser OS Push Notification if permitted
         if ("Notification" in window) {
           if (Notification.permission === "granted") {
             try {
-              new Notification("💬 ST Mart SMS OTP", {
-                body: `Your OTP for ${emailOrPhone} is: ${code}`,
+              new Notification("💬 ST Mart Security OTP", {
+                body: `Your Security OTP is: ${code}`,
               });
             } catch (nErr) {
               console.warn("Notification error:", nErr);
@@ -71,8 +66,8 @@ function LoginPage({ onLoginSuccess, onBack }) {
             Notification.requestPermission().then((perm) => {
               if (perm === "granted") {
                 try {
-                  new Notification("💬 ST Mart SMS OTP", {
-                    body: `Your OTP for ${emailOrPhone} is: ${code}`,
+                  new Notification("💬 ST Mart Security OTP", {
+                    body: `Your Security OTP is: ${code}`,
                   });
                 } catch (nErr) {
                   console.warn("Notification error:", nErr);
@@ -156,7 +151,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
             </button>
           </div>
           <div className="text-xs text-slate-300 leading-relaxed">
-            Security OTP for <span className="font-bold text-white">{emailOrPhone}</span> is <span className="font-black text-amber-400 text-sm tracking-wider px-1.5 py-0.5 bg-zinc-800 rounded">{receivedOtp}</span>.
+            Security OTP Code: <span className="font-black text-amber-400 text-sm tracking-wider px-2 py-0.5 bg-zinc-800 rounded">{receivedOtp}</span>
           </div>
           <div className="flex justify-end gap-2 mt-1">
             <button
@@ -295,29 +290,23 @@ function LoginPage({ onLoginSuccess, onBack }) {
                     Enter 4-Digit Verification OTP
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
-                    Sent code to <span className="font-bold text-slate-900 dark:text-white">{emailOrPhone}</span> via {emailOrPhone.includes("@") ? "Email" : "Mobile SMS"}.
+                    Enter the 4-digit security code to verify and sign in.
                   </p>
                 </div>
 
-                {successMsg && (
-                  <div className="text-xs font-bold text-blue-700 dark:text-amber-300 bg-blue-50 dark:bg-amber-950/40 p-3.5 rounded-xl border border-blue-200 dark:border-amber-900/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                    <div>
-                      <p>{successMsg}</p>
-                      {receivedOtp && (
-                        <p className="mt-1 text-slate-700 dark:text-slate-200">
-                          Security OTP Code: <span className="font-black text-blue-800 dark:text-amber-400 text-sm bg-blue-100 dark:bg-zinc-800 px-2 py-0.5 rounded tracking-widest">{receivedOtp}</span>
-                        </p>
-                      )}
+                {receivedOtp && (
+                  <div className="text-xs font-bold text-blue-700 dark:text-amber-300 bg-blue-50 dark:bg-amber-950/40 p-3.5 rounded-xl border border-blue-200 dark:border-amber-900/50 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-slate-700 dark:text-zinc-300 font-bold">Security OTP Code:</span>
+                      <span className="font-black text-blue-800 dark:text-amber-400 text-base bg-blue-100 dark:bg-zinc-800 px-3 py-1 rounded-lg tracking-widest">{receivedOtp}</span>
                     </div>
-                    {receivedOtp && (
-                      <button
-                        type="button"
-                        onClick={() => setOtp(receivedOtp)}
-                        className="shrink-0 text-[11px] bg-blue-600 hover:bg-blue-700 text-white dark:bg-amber-500 dark:hover:bg-amber-600 dark:text-slate-950 px-3 py-1.5 rounded-lg font-black tracking-wide cursor-pointer transition-colors shadow-xs"
-                      >
-                        Auto-Fill Code
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => setOtp(receivedOtp)}
+                      className="shrink-0 text-[11px] bg-blue-600 hover:bg-blue-700 text-white dark:bg-amber-500 dark:hover:bg-amber-600 dark:text-slate-950 px-3.5 py-2 rounded-xl font-black tracking-wide cursor-pointer transition-colors shadow-xs"
+                    >
+                      Auto-Fill Code
+                    </button>
                   </div>
                 )}
 

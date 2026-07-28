@@ -24,6 +24,7 @@ export const apiService = {
   // Dispatch Real-time OTP to Email / Mobile
   async sendOtp(emailOrPhone) {
     const key = emailOrPhone.toLowerCase().trim();
+    // Always generate a fresh random 4-digit OTP every single call
     const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
     localOtpStore.set(key, generatedOtp);
 
@@ -36,8 +37,9 @@ export const apiService = {
       });
       const data = await response.json();
       if (data && data.success) {
-        if (data.otp) localOtpStore.set(key, data.otp);
-        return data;
+        const finalOtp = data.otp || generatedOtp;
+        localOtpStore.set(key, finalOtp);
+        return { ...data, otp: finalOtp };
       }
     } catch (error) {
       console.warn("Backend OTP API notice:", error.message);
@@ -64,7 +66,7 @@ export const apiService = {
 
     return {
       success: true,
-      message: `Security OTP sent to ${emailOrPhone}. Please check your Inbox.`,
+      message: "Security OTP Code Dispatched",
       otp: generatedOtp,
     };
   },
