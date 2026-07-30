@@ -57,7 +57,7 @@ function ReceiptModal({ order, isOpen, onClose, onViewOrders }) {
             </div>
             <div>
               <h3 className="font-extrabold text-base text-emerald-700 dark:text-emerald-400">
-                Order Placed Successfully! (ऑर्डर सफलतापूर्वक दर्ज हुआ)
+                Order Placed Successfully!
               </h3>
               <p className="text-xs text-slate-600 dark:text-zinc-400">
                 Thank you for your purchase. Your invoice details &amp; payment receipt are below.
@@ -73,7 +73,7 @@ function ReceiptModal({ order, isOpen, onClose, onViewOrders }) {
                   ST MART
                 </span>
                 <span className="text-xs font-bold px-2.5 py-1 bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 rounded-md uppercase tracking-wider">
-                  Tax Invoice / रसीद
+                  TAX INVOICE
                 </span>
               </div>
               <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
@@ -96,7 +96,7 @@ function ReceiptModal({ order, isOpen, onClose, onViewOrders }) {
             {/* Delivery Address */}
             <div className="bg-slate-50 dark:bg-zinc-850 p-4 rounded-2xl border border-slate-100 dark:border-zinc-800 print:border-gray-300 print:bg-white">
               <h4 className="font-extrabold text-slate-900 dark:text-white uppercase tracking-wider text-[11px] mb-2 text-blue-600 dark:text-amber-500">
-                Delivered To / ग्राहक विवरण
+                DELIVERED TO
               </h4>
               <p className="font-bold text-sm text-slate-900 dark:text-white">{order.shippingAddress?.fullName || "Valued Customer"}</p>
               <p className="text-slate-600 dark:text-zinc-300 mt-1">
@@ -114,7 +114,7 @@ function ReceiptModal({ order, isOpen, onClose, onViewOrders }) {
             <div className="bg-slate-50 dark:bg-zinc-850 p-4 rounded-2xl border border-slate-100 dark:border-zinc-800 print:border-gray-300 print:bg-white flex flex-col justify-between">
               <div>
                 <h4 className="font-extrabold text-slate-900 dark:text-white uppercase tracking-wider text-[11px] mb-2 text-blue-600 dark:text-amber-500">
-                  Payment Details / भुगतान विवरण
+                  PAYMENT DETAILS
                 </h4>
                 <div className="flex justify-between items-center py-1">
                   <span className="text-slate-500 dark:text-zinc-400">Order ID:</span>
@@ -146,7 +146,7 @@ function ReceiptModal({ order, isOpen, onClose, onViewOrders }) {
           {/* Itemized Table */}
           <div className="py-6 border-b border-gray-200 dark:border-zinc-800">
             <h4 className="font-extrabold text-slate-900 dark:text-white uppercase tracking-wider text-[11px] mb-3">
-              Order Items Summary / खरीदे गए सामान
+              ORDER ITEMS SUMMARY
             </h4>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
@@ -229,7 +229,7 @@ function ReceiptModal({ order, isOpen, onClose, onViewOrders }) {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231a1.125 1.125 0 01-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-19.126 0C1.04 7.441.272 8.375.272 9.456v6.294A2.25 2.25 0 002.523 18h1.092" />
             </svg>
-            Print Receipt / PDF (रसीद प्रिंट करें)
+            Print Receipt / PDF
           </button>
 
           <div className="w-full sm:w-auto flex items-center gap-2">

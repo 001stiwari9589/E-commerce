@@ -289,7 +289,7 @@ function MyOrdersPage({ onBack, handleAddToCart, triggerToast, userOrders = [], 
                     onClick={() => handleInvoiceClick(ord)}
                     className="px-4 py-2 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-750 text-slate-800 dark:text-zinc-200 font-bold text-xs rounded-xl transition-all cursor-pointer"
                   >
-                    📄 Tax Invoice / रसीद
+                    📄 Tax Invoice
                   </button>
                 </div>
               </div>

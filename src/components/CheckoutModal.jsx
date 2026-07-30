@@ -91,7 +91,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
   const handlePincodeChange = async (val) => {
     // Only allow digits up to 6 characters
     const cleanPin = val.replace(/\D/g, "").slice(0, 6);
-    
+
     setAddress((prev) => ({ ...prev, pincode: cleanPin }));
 
     if (cleanPin.length === 0) {
@@ -223,7 +223,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
 
       {/* Main Container */}
       <div className="relative w-full max-w-3xl bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] z-10 text-slate-900 dark:text-zinc-100 border border-gray-200 dark:border-zinc-800">
-        
+
         {/* Header */}
         <div className="px-6 py-4 bg-slate-100 dark:bg-zinc-850 border-b border-gray-200 dark:border-zinc-800 flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-3">
@@ -271,17 +271,17 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
 
         {/* Content Body */}
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 no-scrollbar">
-          
+
           {step === 1 ? (
             /* STEP 1: ADDRESS FORM */
             <form onSubmit={handleAddressSubmit} className="flex flex-col gap-6">
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
+
                 {/* Left Column: Form Fields */}
                 <div className="flex flex-col gap-4">
                   <h3 className="text-xs font-black text-blue-600 dark:text-amber-400 uppercase tracking-wider">
-                    Shipping Details (डिलीवरी विवरण)
+                    Shipping Details
                   </h3>
 
                   <div>
@@ -316,7 +316,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                     <div>
                       <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1.5 flex items-center justify-between">
                         <span>Pincode (PIN code) *</span>
-                        <span className="text-[10px] text-blue-600 dark:text-amber-400 font-bold">Auto Area Find</span>
+                        {/* <span className="text-[10px] text-blue-600 dark:text-amber-400 font-bold"></span> */}
                       </label>
                       <div className="relative">
                         <input
@@ -327,13 +327,12 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                           placeholder="e.g. 110001"
                           value={address.pincode}
                           onChange={(e) => handlePincodeChange(e.target.value)}
-                          className={`w-full px-3.5 py-2.5 rounded-xl border bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold text-sm focus:outline-none focus:ring-2 transition-all shadow-xs ${
-                            pincodeState.error
+                          className={`w-full px-3.5 py-2.5 rounded-xl border bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold text-sm focus:outline-none focus:ring-2 transition-all shadow-xs ${pincodeState.error
                               ? "border-rose-500 focus:ring-rose-500"
                               : pincodeState.successMsg
-                              ? "border-emerald-500 focus:ring-emerald-500"
-                              : "border-gray-300 dark:border-zinc-700 focus:ring-blue-500 dark:focus:ring-amber-500"
-                          }`}
+                                ? "border-emerald-500 focus:ring-emerald-500"
+                                : "border-gray-300 dark:border-zinc-700 focus:ring-blue-500 dark:focus:ring-amber-500"
+                            }`}
                         />
                         {pincodeState.isLoading && (
                           <div className="absolute right-3 top-3 w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
@@ -512,7 +511,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
           ) : (
             /* STEP 2: PAYMENT GATEWAY SELECTOR */
             <div className="flex flex-col gap-6">
-              
+
               <div className="flex items-center justify-between border-b border-gray-200 dark:border-zinc-800 pb-3">
                 <button
                   onClick={() => setStep(1)}
@@ -536,11 +535,10 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                   <button
                     key={mode.id}
                     onClick={() => setPaymentMode(mode.id)}
-                    className={`p-3 rounded-2xl border flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                      paymentMode === mode.id
+                    className={`p-3 rounded-2xl border flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer ${paymentMode === mode.id
                         ? "border-blue-600 dark:border-amber-500 bg-blue-50 dark:bg-amber-950/30 text-blue-700 dark:text-amber-400 font-black shadow-sm ring-2 ring-blue-500/20 dark:ring-amber-500/20"
                         : "border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700 text-slate-700 dark:text-zinc-300 bg-white dark:bg-zinc-800"
-                    }`}
+                      }`}
                   >
                     <span className="text-xl">{mode.icon}</span>
                     <span className="text-xs font-extrabold">{mode.label}</span>
@@ -550,7 +548,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
 
               {/* Dynamic Payment Mode Body */}
               <div className="bg-slate-50 dark:bg-zinc-850 p-5 rounded-2xl border border-gray-200 dark:border-zinc-800">
-                
+
                 {paymentMode === "upi" && (
                   <div className="flex flex-col gap-4">
                     <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
@@ -562,11 +560,10 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                           key={app.id}
                           type="button"
                           onClick={() => setSelectedUpiApp(app.id)}
-                          className={`p-3 rounded-xl border flex items-center justify-center gap-2 cursor-pointer transition-all ${
-                            selectedUpiApp === app.id
+                          className={`p-3 rounded-xl border flex items-center justify-center gap-2 cursor-pointer transition-all ${selectedUpiApp === app.id
                               ? "border-blue-600 bg-blue-600 text-white font-extrabold"
                               : "border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-zinc-200 hover:border-blue-300"
-                          }`}
+                            }`}
                         >
                           <span className="text-xs font-black">{app.name}</span>
                         </button>
@@ -606,7 +603,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                 {paymentMode === "netbanking" && (
                   <div className="flex flex-col gap-4">
                     <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                      Select Popular Indian Bank (नेट बैंकिंग)
+                      Select Popular Indian Bank (Net Banking)
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {INDIAN_BANKS.map((bank) => (
@@ -614,11 +611,10 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                           key={bank.id}
                           type="button"
                           onClick={() => setSelectedBank(bank.id)}
-                          className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
-                            selectedBank === bank.id
+                          className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${selectedBank === bank.id
                               ? "border-blue-600 bg-blue-600 text-white font-extrabold"
                               : "border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-zinc-200 hover:border-blue-300"
-                          }`}
+                            }`}
                         >
                           <span className="text-xs font-bold">{bank.name}</span>
                           <span className="text-[10px] opacity-70 font-mono">[{bank.code}]</span>
