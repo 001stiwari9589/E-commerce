@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import { validatePincode, lookupPincode } from "../services/pincodeService";
 
 function ProductDetailPage({
   product,
@@ -8,10 +9,37 @@ function ProductDetailPage({
   toggleWishlist,
   onBack,
 }) {
+  const [pinInput, setPinInput] = useState("");
+  const [pinResult, setPinResult] = useState(null);
+  const [isCheckingPin, setIsCheckingPin] = useState(false);
+
   // Scroll to top when page is rendered
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [product]);
+
+  const handleCheckPincode = async (e) => {
+    e.preventDefault();
+    const validation = validatePincode(pinInput);
+    if (!validation.isValid) {
+      setPinResult({ success: false, message: validation.message });
+      return;
+    }
+    setIsCheckingPin(true);
+    const res = await lookupPincode(pinInput);
+    setIsCheckingPin(false);
+    if (res.success) {
+      setPinResult({
+        success: true,
+        message: `Express Delivery Available to ${res.area}, ${res.city} (${res.state})`,
+        area: res.area,
+        city: res.city,
+        state: res.state,
+      });
+    } else {
+      setPinResult({ success: false, message: res.error || "Pincode not deliverable." });
+    }
+  };
 
   if (!product) {
     return (
@@ -188,6 +216,63 @@ function ProductDetailPage({
             <p className="text-xs text-emerald-600 dark:text-emerald-500 font-bold mt-1">
               Special Discount Price (Free Shipping Included)
             </p>
+          </div>
+
+          {/* Check Pincode & Area Availability */}
+          <div className="p-4 bg-blue-50/50 dark:bg-zinc-800/60 border border-blue-100 dark:border-zinc-700/60 rounded-2xl flex flex-col gap-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black uppercase text-blue-700 dark:text-amber-400 tracking-wider flex items-center gap-1.5">
+                <svg className="w-4 h-4 text-blue-600 dark:text-amber-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                </svg>
+                Delivery & Area Availability
+              </span>
+              <span className="text-[11px] text-slate-500 dark:text-zinc-400 font-medium">Standard / Express</span>
+            </div>
+
+            <form onSubmit={handleCheckPincode} className="flex items-center gap-2">
+              <input
+                type="text"
+                maxLength={6}
+                inputMode="numeric"
+                placeholder="Enter 6-digit Pincode (e.g. 110001)"
+                value={pinInput}
+                onChange={(e) => {
+                  const clean = e.target.value.replace(/\D/g, "").slice(0, 6);
+                  setPinInput(clean);
+                  if (clean.length < 6) setPinResult(null);
+                }}
+                className="flex-1 px-3.5 py-2 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-amber-500"
+              />
+              <button
+                type="submit"
+                disabled={isCheckingPin || pinInput.length !== 6}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold text-xs rounded-xl transition-all cursor-pointer shadow-xs shrink-0"
+              >
+                {isCheckingPin ? "Finding..." : "Check PIN"}
+              </button>
+            </form>
+
+            {pinResult && (
+              <div
+                className={`p-2.5 rounded-xl text-xs font-bold flex items-start gap-2 ${
+                  pinResult.success
+                    ? "bg-emerald-100/70 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800"
+                    : "bg-rose-100/70 dark:bg-rose-950/50 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800"
+                }`}
+              >
+                <span className="text-sm">{pinResult.success ? "✓" : "❌"}</span>
+                <div>
+                  <p>{pinResult.message}</p>
+                  {pinResult.success && (
+                    <p className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400 mt-0.5">
+                      📦 Delivered within 2-3 business days. Cash on Delivery Available.
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Description */}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { apiService } from "../services/api";
+import { validatePincode, lookupPincode } from "../services/pincodeService";
 
 const INDIAN_BANKS = [
   { id: "sbi", name: "State Bank of India (SBI)", code: "SBIN" },
@@ -28,10 +29,19 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
     fullName: "",
     phone: "",
     streetAddress: "",
+    area: "",
     city: "",
     state: "Delhi",
     pincode: "",
     addressType: "Home",
+  });
+
+  // Pincode lookup state
+  const [pincodeState, setPincodeState] = useState({
+    isLoading: false,
+    error: "",
+    successMsg: "",
+    postOffices: [],
   });
 
   // Payment State
@@ -77,8 +87,86 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
   const deliveryCharge = totalCurrentPrice > 500 || totalCurrentPrice === 0 ? 0 : 40;
   const finalPrice = totalCurrentPrice + deliveryCharge;
 
+  // Handle PIN Code Change & Live Lookup
+  const handlePincodeChange = async (val) => {
+    // Only allow digits up to 6 characters
+    const cleanPin = val.replace(/\D/g, "").slice(0, 6);
+    
+    setAddress((prev) => ({ ...prev, pincode: cleanPin }));
+
+    if (cleanPin.length === 0) {
+      setPincodeState({ isLoading: false, error: "", successMsg: "", postOffices: [] });
+      return;
+    }
+
+    // Check partial validation
+    if (cleanPin.startsWith("0")) {
+      setPincodeState({
+        isLoading: false,
+        error: "Invalid Pincode! Indian Pincodes cannot start with 0.",
+        successMsg: "",
+        postOffices: [],
+      });
+      return;
+    }
+
+    if (cleanPin.length < 6) {
+      setPincodeState({
+        isLoading: false,
+        error: `Entering PIN... (${cleanPin.length}/6 digits)`,
+        successMsg: "",
+        postOffices: [],
+      });
+      return;
+    }
+
+    // 6-digit complete PIN code entered -> trigger lookup
+    setPincodeState({ isLoading: true, error: "", successMsg: "", postOffices: [] });
+
+    const result = await lookupPincode(cleanPin);
+
+    if (result.success) {
+      setAddress((prev) => ({
+        ...prev,
+        city: result.city || prev.city,
+        state: result.state || prev.state,
+        area: result.area || prev.area,
+      }));
+
+      setPincodeState({
+        isLoading: false,
+        error: "",
+        successMsg: `📍 Area Identified: ${result.area}, ${result.city} (${result.state})`,
+        postOffices: result.postOffices || [],
+      });
+
+      if (triggerToast) {
+        triggerToast(`PIN code verified! Area found: ${result.area}, ${result.city}`, "success");
+      }
+    } else {
+      setPincodeState({
+        isLoading: false,
+        error: result.error || "Unable to locate area for this pincode.",
+        successMsg: "",
+        postOffices: [],
+      });
+      if (triggerToast) {
+        triggerToast(result.error || "Invalid Pincode", "error");
+      }
+    }
+  };
+
   const handleAddressSubmit = (e) => {
     e.preventDefault();
+
+    // Pincode validation check
+    const pinCheck = validatePincode(address.pincode);
+    if (!pinCheck.isValid) {
+      if (triggerToast) triggerToast(pinCheck.message, "error");
+      setPincodeState((prev) => ({ ...prev, error: pinCheck.message }));
+      return;
+    }
+
     if (!address.fullName || !address.phone || !address.streetAddress || !address.city || !address.pincode) {
       if (triggerToast) triggerToast("Please complete all shipping address fields.", "warning");
       return;
@@ -226,19 +314,73 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                     </div>
 
                     <div>
-                      <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1.5">
-                        Pincode *
+                      <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1.5 flex items-center justify-between">
+                        <span>Pincode (PIN code) *</span>
+                        <span className="text-[10px] text-blue-600 dark:text-amber-400 font-bold">Auto Area Find</span>
                       </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="e.g. 110001"
-                        value={address.pincode}
-                        onChange={(e) => setAddress({ ...address, pincode: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-amber-500 transition-all shadow-xs"
-                      />
+                      <div className="relative">
+                        <input
+                          type="text"
+                          required
+                          inputMode="numeric"
+                          maxLength={6}
+                          placeholder="e.g. 110001"
+                          value={address.pincode}
+                          onChange={(e) => handlePincodeChange(e.target.value)}
+                          className={`w-full px-3.5 py-2.5 rounded-xl border bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold text-sm focus:outline-none focus:ring-2 transition-all shadow-xs ${
+                            pincodeState.error
+                              ? "border-rose-500 focus:ring-rose-500"
+                              : pincodeState.successMsg
+                              ? "border-emerald-500 focus:ring-emerald-500"
+                              : "border-gray-300 dark:border-zinc-700 focus:ring-blue-500 dark:focus:ring-amber-500"
+                          }`}
+                        />
+                        {pincodeState.isLoading && (
+                          <div className="absolute right-3 top-3 w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                        )}
+                      </div>
                     </div>
                   </div>
+
+                  {/* Pincode Lookup Feedback Badge */}
+                  {pincodeState.isLoading && (
+                    <div className="text-xs text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1.5 bg-blue-50 dark:bg-blue-950/40 p-2 rounded-lg border border-blue-200 dark:border-blue-800/50">
+                      <div className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                      Finding area & location details for PIN {address.pincode}...
+                    </div>
+                  )}
+
+                  {pincodeState.error && (
+                    <div className="text-xs text-rose-600 dark:text-rose-400 font-bold flex items-center gap-1.5 bg-rose-50 dark:bg-rose-950/40 p-2 rounded-lg border border-rose-200 dark:border-rose-800/50">
+                      <span>❌</span> {pincodeState.error}
+                    </div>
+                  )}
+
+                  {pincodeState.successMsg && (
+                    <div className="text-xs text-emerald-700 dark:text-emerald-400 font-extrabold flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/40 p-2 rounded-lg border border-emerald-200 dark:border-emerald-800/50">
+                      <span>✓</span> {pincodeState.successMsg}
+                    </div>
+                  )}
+
+                  {/* Area / Locality Selection if multiple post offices found */}
+                  {pincodeState.postOffices && pincodeState.postOffices.length > 0 && (
+                    <div>
+                      <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1.5">
+                        Area / Locality Name *
+                      </label>
+                      <select
+                        value={address.area}
+                        onChange={(e) => setAddress({ ...address, area: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-emerald-300 dark:border-emerald-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-xs cursor-pointer"
+                      >
+                        {pincodeState.postOffices.map((po, idx) => (
+                          <option key={idx} value={po}>
+                            {po}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
 
                   <div>
                     <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1.5">
@@ -257,7 +399,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1.5">
-                        City / Town *
+                        City / District *
                       </label>
                       <input
                         type="text"
