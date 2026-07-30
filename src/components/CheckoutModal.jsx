@@ -159,6 +159,13 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
   const handleAddressSubmit = (e) => {
     e.preventDefault();
 
+    // Mobile number validation (must be exactly 10 digits)
+    const cleanPhone = (address.phone || "").replace(/\D/g, "");
+    if (!cleanPhone || cleanPhone.length !== 10) {
+      if (triggerToast) triggerToast("Mobile Number must be a valid 10-digit number.", "error");
+      return;
+    }
+
     // Pincode validation check
     const pinCheck = validatePincode(address.pincode);
     if (!pinCheck.isValid) {
@@ -300,15 +307,21 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1.5">
-                        Mobile Number *
+                      <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1.5 flex items-center justify-between">
+                        <span>Mobile Number *</span>
+                        <span className="text-[10px] text-slate-400 font-semibold">(10 digits only)</span>
                       </label>
                       <input
                         type="tel"
                         required
-                        placeholder="10 digit mobile"
+                        inputMode="numeric"
+                        maxLength={10}
+                        placeholder="10 digit mobile number"
                         value={address.phone}
-                        onChange={(e) => setAddress({ ...address, phone: e.target.value })}
+                        onChange={(e) => {
+                          const clean = e.target.value.replace(/\D/g, "").slice(0, 10);
+                          setAddress({ ...address, phone: clean });
+                        }}
                         className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-amber-500 transition-all shadow-xs"
                       />
                     </div>
@@ -328,10 +341,10 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                           value={address.pincode}
                           onChange={(e) => handlePincodeChange(e.target.value)}
                           className={`w-full px-3.5 py-2.5 rounded-xl border bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold text-sm focus:outline-none focus:ring-2 transition-all shadow-xs ${pincodeState.error
-                              ? "border-rose-500 focus:ring-rose-500"
-                              : pincodeState.successMsg
-                                ? "border-emerald-500 focus:ring-emerald-500"
-                                : "border-gray-300 dark:border-zinc-700 focus:ring-blue-500 dark:focus:ring-amber-500"
+                            ? "border-rose-500 focus:ring-rose-500"
+                            : pincodeState.successMsg
+                              ? "border-emerald-500 focus:ring-emerald-500"
+                              : "border-gray-300 dark:border-zinc-700 focus:ring-blue-500 dark:focus:ring-amber-500"
                             }`}
                         />
                         {pincodeState.isLoading && (
@@ -536,8 +549,8 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                     key={mode.id}
                     onClick={() => setPaymentMode(mode.id)}
                     className={`p-3 rounded-2xl border flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer ${paymentMode === mode.id
-                        ? "border-blue-600 dark:border-amber-500 bg-blue-50 dark:bg-amber-950/30 text-blue-700 dark:text-amber-400 font-black shadow-sm ring-2 ring-blue-500/20 dark:ring-amber-500/20"
-                        : "border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700 text-slate-700 dark:text-zinc-300 bg-white dark:bg-zinc-800"
+                      ? "border-blue-600 dark:border-amber-500 bg-blue-50 dark:bg-amber-950/30 text-blue-700 dark:text-amber-400 font-black shadow-sm ring-2 ring-blue-500/20 dark:ring-amber-500/20"
+                      : "border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700 text-slate-700 dark:text-zinc-300 bg-white dark:bg-zinc-800"
                       }`}
                   >
                     <span className="text-xl">{mode.icon}</span>
@@ -561,8 +574,8 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                           type="button"
                           onClick={() => setSelectedUpiApp(app.id)}
                           className={`p-3 rounded-xl border flex items-center justify-center gap-2 cursor-pointer transition-all ${selectedUpiApp === app.id
-                              ? "border-blue-600 bg-blue-600 text-white font-extrabold"
-                              : "border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-zinc-200 hover:border-blue-300"
+                            ? "border-blue-600 bg-blue-600 text-white font-extrabold"
+                            : "border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-zinc-200 hover:border-blue-300"
                             }`}
                         >
                           <span className="text-xs font-black">{app.name}</span>
@@ -612,8 +625,8 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                           type="button"
                           onClick={() => setSelectedBank(bank.id)}
                           className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${selectedBank === bank.id
-                              ? "border-blue-600 bg-blue-600 text-white font-extrabold"
-                              : "border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-zinc-200 hover:border-blue-300"
+                            ? "border-blue-600 bg-blue-600 text-white font-extrabold"
+                            : "border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-zinc-200 hover:border-blue-300"
                             }`}
                         >
                           <span className="text-xs font-bold">{bank.name}</span>
