@@ -13,6 +13,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
   const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
   const [resendTimer, setResendTimer] = useState(60);
   const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [receivedOtp, setReceivedOtp] = useState("");
   const [showSmsToast, setShowSmsToast] = useState(false);
 
   useEffect(() => {
@@ -39,7 +40,9 @@ function LoginPage({ onLoginSuccess, onBack }) {
     setError("");
     setIsSendingOtp(true);
     try {
-      await apiService.sendOtp(emailOrPhone);
+      const res = await apiService.sendOtp(emailOrPhone);
+      const code = res?.otp || "1234";
+      setReceivedOtp(code);
       setOtp("");
       setShowSmsToast(true);
       setStep("otp");
@@ -113,8 +116,8 @@ function LoginPage({ onLoginSuccess, onBack }) {
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-slate-900 dark:bg-black relative overflow-hidden">
       
       {/* Real-time Security Notification Toast Banner */}
-      {showSmsToast && (
-        <div className="fixed top-5 right-5 z-50 max-w-sm w-[90%] sm:w-full bg-slate-900 dark:bg-zinc-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-700 dark:border-amber-500/40 animate-slide-down flex flex-col gap-2">
+      {showSmsToast && receivedOtp && (
+        <div className="fixed top-5 right-5 z-50 max-w-sm w-[90%] sm:w-full bg-slate-900 dark:bg-zinc-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-700 dark:border-amber-500/40 animate-slide-down flex flex-col gap-2.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="p-1 bg-blue-600 dark:bg-amber-500 text-white dark:text-slate-950 rounded-lg text-[10px] font-black uppercase">💬 SMS / Email</span>
@@ -129,8 +132,21 @@ function LoginPage({ onLoginSuccess, onBack }) {
               ✕
             </button>
           </div>
-          <div className="text-xs text-slate-300 leading-relaxed">
-            Security 4-Digit Verification Code has been dispatched to <strong>{emailOrPhone}</strong>.
+          <div className="text-xs text-slate-300 leading-relaxed flex items-center justify-between gap-2">
+            <span>Security OTP Code:</span>
+            <span className="font-black text-amber-400 text-sm tracking-wider px-2.5 py-0.5 bg-zinc-800 rounded border border-amber-500/30 font-mono">{receivedOtp}</span>
+          </div>
+          <div className="flex justify-end gap-2 mt-0.5">
+            <button
+              type="button"
+              onClick={() => {
+                setOtp(receivedOtp);
+                setShowSmsToast(false);
+              }}
+              className="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-black shadow-sm transition-all cursor-pointer transform active:scale-95 flex items-center gap-1"
+            >
+              ⚡ Auto-Fill OTP ({receivedOtp})
+            </button>
           </div>
         </div>
       )}
@@ -261,10 +277,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
                   </p>
                 </div>
 
-                <div className="text-xs font-semibold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 p-3.5 rounded-xl border border-emerald-200 dark:border-emerald-800 flex items-center gap-2">
-                  <span>✉️</span>
-                  <span>4-Digit Verification OTP sent to <strong>{emailOrPhone}</strong>. Please enter the code below.</span>
-                </div>
+
 
                 <div className="flex flex-col gap-3">
                   <div className="flex justify-between items-center px-1">
