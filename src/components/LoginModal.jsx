@@ -8,13 +8,11 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState("input"); // 'input' or 'otp'
   const [error, setError] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [resendTimer, setResendTimer] = useState(60);
   const [isSendingOtp, setIsSendingOtp] = useState(false);
-  const [receivedOtp, setReceivedOtp] = useState("");
   const [showSmsToast, setShowSmsToast] = useState(false);
 
   // Clean form state on open/close
@@ -52,19 +50,15 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     }
 
     setError("");
-    setSuccessMsg("");
     setIsSendingOtp(true);
     try {
       const res = await apiService.sendOtp(emailOrPhone);
       if (res && res.success) {
-        const isMobile = !emailOrPhone.includes("@");
         const code = res.otp || "";
         setOtp("");
-        setReceivedOtp(code);
         setShowSmsToast(true);
         setStep("otp");
         setResendTimer(60);
-        setSuccessMsg("Security OTP Code Dispatched");
 
         if ("Notification" in window) {
           if (Notification.permission === "granted") {
@@ -121,7 +115,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     } catch (err) {
       console.error("Verify OTP error:", err);
       setError("Invalid OTP! Please check your Email Inbox or SMS for the 4-digit code.");
-    } fontally: {
+    } finally {
       setIsLoading(false);
     }
   };

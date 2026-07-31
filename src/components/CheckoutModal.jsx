@@ -66,12 +66,15 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
     if (isOpen) {
       document.body.style.overflow = "hidden";
       // Auto-fill default user email/name if available
-      if (userEmail && !address.fullName) {
-        const namePart = userEmail.split("@")[0];
-        setAddress((prev) => ({
-          ...prev,
-          fullName: namePart.charAt(0).toUpperCase() + namePart.slice(1),
-        }));
+      if (userEmail) {
+        setAddress((prev) => {
+          if (prev.fullName) return prev;
+          const namePart = userEmail.split("@")[0];
+          return {
+            ...prev,
+            fullName: namePart.charAt(0).toUpperCase() + namePart.slice(1),
+          };
+        });
       }
     } else {
       document.body.style.overflow = "unset";

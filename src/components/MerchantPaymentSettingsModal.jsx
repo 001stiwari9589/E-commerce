@@ -3,7 +3,6 @@ import { getPaymentConfig, savePaymentConfig, getUpiQrCodeUrl } from "../config/
 
 function MerchantPaymentSettingsModal({ isOpen, onClose, triggerToast }) {
   const [config, setConfig] = useState(() => getPaymentConfig());
-  const [previewAmount, setPreviewAmount] = useState("499");
 
   if (!isOpen) return null;
 
@@ -21,7 +20,7 @@ function MerchantPaymentSettingsModal({ isOpen, onClose, triggerToast }) {
   const qrCodeUrl = getUpiQrCodeUrl({
     upiId: config.merchantUpiId,
     name: config.merchantName,
-    amount: previewAmount,
+    amount: "499",
     orderId: "TEST1234",
     customQrUrl: config.customQrUrl,
   });

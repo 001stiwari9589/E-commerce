@@ -8,13 +8,11 @@ function LoginPage({ onLoginSuccess, onBack }) {
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState("input"); // 'input' or 'otp'
   const [error, setError] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
   const [resendTimer, setResendTimer] = useState(60);
   const [isSendingOtp, setIsSendingOtp] = useState(false);
-  const [receivedOtp, setReceivedOtp] = useState("");
   const [showSmsToast, setShowSmsToast] = useState(false);
 
   useEffect(() => {
@@ -39,18 +37,15 @@ function LoginPage({ onLoginSuccess, onBack }) {
     }
 
     setError("");
-    setSuccessMsg("");
     setIsSendingOtp(true);
     try {
       const res = await apiService.sendOtp(emailOrPhone);
       if (res && res.success) {
         const code = res.otp || "";
         setOtp("");
-        setReceivedOtp(code);
         setShowSmsToast(true);
         setStep("otp");
         setResendTimer(60);
-        setSuccessMsg("Security OTP Code Dispatched");
 
         // Native Browser OS Push Notification if permitted
         if ("Notification" in window) {
