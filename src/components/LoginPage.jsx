@@ -133,13 +133,13 @@ function LoginPage({ onLoginSuccess, onBack }) {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-slate-900 dark:bg-black relative overflow-hidden">
       
-      {/* Real-time Mobile SMS Push Toast Notification Banner */}
-      {showSmsToast && receivedOtp && (
+      {/* Real-time Security Notification Toast Banner */}
+      {showSmsToast && (
         <div className="fixed top-5 right-5 z-50 max-w-sm w-[90%] sm:w-full bg-slate-900 dark:bg-zinc-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-700 dark:border-amber-500/40 animate-slide-down flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="p-1 bg-blue-600 dark:bg-amber-500 text-white dark:text-slate-950 rounded-lg text-[10px] font-black uppercase">💬 SMS</span>
-              <span className="text-xs font-bold text-slate-200">ST-MART-SMS</span>
+              <span className="p-1 bg-blue-600 dark:bg-amber-500 text-white dark:text-slate-950 rounded-lg text-[10px] font-black uppercase">💬 SMS / Email</span>
+              <span className="text-xs font-bold text-slate-200">ST-MART-SECURITY</span>
               <span className="text-[10px] text-slate-400">Just now</span>
             </div>
             <button
@@ -151,19 +151,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
             </button>
           </div>
           <div className="text-xs text-slate-300 leading-relaxed">
-            Security OTP Code: <span className="font-black text-amber-400 text-sm tracking-wider px-2 py-0.5 bg-zinc-800 rounded">{receivedOtp}</span>
-          </div>
-          <div className="flex justify-end gap-2 mt-1">
-            <button
-              type="button"
-              onClick={() => {
-                setOtp(receivedOtp);
-                setShowSmsToast(false);
-              }}
-              className="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-black shadow-sm transition-all cursor-pointer transform active:scale-95 flex items-center gap-1"
-            >
-              ⚡ Auto-Fill OTP ({receivedOtp})
-            </button>
+            Security 4-Digit Verification Code has been dispatched to <strong>{emailOrPhone}</strong>.
           </div>
         </div>
       )}
@@ -294,21 +282,10 @@ function LoginPage({ onLoginSuccess, onBack }) {
                   </p>
                 </div>
 
-                {receivedOtp && (
-                  <div className="text-xs font-bold text-blue-700 dark:text-amber-300 bg-blue-50 dark:bg-amber-950/40 p-3.5 rounded-xl border border-blue-200 dark:border-amber-900/50 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-slate-700 dark:text-zinc-300 font-bold">Security OTP Code:</span>
-                      <span className="font-black text-blue-800 dark:text-amber-400 text-base bg-blue-100 dark:bg-zinc-800 px-3 py-1 rounded-lg tracking-widest">{receivedOtp}</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setOtp(receivedOtp)}
-                      className="shrink-0 text-[11px] bg-blue-600 hover:bg-blue-700 text-white dark:bg-amber-500 dark:hover:bg-amber-600 dark:text-slate-950 px-3.5 py-2 rounded-xl font-black tracking-wide cursor-pointer transition-colors shadow-xs"
-                    >
-                      Auto-Fill Code
-                    </button>
-                  </div>
-                )}
+                <div className="text-xs font-semibold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 p-3.5 rounded-xl border border-emerald-200 dark:border-emerald-800 flex items-center gap-2">
+                  <span>✉️</span>
+                  <span>4-Digit Verification OTP sent to <strong>{emailOrPhone}</strong>. Please enter the code below.</span>
+                </div>
 
                 <div className="flex flex-col gap-3">
                   <div className="flex justify-between items-center px-1">

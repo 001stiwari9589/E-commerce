@@ -27,28 +27,32 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
           avatar: payload.picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${payload.email}`,
         });
       } catch (err) {
-        console.error("Google Auth Decode error:", err);
+        console.warn("Google Auth Decode warning:", err);
       }
     };
 
     if (window.google?.accounts?.id) {
-      window.google.accounts.id.initialize({
-        client_id: "958901801100-stmartdemo.apps.googleusercontent.com",
-        callback: handleCredentialResponse,
-        auto_select: true,
-      });
-
-      if (googleBtnRef.current) {
-        window.google.accounts.id.renderButton(googleBtnRef.current, {
-          theme: "filled_blue",
-          size: "large",
-          width: 320,
-          text: "continue_with",
-          shape: "pill",
+      try {
+        window.google.accounts.id.initialize({
+          client_id: "958901801100-stmartdemo.apps.googleusercontent.com",
+          callback: handleCredentialResponse,
+          auto_select: false,
+          cancel_on_tap_outside: true,
         });
-      }
 
-      window.google.accounts.id.prompt();
+        if (googleBtnRef.current) {
+          const btnWidth = Math.max(240, Math.min(300, window.innerWidth - 65));
+          window.google.accounts.id.renderButton(googleBtnRef.current, {
+            theme: "filled_blue",
+            size: "large",
+            width: btnWidth,
+            text: "continue_with",
+            shape: "pill",
+          });
+        }
+      } catch (e) {
+        console.warn("Google Identity initialize notice:", e.message);
+      }
     }
   }, [isOpen, onSelectAccount]);
 
