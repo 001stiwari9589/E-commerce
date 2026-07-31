@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { apiService } from "../services/api";
 import { validatePincode, lookupPincode } from "../services/pincodeService";
+import { getPaymentConfig, generateUpiUrl, getUpiQrCodeUrl } from "../config/paymentConfig";
+import MerchantPaymentSettingsModal from "./MerchantPaymentSettingsModal";
 
 const INDIAN_BANKS = [
   { id: "sbi", name: "State Bank of India (SBI)", code: "SBIN" },
@@ -48,6 +50,10 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
   const [paymentMode, setPaymentMode] = useState("upi"); // 'upi' | 'netbanking' | 'card' | 'cod'
   const [selectedUpiApp, setSelectedUpiApp] = useState("gpay");
   const [upiId, setUpiId] = useState("");
+  const [utrNumber, setUtrNumber] = useState("");
+  const [copiedUpi, setCopiedUpi] = useState(false);
+  const [paymentConfig, setPaymentConfig] = useState(() => getPaymentConfig());
+  const [isMerchantSettingsOpen, setIsMerchantSettingsOpen] = useState(false);
   const [selectedBank, setSelectedBank] = useState("sbi");
   const [cardDetails, setCardDetails] = useState({
     cardNumber: "",
@@ -187,7 +193,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
     let methodLabel = "Cash on Delivery";
     if (paymentMode === "upi") {
       const appObj = UPI_APPS.find((a) => a.id === selectedUpiApp);
-      methodLabel = `UPI (${appObj?.name || "UPI"}${upiId ? ` - ${upiId}` : ""})`;
+      methodLabel = `UPI Direct (${appObj?.name || "UPI"}${paymentConfig.merchantUpiId ? ` to ${paymentConfig.merchantUpiId}` : ""}${utrNumber ? ` | Ref: ${utrNumber}` : ""})`;
     } else if (paymentMode === "netbanking") {
       const bankObj = INDIAN_BANKS.find((b) => b.id === selectedBank);
       methodLabel = `Net Banking (${bankObj?.name || "Bank"})`;
@@ -564,9 +570,42 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
 
                 {paymentMode === "upi" && (
                   <div className="flex flex-col gap-4">
-                    <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                      Select Instant UPI Payment
-                    </h4>
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                        <span>📱</span> Instant Direct Bank UPI Payment
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={() => setIsMerchantSettingsOpen(true)}
+                        className="text-[11px] font-extrabold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800"
+                      >
+                        <span>⚙️</span> Merchant UPI Settings
+                      </button>
+                    </div>
+
+                    {/* Merchant Payee Account Card */}
+                    <div className="bg-gradient-to-r from-emerald-600 via-teal-700 to-slate-900 text-white p-3.5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+                      <div>
+                        <span className="text-[10px] uppercase font-black text-emerald-200 tracking-wider">Recipient Bank Account</span>
+                        <h5 className="font-extrabold text-sm flex flex-wrap items-center gap-2 mt-0.5">
+                          {paymentConfig.merchantName}
+                          <span className="text-[11px] font-mono bg-white/20 px-2 py-0.5 rounded text-white">{paymentConfig.merchantUpiId}</span>
+                        </h5>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(paymentConfig.merchantUpiId);
+                          setCopiedUpi(true);
+                          if (triggerToast) triggerToast("UPI ID Copied to Clipboard!", "success");
+                          setTimeout(() => setCopiedUpi(false), 2500);
+                        }}
+                        className="self-stretch sm:self-auto bg-white text-emerald-900 hover:bg-emerald-50 font-black text-xs px-3 py-1.5 rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1 shrink-0"
+                      >
+                        {copiedUpi ? "✓ Copied!" : "📋 Copy UPI ID"}
+                      </button>
+                    </div>
+
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       {UPI_APPS.map((app) => (
                         <button
@@ -574,8 +613,8 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                           type="button"
                           onClick={() => setSelectedUpiApp(app.id)}
                           className={`p-3 rounded-xl border flex items-center justify-center gap-2 cursor-pointer transition-all ${selectedUpiApp === app.id
-                            ? "border-blue-600 bg-blue-600 text-white font-extrabold"
-                            : "border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-zinc-200 hover:border-blue-300"
+                            ? "border-emerald-600 bg-emerald-600 text-white font-extrabold shadow-sm"
+                            : "border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-zinc-200 hover:border-emerald-400"
                             }`}
                         >
                           <span className="text-xs font-black">{app.name}</span>
@@ -583,31 +622,69 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                       ))}
                     </div>
 
-                    <div className="mt-2 pt-3 border-t border-gray-200 dark:border-zinc-750 flex flex-col sm:flex-row items-center gap-4">
-                      <div className="bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center shrink-0">
-                        {/* Dynamic QR Code Simulation */}
-                        <div className="w-24 h-24 bg-zinc-900 rounded flex flex-col items-center justify-center text-white p-1 text-center">
-                          <span className="text-[10px] font-mono">SCAN TO PAY</span>
-                          <span className="text-lg font-black text-amber-400">₹{finalPrice}</span>
-                          <span className="text-[8px] opacity-70">ST MART UPI</span>
+                    <div className="mt-1 pt-3 border-t border-gray-200 dark:border-zinc-750 flex flex-col md:flex-row items-center gap-5">
+                      {/* Live Dynamic QR Code */}
+                      <div className="bg-white p-3 rounded-2xl border border-gray-200 shadow-md flex flex-col items-center shrink-0 text-slate-900">
+                        <div className="relative">
+                          <img
+                            src={getUpiQrCodeUrl({
+                              upiId: paymentConfig.merchantUpiId,
+                              name: paymentConfig.merchantName,
+                              amount: finalPrice,
+                              orderId: `STM-${Date.now().toString().slice(-5)}`,
+                              customQrUrl: paymentConfig.customQrUrl,
+                            })}
+                            alt="Live Dynamic Payment QR Code"
+                            className="w-40 h-40 object-contain rounded-lg border border-gray-100"
+                          />
                         </div>
-                        <span className="text-[9px] font-extrabold text-slate-600 mt-1">Scan with any UPI App</span>
+                        <div className="mt-2 text-center">
+                          <span className="text-xs font-black text-emerald-700 block">Scan &amp; Pay ₹{finalPrice.toLocaleString("en-IN")}</span>
+                          <span className="text-[10px] font-bold text-slate-500 block">Works with GPay, PhonePe, Paytm, BHIM</span>
+                        </div>
                       </div>
 
-                      <div className="flex-1 w-full space-y-2">
-                        <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100">
-                          Or Enter UPI ID (VPA)
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. mobileNumber@upi or username@okaxis"
-                          value={upiId}
-                          onChange={(e) => setUpiId(e.target.value)}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-amber-500"
-                        />
-                        <p className="text-[10px] font-semibold text-slate-500 dark:text-zinc-400">
-                          Payment link will be requested directly on your selected UPI app.
-                        </p>
+                      <div className="flex-1 w-full space-y-3">
+                        {/* Direct Mobile Deep Link */}
+                        <a
+                          href={generateUpiUrl({
+                            upiId: paymentConfig.merchantUpiId,
+                            name: paymentConfig.merchantName,
+                            amount: finalPrice,
+                            orderId: `STM-${Date.now().toString().slice(-5)}`,
+                          })}
+                          className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold rounded-xl shadow-md hover:shadow-lg transition-all text-xs flex items-center justify-center gap-2 cursor-pointer"
+                        >
+                          <span>📲</span> Open directly in Mobile UPI App
+                        </a>
+
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1">
+                            Your UPI ID (VPA)
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g. mobileNumber@upi or username@okaxis"
+                            value={upiId}
+                            onChange={(e) => setUpiId(e.target.value)}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1 flex items-center justify-between">
+                            <span>UTR / Transaction Ref No. (12 Digits)</span>
+                            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold">Instant Receipt</span>
+                          </label>
+                          <input
+                            type="text"
+                            maxLength={12}
+                            placeholder="e.g. 329104829104 (From UPI receipt)"
+                            value={utrNumber}
+                            onChange={(e) => setUtrNumber(e.target.value.replace(/\D/g, ""))}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -720,6 +797,16 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
         </div>
 
       </div>
+
+      {/* Merchant Payment Settings Modal */}
+      <MerchantPaymentSettingsModal
+        isOpen={isMerchantSettingsOpen}
+        onClose={() => {
+          setIsMerchantSettingsOpen(false);
+          setPaymentConfig(getPaymentConfig());
+        }}
+        triggerToast={triggerToast}
+      />
     </div>
   );
 }
