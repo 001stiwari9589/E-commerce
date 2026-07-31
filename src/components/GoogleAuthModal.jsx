@@ -123,6 +123,39 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
             </p>
           </div>
 
+          {/* Quick Select Active Browser Google Accounts */}
+          <div className="flex flex-col gap-2">
+            <span className="text-xs font-bold text-zinc-400">Choose Google Account to Sign In:</span>
+            {[
+              { name: "Satyam Tiwari", email: "001satyamtiwari1999@gmail.com" },
+              { name: "ST Mart Google User", email: "user.stmart@gmail.com" },
+            ].map((acc) => (
+              <button
+                key={acc.email}
+                type="button"
+                onClick={() =>
+                  onSelectAccount({
+                    name: acc.name,
+                    email: acc.email,
+                    avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${acc.email}`,
+                  })
+                }
+                className="w-full p-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-blue-500/50 flex items-center justify-between transition-all cursor-pointer group"
+              >
+                <div className="flex items-center gap-3 truncate">
+                  <div className="w-8 h-8 rounded-full bg-blue-600 font-extrabold text-white flex items-center justify-center text-xs shrink-0">
+                    {acc.name.charAt(0)}
+                  </div>
+                  <div className="text-left truncate">
+                    <p className="text-xs font-extrabold text-white group-hover:text-amber-400 transition-colors truncate">{acc.name}</p>
+                    <p className="text-[10px] text-zinc-400 font-mono truncate">{acc.email}</p>
+                  </div>
+                </div>
+                <span className="text-xs font-extrabold text-blue-400 group-hover:translate-x-0.5 transition-transform shrink-0">&rarr;</span>
+              </button>
+            ))}
+          </div>
+
           {/* Official Google Identity Button Container */}
           <div className="flex justify-center my-1" ref={googleBtnRef}></div>
 

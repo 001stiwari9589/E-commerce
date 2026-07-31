@@ -292,6 +292,8 @@ function MainLayout() {
             wishlistItems={wishlistItems}
             handleToggleWishlist={handleToggleWishlist}
             triggerToast={triggerToast}
+            cartItems={cartItems}
+            handleUpdateCartQuantity={handleUpdateCartQuantity}
           />
         )}
 
@@ -308,6 +310,8 @@ function MainLayout() {
             handleProductSelect={handleProductSelect}
             wishlistItems={wishlistItems}
             handleToggleWishlist={handleToggleWishlist}
+            cartItems={cartItems}
+            handleUpdateCartQuantity={handleUpdateCartQuantity}
           />
         )}
 
@@ -319,6 +323,8 @@ function MainLayout() {
             handleAddToCart={handleAddToCart}
             handleProductSelect={handleProductSelect}
             handleToggleWishlist={handleToggleWishlist}
+            cartItems={cartItems}
+            handleUpdateCartQuantity={handleUpdateCartQuantity}
           />
         )}
 

@@ -28,24 +28,32 @@ export const apiService = {
     const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
     localOtpStore.set(key, generatedOtp);
 
-    // 1. Send via Express Backend API (Nodemailer)
+    // Fast 2-second timeout for backend API attempt so mobile app never hangs
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+
     try {
       const response = await fetch(`${API_BASE_URL}/auth/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ emailOrPhone: key }),
+        signal: controller.signal,
       });
-      const data = await response.json();
-      if (data && data.success) {
-        const finalOtp = data.otp || generatedOtp;
-        localOtpStore.set(key, finalOtp);
-        return { ...data, otp: finalOtp };
+      clearTimeout(timeoutId);
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.success) {
+          const finalOtp = data.otp || generatedOtp;
+          localOtpStore.set(key, finalOtp);
+          return { ...data, otp: finalOtp };
+        }
       }
     } catch (error) {
+      clearTimeout(timeoutId);
       console.warn("Backend OTP API notice:", error.message);
     }
 
-    // 2. Client-side Real EmailJS Dispatch if Email address
+    // Client-side Real EmailJS Dispatch if Email address (non-blocking)
     if (key.includes("@")) {
       try {
         emailjs.send(

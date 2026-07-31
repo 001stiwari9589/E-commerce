@@ -11,6 +11,8 @@ function HomeView({
   wishlistItems,
   handleToggleWishlist,
   triggerToast,
+  cartItems = [],
+  handleUpdateCartQuantity,
 }) {
   // Live Countdown Timer state for Flash Deals
   const [timeLeft, setTimeLeft] = useState({ hours: 14, minutes: 32, seconds: 45 });
@@ -276,6 +278,8 @@ function HomeView({
                 onSelect={handleProductSelect}
                 isWishlisted={wishlistItems.includes(product.id)}
                 toggleWishlist={handleToggleWishlist}
+                cartItems={cartItems}
+                handleUpdateQty={handleUpdateCartQuantity}
               />
             ))}
           </div>

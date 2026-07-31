@@ -4,7 +4,12 @@ function ProductCard({
   onSelect,
   isWishlisted,
   toggleWishlist,
+  cartItems = [],
+  handleUpdateQty,
 }) {
+  const cartItem = cartItems.find((item) => item.id === product.id);
+  const cartQuantity = cartItem ? cartItem.qty : 0;
+
   return (
     <div
       onClick={() => onSelect(product)}
@@ -91,19 +96,55 @@ function ProductCard({
           </p>
         </div>
 
-        {/* Add to Cart button */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            addToCart(product);
-          }}
-          className="bg-blue-600 hover:bg-blue-700 dark:bg-zinc-800 dark:hover:bg-zinc-750 text-white font-bold text-[11px] sm:text-xs w-full mt-2.5 sm:mt-4 py-2 sm:py-2.5 rounded-xl transition-all cursor-pointer transform active:scale-98 flex items-center justify-center gap-1 border border-transparent dark:border-zinc-700"
-        >
-          <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          <span>Add to Cart</span>
-        </button>
+        {/* Add to Cart / Interactive Quantity Buttons */}
+        {cartQuantity > 0 ? (
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="mt-2.5 sm:mt-4 w-full flex items-center justify-between bg-blue-50 dark:bg-zinc-800 border border-blue-200 dark:border-zinc-700 rounded-xl p-1 shadow-xs"
+          >
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (handleUpdateQty) {
+                  handleUpdateQty(product.id, cartQuantity - 1);
+                }
+              }}
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white dark:bg-zinc-700 text-slate-800 dark:text-white font-black text-base flex items-center justify-center shadow-xs hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 transition-all cursor-pointer active:scale-90 shrink-0"
+              title="Decrease Quantity"
+            >
+              −
+            </button>
+            <div className="flex flex-col items-center">
+              <span className="text-[9px] text-blue-600 dark:text-amber-400 font-extrabold uppercase leading-none">In Cart</span>
+              <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-none mt-0.5">{cartQuantity}</span>
+            </div>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                addToCart(product);
+              }}
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-600 dark:bg-amber-500 text-white dark:text-slate-950 font-black text-base flex items-center justify-center shadow-xs hover:bg-blue-700 dark:hover:bg-amber-600 transition-all cursor-pointer active:scale-90 shrink-0"
+              title="Increase Quantity"
+            >
+              +
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              addToCart(product);
+            }}
+            className="bg-blue-600 hover:bg-blue-700 dark:bg-zinc-800 dark:hover:bg-zinc-750 text-white font-bold text-[11px] sm:text-xs w-full mt-2.5 sm:mt-4 py-2 sm:py-2.5 rounded-xl transition-all cursor-pointer transform active:scale-98 flex items-center justify-center gap-1 border border-transparent dark:border-zinc-700 shadow-xs"
+          >
+            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span>Add to Cart</span>
+          </button>
+        )}
       </div>
     </div>
   );

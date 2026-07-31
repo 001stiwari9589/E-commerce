@@ -8,6 +8,8 @@ function CategoryView({
   handleProductSelect,
   wishlistItems,
   handleToggleWishlist,
+  cartItems = [],
+  handleUpdateCartQuantity,
 }) {
   return (
     <div className="bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-2xl shadow-xs p-5 md:p-6 transition-colors">
@@ -48,6 +50,8 @@ function CategoryView({
               onSelect={handleProductSelect}
               isWishlisted={wishlistItems.includes(product.id)}
               toggleWishlist={handleToggleWishlist}
+              cartItems={cartItems}
+              handleUpdateQty={handleUpdateCartQuantity}
             />
           ))}
         </div>
