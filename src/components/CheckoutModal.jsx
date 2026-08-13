@@ -65,17 +65,6 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
-      // Auto-fill default user email/name if available
-      if (userEmail) {
-        setAddress((prev) => {
-          if (prev.fullName) return prev;
-          const namePart = userEmail.split("@")[0];
-          return {
-            ...prev,
-            fullName: namePart.charAt(0).toUpperCase() + namePart.slice(1),
-          };
-        });
-      }
     } else {
       document.body.style.overflow = "unset";
       setStep(1);
@@ -83,7 +72,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, userEmail]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -167,6 +156,18 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
 
   const handleAddressSubmit = (e) => {
     e.preventDefault();
+
+    // Full name validation check (must be a valid full name with at least 2 letters, no emails/phone numbers)
+    const cleanName = (address.fullName || "").trim();
+    if (!cleanName || cleanName.length < 2) {
+      if (triggerToast) triggerToast("Please enter a valid Full Name (at least 2 letters).", "error");
+      return;
+    }
+
+    if (/\d/.test(cleanName) || cleanName.includes("@")) {
+      if (triggerToast) triggerToast("Full Name cannot contain numbers or email addresses.", "error");
+      return;
+    }
 
     // Mobile number validation (must be exactly 10 digits)
     const cleanPhone = (address.phone || "").replace(/\D/g, "");
@@ -309,7 +310,10 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                       required
                       placeholder="e.g. Rahul Sharma"
                       value={address.fullName}
-                      onChange={(e) => setAddress({ ...address, fullName: e.target.value })}
+                      onChange={(e) => {
+                        const filtered = e.target.value.replace(/[^a-zA-Z\s.'-]/g, "");
+                        setAddress({ ...address, fullName: filtered });
+                      }}
                       className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-amber-500 transition-all shadow-xs"
                     />
                   </div>
