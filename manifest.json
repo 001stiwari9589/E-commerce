@@ -1,0 +1,16 @@
+{
+  "name": "ST Mart",
+  "short_name": "ST Mart",
+  "description": "ST Mart - Premium Online Shopping Platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
