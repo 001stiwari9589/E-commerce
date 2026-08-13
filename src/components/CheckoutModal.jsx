@@ -65,6 +65,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
+      setPaymentConfig(getPaymentConfig());
     } else {
       document.body.style.overflow = "unset";
       setStep(1);

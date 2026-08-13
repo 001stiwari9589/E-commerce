@@ -1,15 +1,21 @@
-import { useState } from "react";
-import { getPaymentConfig, savePaymentConfig, getUpiQrCodeUrl } from "../config/paymentConfig";
+import { useState, useEffect } from "react";
+import { getPaymentConfig, savePaymentConfig, getUpiQrCodeUrl, isValidUpiId } from "../config/paymentConfig";
 
 function MerchantPaymentSettingsModal({ isOpen, onClose, triggerToast }) {
   const [config, setConfig] = useState(() => getPaymentConfig());
+
+  useEffect(() => {
+    if (isOpen) {
+      setConfig(getPaymentConfig());
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   const handleSave = (e) => {
     e.preventDefault();
-    if (!config.merchantUpiId || !config.merchantUpiId.includes("@")) {
-      if (triggerToast) triggerToast("Please enter a valid UPI ID (e.g. mobile@paytm or name@okaxis)", "error");
+    if (!config.merchantUpiId || !isValidUpiId(config.merchantUpiId)) {
+      if (triggerToast) triggerToast("Please enter a valid UPI ID (e.g. mobile@paytm, name@okaxis, or user@ybl)", "error");
       return;
     }
     savePaymentConfig(config);
