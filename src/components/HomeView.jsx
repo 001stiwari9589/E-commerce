@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import HeroCarousel from "./HeroCarousel";
 import ProductCard from "./ProductCard";
+import { notifyOfferSubscriptionWhatsApp } from "../services/whatsappService";
 
 function HomeView({
   searchQuery,
@@ -74,8 +75,9 @@ function HomeView({
       return;
     }
     setIsSubscribed(true);
+    notifyOfferSubscriptionWhatsApp(subscriberEmail, "STMART500");
     if (triggerToast) {
-      triggerToast("🎉 Welcome to ST Mart VIP Club! Your ₹500 Coupon Code: STMART500", "success");
+      triggerToast("🎉 Welcome to ST Mart VIP Club! Your ₹500 Coupon Code: STMART500 sent to WhatsApp!", "success");
     }
   };
 

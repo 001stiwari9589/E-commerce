@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { apiService } from "../services/api";
 import OtpInput from "./OtpInput";
+import { notifyLoginWhatsApp } from "../services/whatsappService";
 
 function LoginPage({ onLoginSuccess, onBack }) {
   const [emailOrPhone, setEmailOrPhone] = useState("");
@@ -115,6 +116,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
       const res = await apiService.verifyOtp(emailOrPhone, otp);
       if (res && res.success) {
         await apiService.login(emailOrPhone, otp);
+        notifyLoginWhatsApp(emailOrPhone);
         onLoginSuccess(emailOrPhone);
       } else {
         setError(res?.message || "Invalid OTP! Check your Mobile SMS / Email for the correct 6-digit code.");

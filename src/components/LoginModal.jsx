@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { apiService } from "../services/api";
 import OtpInput from "./OtpInput";
+import { notifyLoginWhatsApp } from "../services/whatsappService";
 
 function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [emailOrPhone, setEmailOrPhone] = useState("");
@@ -113,6 +114,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       const res = await apiService.verifyOtp(emailOrPhone, otp);
       if (res && res.success) {
         await apiService.login(emailOrPhone, otp);
+        notifyLoginWhatsApp(emailOrPhone);
         onLoginSuccess(emailOrPhone);
         onClose();
       } else {

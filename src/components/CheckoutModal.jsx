@@ -3,6 +3,7 @@ import { apiService } from "../services/api";
 import { validatePincode, lookupPincode } from "../services/pincodeService";
 import { getPaymentConfig, generateUpiUrl, getUpiQrCodeUrl } from "../config/paymentConfig";
 import MerchantPaymentSettingsModal from "./MerchantPaymentSettingsModal";
+import { notifyOrderBookedWhatsApp } from "../services/whatsappService";
 
 const INDIAN_BANKS = [
   { id: "sbi", name: "State Bank of India (SBI)", code: "SBIN" },
@@ -281,11 +282,14 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
       const result = await apiService.createOrder(orderPayload);
       setIsProcessingPayment(false);
 
+      const confirmedOrder = result?.order || orderPayload;
+      notifyOrderBookedWhatsApp(confirmedOrder);
+
       if (triggerToast) {
-        triggerToast(`Payment Verified & Authorized! Order ${orderPayload.id} Confirmed. 🎉`, "success");
+        triggerToast(`Payment Verified & Authorized! Order ${orderPayload.id} Confirmed & Sent to WhatsApp! 🎉`, "success");
       }
 
-      onOrderSuccess(result?.order || orderPayload);
+      onOrderSuccess(confirmedOrder);
     }, 1600);
   };
 
