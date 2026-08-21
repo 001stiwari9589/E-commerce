@@ -28,18 +28,51 @@ function LoginPage({ onLoginSuccess, onBack }) {
     return () => clearInterval(timer);
   }, [step, resendTimer]);
 
+  const handleBackToInput = () => {
+    setStep("input");
+    setError("");
+    setShowSmsToast(false);
+    setReceivedOtp("");
+    setOtp("");
+    setShowOtp(false);
+    if (emailOrPhone) {
+      apiService.clearOtp(emailOrPhone);
+    }
+  };
+
+  const handleBackToStore = () => {
+    setShowSmsToast(false);
+    setReceivedOtp("");
+    setOtp("");
+    setShowOtp(false);
+    if (emailOrPhone) {
+      apiService.clearOtp(emailOrPhone);
+    }
+    if (onBack) onBack();
+  };
+
   const handleRequestOtp = async (e) => {
     if (e) e.preventDefault();
-    if (!emailOrPhone.trim()) {
-      setError("Please enter a valid Email or Mobile Number");
+    const cleanInput = emailOrPhone.trim();
+    if (!cleanInput) {
+      setError("Please enter a valid Email or 10-digit Mobile Number");
       return;
+    }
+
+    const isEmail = cleanInput.includes("@");
+    if (!isEmail) {
+      const digits = cleanInput.replace(/\D/g, "");
+      if (digits.length < 10) {
+        setError("Please enter a valid 10-digit Mobile Number (e.g. 9876543210)");
+        return;
+      }
     }
 
     setError("");
     setIsSendingOtp(true);
     try {
       const res = await apiService.sendOtp(emailOrPhone);
-      const code = res?.otp || "1234";
+      const code = res?.otp || Math.floor(100000 + Math.random() * 900000).toString();
       setReceivedOtp(code);
       setOtp("");
       setShowSmsToast(true);
@@ -49,8 +82,8 @@ function LoginPage({ onLoginSuccess, onBack }) {
       // Native Browser OS Push Notification if permitted
       if ("Notification" in window && Notification.permission === "granted") {
         try {
-          new Notification("💬 ST Mart Security OTP", {
-            body: `Verification OTP dispatched for ${emailOrPhone}`,
+          new Notification(isEmail ? "💬 ST Mart Email OTP" : "📱 ST Mart SMS Security OTP", {
+            body: `Your 6-digit verification code for ${emailOrPhone} is ${code}`,
           });
         } catch (nErr) {
           console.warn("Notification notice:", nErr);
@@ -59,6 +92,8 @@ function LoginPage({ onLoginSuccess, onBack }) {
     } catch (err) {
       console.warn("sendOtp notice:", err);
       // Fallback transition to OTP step
+      const fallbackCode = Math.floor(100000 + Math.random() * 900000).toString();
+      setReceivedOtp(fallbackCode);
       setStep("otp");
       setShowSmsToast(true);
       setResendTimer(60);
@@ -69,8 +104,8 @@ function LoginPage({ onLoginSuccess, onBack }) {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    if (!otp.trim() || otp.trim().length < 4) {
-      setError("Please enter complete 4-digit OTP code.");
+    if (!otp.trim() || otp.trim().length < 6) {
+      setError("Please enter complete 6-digit OTP code.");
       return;
     }
 
@@ -82,11 +117,11 @@ function LoginPage({ onLoginSuccess, onBack }) {
         await apiService.login(emailOrPhone, otp);
         onLoginSuccess(emailOrPhone);
       } else {
-        setError(res?.message || "Invalid OTP! Check your Email Inbox / SMS for the correct code.");
+        setError(res?.message || "Invalid OTP! Check your Mobile SMS / Email for the correct 6-digit code.");
       }
     } catch (err) {
       console.error("Verify OTP error:", err);
-      setError("Invalid OTP! Please check your Email Inbox or SMS for the 4-digit code.");
+      setError("Invalid OTP! Please check your Mobile SMS or Email for the 6-digit code.");
     } finally {
       setIsLoading(false);
     }
@@ -99,10 +134,12 @@ function LoginPage({ onLoginSuccess, onBack }) {
       
       {/* Real-time Security Notification Toast Banner */}
       {showSmsToast && receivedOtp && (
-        <div className="fixed top-5 right-5 z-50 max-w-sm w-[90%] sm:w-full bg-slate-900 dark:bg-zinc-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-700 dark:border-amber-500/40 animate-slide-down flex flex-col gap-2.5">
+        <div className="fixed top-5 right-5 z-50 max-w-sm w-[90%] sm:w-full bg-slate-900 dark:bg-zinc-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-700 dark:border-amber-500/40 animate-slide-down flex flex-col gap-2.5 pointer-events-auto">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="p-1 bg-blue-600 dark:bg-amber-500 text-white dark:text-slate-950 rounded-lg text-[10px] font-black uppercase">💬 SMS / Email</span>
+              <span className="p-1 bg-emerald-600 dark:bg-amber-500 text-white dark:text-slate-950 rounded-lg text-[10px] font-black uppercase flex items-center gap-1">
+                {emailOrPhone.includes("@") ? "💬 EMAIL OTP" : "📱 MOBILE SMS OTP"}
+              </span>
               <span className="text-xs font-bold text-slate-200">ST-MART-SECURITY</span>
               <span className="text-[10px] text-slate-400">Just now</span>
             </div>
@@ -115,7 +152,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
             </button>
           </div>
           <div className="text-xs text-slate-300 leading-relaxed flex items-center justify-between gap-2">
-            <span>Security OTP Code:</span>
+            <span>6-Digit Security OTP Code:</span>
             <span className="font-black text-amber-400 text-sm tracking-wider px-2.5 py-0.5 bg-zinc-800 rounded border border-amber-500/30 font-mono">{receivedOtp}</span>
           </div>
           <div className="flex justify-end gap-2 mt-0.5">
@@ -127,7 +164,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
               }}
               className="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-black shadow-sm transition-all cursor-pointer transform active:scale-95 flex items-center gap-1"
             >
-              ⚡ Auto-Fill OTP ({receivedOtp})
+              ⚡ Auto-Fill 6-Digit OTP ({receivedOtp})
             </button>
           </div>
         </div>
@@ -148,7 +185,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
           <div>
             {onBack && (
               <button
-                onClick={onBack}
+                onClick={handleBackToStore}
                 className="flex items-center gap-2 text-xs font-bold text-blue-200 hover:text-white mb-6 cursor-pointer group transition-colors"
               >
                 <span>&larr;</span> Back to Store
@@ -230,10 +267,10 @@ function LoginPage({ onLoginSuccess, onBack }) {
               <form onSubmit={handleVerifyOtp} className="flex flex-col gap-6">
                 <div>
                   <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-                    Enter 4-Digit Verification OTP
+                    Enter 6-Digit Verification OTP
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
-                    Enter the 4-digit security code to verify and sign in.
+                    Enter the 6-digit security code to verify and sign in.
                   </p>
                 </div>
 
@@ -254,7 +291,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
                   </div>
 
                   <OtpInput
-                    length={4}
+                    length={6}
                     value={otp}
                     onChange={setOtp}
                     showOtp={showOtp}
@@ -292,12 +329,8 @@ function LoginPage({ onLoginSuccess, onBack }) {
                 <div className="flex gap-3">
                   <button
                     type="button"
-                    onClick={() => {
-                      setStep("input");
-                      setError("");
-                      setSuccessMsg("");
-                    }}
-                    className="w-1/3 py-4 border border-gray-200 dark:border-zinc-700 rounded-2xl text-xs font-bold text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors"
+                    onClick={handleBackToInput}
+                    className="w-1/3 py-4 border border-gray-200 dark:border-zinc-700 rounded-2xl text-xs font-bold text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
                   >
                     Back
                   </button>

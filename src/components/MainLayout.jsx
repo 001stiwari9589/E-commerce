@@ -23,6 +23,7 @@ import ReturnsHelpPage from "./ReturnsHelpPage";
 import FAQPage from "./FAQPage";
 import ReturnPolicyPage from "./ReturnPolicyPage";
 import TermsOfUsePage from "./TermsOfUsePage";
+import { matchSearchQuery } from "../utils/searchUtils";
 import SecurityPage from "./SecurityPage";
 import PrivacyPolicyPage from "./PrivacyPolicyPage";
 import AdvertisePage from "./AdvertisePage";
@@ -67,10 +68,19 @@ function MainLayout() {
   useEffect(() => {
     const refreshProducts = async () => {
       const apiProducts = await apiService.getProducts(activeCategory, searchQuery);
-      if (apiProducts) {
+      if (apiProducts && apiProducts.length > 0) {
         setProductsList(apiProducts);
         setIsBackendConnected(true);
       } else {
+        // Fallback to PRODUCTS_DATABASE filtering if API is offline or returns empty
+        let fallback = PRODUCTS_DATABASE;
+        if (activeCategory && activeCategory !== "all") {
+          fallback = fallback.filter((p) => (p.category || "").toLowerCase() === activeCategory.toLowerCase());
+        }
+        if (searchQuery) {
+          fallback = matchSearchQuery(fallback, searchQuery);
+        }
+        setProductsList(fallback);
         setIsBackendConnected(false);
       }
     };
@@ -202,10 +212,7 @@ function MainLayout() {
     const matchesCategory =
       activeCategory === "all" || product.category.toLowerCase() === activeCategory.toLowerCase();
 
-    const matchesSearch =
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = matchSearchQuery(product, searchQuery);
 
     return matchesCategory && matchesSearch;
   });

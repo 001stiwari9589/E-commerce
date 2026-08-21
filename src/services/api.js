@@ -8,6 +8,25 @@ const API_BASE_URL = typeof window !== "undefined" && window.location.hostname =
 const localOtpStore = new Map();
 
 export const apiService = {
+  // Normalize email or mobile number key for reliable store lookup
+  normalizeKey(emailOrPhone) {
+    if (!emailOrPhone) return "";
+    const clean = emailOrPhone.trim().toLowerCase();
+    if (clean.includes("@")) {
+      return clean;
+    }
+    // Mobile number: extract digits and normalize to 10-digit number
+    const digits = clean.replace(/\D/g, "");
+    return digits.length >= 10 ? digits.slice(-10) : digits;
+  },
+
+  // Clear local OTP for key
+  clearOtp(emailOrPhone) {
+    if (!emailOrPhone) return;
+    const key = this.normalizeKey(emailOrPhone);
+    localOtpStore.delete(key);
+  },
+
   // Check backend server health
   async checkHealth() {
     try {
@@ -23,9 +42,9 @@ export const apiService = {
 
   // Dispatch Real-time OTP to Email / Mobile
   async sendOtp(emailOrPhone) {
-    const key = emailOrPhone.toLowerCase().trim();
-    // Always generate a fresh random 4-digit OTP every single call
-    const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+    const key = this.normalizeKey(emailOrPhone);
+    // Always generate a fresh random 6-digit OTP every single call
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
     localOtpStore.set(key, generatedOtp);
 
     // Fast 2-second timeout for backend API attempt so mobile app never hangs
@@ -43,7 +62,11 @@ export const apiService = {
       if (response.ok) {
         const data = await response.json();
         if (data && data.success) {
-          const finalOtp = data.otp || generatedOtp;
+          // Enforce 6-digit length even if backend returned legacy 4-digit code
+          let finalOtp = (data.otp || "").toString();
+          if (finalOtp.length !== 6) {
+            finalOtp = generatedOtp;
+          }
           localOtpStore.set(key, finalOtp);
           return { ...data, otp: finalOtp };
         }
@@ -54,14 +77,14 @@ export const apiService = {
     }
 
     // Client-side Real EmailJS Dispatch if Email address (non-blocking)
-    if (key.includes("@")) {
+    if (emailOrPhone.includes("@")) {
       try {
         emailjs.send(
           "service_stmart_auth",
           "template_stmart_otp",
           {
-            to_email: key,
-            to_name: key.split("@")[0],
+            to_email: emailOrPhone.trim(),
+            to_name: emailOrPhone.trim().split("@")[0],
             otp_code: generatedOtp,
             app_name: "ST Mart",
           },
@@ -81,9 +104,15 @@ export const apiService = {
 
   // Verify user entered OTP
   async verifyOtp(emailOrPhone, inputOtp) {
-    const targetKey = emailOrPhone.toLowerCase().trim();
+    const targetKey = this.normalizeKey(emailOrPhone);
 
-    // 1. Try Backend Verification API
+    // 1. Check local stored OTP first
+    const validOtp = localOtpStore.get(targetKey);
+    if (validOtp && validOtp === inputOtp.trim()) {
+      return { success: true, message: "OTP Verified successfully!" };
+    }
+
+    // 2. Try Backend Verification API
     try {
       const response = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
         method: "POST",
@@ -96,15 +125,9 @@ export const apiService = {
       console.warn("Backend verify OTP fallback:", error.message);
     }
 
-    // 2. Check local stored OTP
-    const validOtp = localOtpStore.get(targetKey);
-    if (validOtp && validOtp === inputOtp.trim()) {
-      return { success: true, message: "OTP Verified successfully!" };
-    }
-
     return {
       success: false,
-      message: `Invalid OTP code! Please enter the correct 4-digit code sent to ${emailOrPhone}.`,
+      message: `Invalid OTP code! Please enter the correct 6-digit code sent to ${emailOrPhone}.`,
     };
   },
 

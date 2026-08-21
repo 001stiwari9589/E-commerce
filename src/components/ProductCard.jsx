@@ -68,13 +68,16 @@ function ProductCard({
             {product.name}
           </h2>
 
-          {/* Rating banner */}
-          <div className="flex items-center gap-1.5 mt-1 sm:mt-1.5">
+          {/* Rating & ST Assured banner */}
+          <div className="flex items-center gap-1.5 mt-1 sm:mt-1.5 flex-wrap">
             <span className="bg-emerald-600 text-white text-[9px] sm:text-[10px] font-black px-1.5 py-0.2 rounded flex items-center gap-0.5 shadow-sm">
               {product.rating} ★
             </span>
             <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-zinc-500">
               ({product.reviewsCount || "432"})
+            </span>
+            <span className="bg-blue-600/10 text-blue-700 dark:bg-amber-500/15 dark:text-amber-400 border border-blue-200 dark:border-amber-500/30 text-[9px] font-black px-1.5 py-0.5 rounded-full flex items-center gap-0.5 shadow-2xs">
+              ST Assured✦
             </span>
           </div>
 

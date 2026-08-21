@@ -186,12 +186,15 @@ function ProductDetailPage({
             </h1>
 
             {/* Ratings and review badge */}
-            <div className="flex items-center gap-2 mt-2.5">
-              <span className="bg-emerald-600 text-white font-bold text-xs px-2 py-0.5 rounded flex items-center gap-0.5">
+            <div className="flex items-center gap-2 mt-2.5 flex-wrap">
+              <span className="bg-emerald-600 text-white font-bold text-xs px-2 py-0.5 rounded flex items-center gap-0.5 shadow-xs">
                 {product.rating} ★
               </span>
               <span className="text-xs font-semibold text-slate-500 dark:text-zinc-400">
-                {product.reviewsCount || "1,420"} Ratings & {product.comments?.length || "3"} Reviews
+                {product.reviewsCount || "1,420"} Ratings &amp; {product.comments?.length || "3"} Reviews
+              </span>
+              <span className="bg-blue-600/10 text-blue-700 dark:bg-amber-500/15 dark:text-amber-400 border border-blue-200 dark:border-amber-500/30 text-xs font-black px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                ST Assured✦ 100% Quality Checked
               </span>
             </div>
           </div>

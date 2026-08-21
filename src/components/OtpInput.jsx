@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 
-function OtpInput({ length = 4, value = "", onChange, showOtp = true, autoFocus = true }) {
+function OtpInput({ length = 6, value = "", onChange, showOtp = true, autoFocus = true }) {
   const inputRefs = useRef([]);
 
   // Ensure digits array matches length
@@ -91,7 +91,7 @@ function OtpInput({ length = 4, value = "", onChange, showOtp = true, autoFocus 
           onKeyDown={(e) => handleKeyDown(index, e)}
           onPaste={handlePaste}
           onFocus={handleFocus}
-          className={`w-10 h-12 sm:w-12 sm:h-14 text-center text-lg sm:text-xl font-extrabold rounded-xl border transition-all outline-none shadow-xs select-all ${
+          className={`w-9 h-11 sm:w-11 sm:h-13 text-center text-lg sm:text-xl font-extrabold rounded-xl border transition-all outline-none shadow-xs select-all ${
             digits[index]
               ? "border-blue-500 dark:border-amber-500 bg-blue-50/50 dark:bg-amber-500/10 text-blue-700 dark:text-amber-400 ring-2 ring-blue-500/20 dark:ring-amber-500/20"
               : "border-gray-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white focus:border-blue-500 dark:focus:border-amber-500 focus:bg-white dark:focus:bg-zinc-750 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-amber-500/20"

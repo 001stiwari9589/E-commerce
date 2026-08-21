@@ -188,6 +188,14 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
                   <option value="mobiles">Mobiles &amp; Accessories</option>
                   <option value="home">Home &amp; Kitchen</option>
                   <option value="appliances">Large Appliances</option>
+                  <option value="grocery">Grocery &amp; Food</option>
+                  <option value="sports">Sports &amp; Fitness</option>
+                  <option value="books">Books &amp; Stationery</option>
+                  <option value="footwear">Footwear &amp; Shoes</option>
+                  <option value="gaming">Gaming &amp; Gear</option>
+                  <option value="jewelry">Jewelry &amp; Watches</option>
+                  <option value="automotive">Auto &amp; Car Accessories</option>
+                  <option value="pets">Pet Supplies</option>
                 </select>
               </div>
             </div>

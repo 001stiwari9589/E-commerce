@@ -43,6 +43,14 @@ function Navbar({
     { id: "home", name: "Home & Living" },
     { id: "appliances", name: "Appliances" },
     { id: "toys", name: "Beauty & Toys" },
+    { id: "grocery", name: "Grocery & Food" },
+    { id: "sports", name: "Sports & Fitness" },
+    { id: "books", name: "Books & Stationery" },
+    { id: "footwear", name: "Footwear & Shoes" },
+    { id: "gaming", name: "Gaming & Gear" },
+    { id: "jewelry", name: "Jewelry & Watches" },
+    { id: "automotive", name: "Auto & Car Accessories" },
+    { id: "pets", name: "Pet Supplies" },
   ];
 
   return (

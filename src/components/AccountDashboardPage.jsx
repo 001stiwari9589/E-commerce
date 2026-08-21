@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import OrderTrackingModal from "./OrderTrackingModal";
 
 function AccountDashboardPage({ userEmail, onLogout, setView, onBack }) {
   const [activeTab, setActiveTab] = useState("orders"); // 'orders' | 'profile' | 'addresses' | 'wallet'
+  const [trackingModalOrder, setTrackingModalOrder] = useState(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -222,10 +224,10 @@ function AccountDashboardPage({ userEmail, onLogout, setView, onBack }) {
                         ● {ord.status}
                       </span>
                       <button
-                        onClick={() => alert(`Tracking status for ${ord.id}: Package in transit and on schedule.`)}
+                        onClick={() => setTrackingModalOrder(ord)}
                         className="text-xs font-bold text-blue-600 dark:text-amber-500 hover:underline cursor-pointer"
                       >
-                        Track Order Details
+                        Track Live Location 🗺️
                       </button>
                     </div>
                   </div>
@@ -324,6 +326,13 @@ function AccountDashboardPage({ userEmail, onLogout, setView, onBack }) {
         </div>
 
       </div>
+
+      {/* Flipkart Live Order Location Tracking Modal */}
+      <OrderTrackingModal
+        isOpen={!!trackingModalOrder}
+        onClose={() => setTrackingModalOrder(null)}
+        order={trackingModalOrder}
+      />
 
     </div>
   );

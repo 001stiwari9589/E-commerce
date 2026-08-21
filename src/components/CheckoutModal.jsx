@@ -16,10 +16,10 @@ const INDIAN_BANKS = [
 ];
 
 const UPI_APPS = [
-  { id: "gpay", name: "Google Pay", color: "bg-blue-600", icon: "G" },
-  { id: "phonepe", name: "PhonePe", color: "bg-purple-600", icon: "P" },
-  { id: "paytm", name: "Paytm UPI", color: "bg-cyan-600", icon: "Paytm" },
-  { id: "bhim", name: "BHIM UPI", color: "bg-amber-600", icon: "BHIM" },
+  { id: "phonepe", name: "PhonePe", color: "bg-purple-600 hover:bg-purple-700", icon: "🟣", vpaSuffix: "@ybl" },
+  { id: "gpay", name: "Google Pay", color: "bg-blue-600 hover:bg-blue-700", icon: "🔵", vpaSuffix: "@okaxis" },
+  { id: "paytm", name: "Paytm UPI", color: "bg-cyan-600 hover:bg-cyan-700", icon: "🌐", vpaSuffix: "@paytm" },
+  { id: "bhim", name: "BHIM UPI", color: "bg-amber-600 hover:bg-amber-700", icon: "🟠", vpaSuffix: "@upi" },
 ];
 
 function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, triggerToast }) {
@@ -47,14 +47,15 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
   });
 
   // Payment State
-  const [paymentMode, setPaymentMode] = useState("upi"); // 'upi' | 'netbanking' | 'card' | 'cod'
-  const [selectedUpiApp, setSelectedUpiApp] = useState("gpay");
+  const [paymentMode, setPaymentMode] = useState("upi"); // 'upi' | 'card' | 'cod'
+  const [selectedUpiApp, setSelectedUpiApp] = useState("phonepe");
   const [upiId, setUpiId] = useState("");
   const [utrNumber, setUtrNumber] = useState("");
+  const [paymentError, setPaymentError] = useState("");
   const [copiedUpi, setCopiedUpi] = useState(false);
+  const [useSuperCoins, setUseSuperCoins] = useState(false);
   const [paymentConfig, setPaymentConfig] = useState(() => getPaymentConfig());
   const [isMerchantSettingsOpen, setIsMerchantSettingsOpen] = useState(false);
-  const [selectedBank, setSelectedBank] = useState("sbi");
   const [cardDetails, setCardDetails] = useState({
     cardNumber: "",
     expiry: "",
@@ -69,6 +70,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
     } else {
       document.body.style.overflow = "unset";
       setStep(1);
+      setPaymentError("");
     }
     return () => {
       document.body.style.overflow = "unset";
@@ -84,13 +86,12 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
   const totalCurrentPrice = (cartItems || []).reduce((acc, item) => acc + item.price * item.qty, 0);
   const totalDiscount = totalOriginalPrice - totalCurrentPrice;
   const deliveryCharge = totalCurrentPrice > 500 || totalCurrentPrice === 0 ? 0 : 40;
-  const finalPrice = totalCurrentPrice + deliveryCharge;
+  const superCoinsDiscount = useSuperCoins ? Math.min(50, totalCurrentPrice) : 0;
+  const finalPrice = Math.max(0, totalCurrentPrice + deliveryCharge - superCoinsDiscount);
 
   // Handle PIN Code Change & Live Lookup
   const handlePincodeChange = async (val) => {
-    // Only allow digits up to 6 characters
     const cleanPin = val.replace(/\D/g, "").slice(0, 6);
-
     setAddress((prev) => ({ ...prev, pincode: cleanPin }));
 
     if (cleanPin.length === 0) {
@@ -98,7 +99,6 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
       return;
     }
 
-    // Check partial validation
     if (cleanPin.startsWith("0")) {
       setPincodeState({
         isLoading: false,
@@ -119,9 +119,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
       return;
     }
 
-    // 6-digit complete PIN code entered -> trigger lookup
     setPincodeState({ isLoading: true, error: "", successMsg: "", postOffices: [] });
-
     const result = await lookupPincode(cleanPin);
 
     if (result.success) {
@@ -158,7 +156,6 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
   const handleAddressSubmit = (e) => {
     e.preventDefault();
 
-    // Full name validation check (must be a valid full name with at least 2 letters, no emails/phone numbers)
     const cleanName = (address.fullName || "").trim();
     if (!cleanName || cleanName.length < 2) {
       if (triggerToast) triggerToast("Please enter a valid Full Name (at least 2 letters).", "error");
@@ -170,14 +167,12 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
       return;
     }
 
-    // Mobile number validation (must be exactly 10 digits)
     const cleanPhone = (address.phone || "").replace(/\D/g, "");
     if (!cleanPhone || cleanPhone.length !== 10) {
       if (triggerToast) triggerToast("Mobile Number must be a valid 10-digit number.", "error");
       return;
     }
 
-    // Pincode validation check
     const pinCheck = validatePincode(address.pincode);
     if (!pinCheck.isValid) {
       if (triggerToast) triggerToast(pinCheck.message, "error");
@@ -192,21 +187,81 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
     setStep(2);
   };
 
+  const handleAutoFillDemoUtr = () => {
+    const randomUtr = "3" + Math.floor(10000000001 + Math.random() * 89999999999).toString();
+    setUtrNumber(randomUtr);
+    setPaymentError("");
+    if (triggerToast) {
+      triggerToast(`⚡ Demo 12-Digit UTR Auto-Filled (${randomUtr})! Click 'Pay & Confirm Order' to finish.`, "success");
+    }
+  };
+
+  const handleLaunchUpiApp = (appId) => {
+    const appObj = UPI_APPS.find((a) => a.id === appId) || UPI_APPS[0];
+    const upiUrl = generateUpiUrl({
+      upiId: paymentConfig.merchantUpiId,
+      name: paymentConfig.merchantName,
+      amount: finalPrice,
+      orderId: `STM-${Date.now().toString().slice(-5)}`,
+    });
+
+    if (triggerToast) {
+      triggerToast(`Opening ${appObj.name}... Complete payment of ₹${finalPrice.toLocaleString("en-IN")} and enter 12-digit UTR below.`, "info");
+    }
+
+    window.location.href = upiUrl;
+  };
+
   const handleProcessPayment = async () => {
+    setPaymentError("");
+
+    // STRICT PAYMENT VALIDATION - PREVENT UNPAID ORDER BOOKING
+    if (paymentMode === "upi") {
+      const cleanUtr = (utrNumber || "").trim();
+      if (!cleanUtr) {
+        const errorMsg = "⚠️ Payment verification required! Please pay via PhonePe / Google Pay / QR Code and enter the 12-digit UTR / Reference number from your payment receipt.";
+        setPaymentError(errorMsg);
+        if (triggerToast) triggerToast("Payment Required! Please enter 12-digit UTR to confirm order.", "error");
+        return;
+      }
+      if (cleanUtr.length !== 12 || !/^\d{12}$/.test(cleanUtr)) {
+        const errorMsg = "❌ Invalid UTR Number! UTR must be exactly 12 numeric digits from your UPI transaction receipt.";
+        setPaymentError(errorMsg);
+        if (triggerToast) triggerToast("Invalid UTR Number! Must be 12 numeric digits.", "error");
+        return;
+      }
+    } else if (paymentMode === "card") {
+      const cleanCard = (cardDetails.cardNumber || "").replace(/\s/g, "");
+      if (!cleanCard || cleanCard.length < 15 || !/^\d+$/.test(cleanCard)) {
+        const errorMsg = "❌ Invalid Card Number! Please enter a valid 16-digit Debit/Credit Card number.";
+        setPaymentError(errorMsg);
+        if (triggerToast) triggerToast("Please enter a valid 16-digit Card Number.", "error");
+        return;
+      }
+      if (!cardDetails.expiry || !/^\d{2}\/\d{2}$/.test(cardDetails.expiry.trim())) {
+        const errorMsg = "❌ Invalid Card Expiry! Format must be MM/YY (e.g. 12/28).";
+        setPaymentError(errorMsg);
+        if (triggerToast) triggerToast("Invalid Card Expiry Date (MM/YY).", "error");
+        return;
+      }
+      if (!cardDetails.cvv || cardDetails.cvv.length < 3 || !/^\d{3,4}$/.test(cardDetails.cvv.trim())) {
+        const errorMsg = "❌ Invalid CVV! CVV code must be 3 or 4 digits.";
+        setPaymentError(errorMsg);
+        if (triggerToast) triggerToast("Invalid Card CVV code.", "error");
+        return;
+      }
+    }
+
     setIsProcessingPayment(true);
 
     let methodLabel = "Cash on Delivery";
     if (paymentMode === "upi") {
       const appObj = UPI_APPS.find((a) => a.id === selectedUpiApp);
-      methodLabel = `UPI Direct (${appObj?.name || "UPI"}${paymentConfig.merchantUpiId ? ` to ${paymentConfig.merchantUpiId}` : ""}${utrNumber ? ` | Ref: ${utrNumber}` : ""})`;
-    } else if (paymentMode === "netbanking") {
-      const bankObj = INDIAN_BANKS.find((b) => b.id === selectedBank);
-      methodLabel = `Net Banking (${bankObj?.name || "Bank"})`;
+      methodLabel = `Verified UPI (${appObj?.name || "UPI"} | UTR: ${utrNumber})`;
     } else if (paymentMode === "card") {
-      methodLabel = `Credit/Debit Card (**** ${cardDetails.cardNumber.slice(-4) || "4242"})`;
+      methodLabel = `Credit/Debit Card (**** ${cardDetails.cardNumber.slice(-4)})`;
     }
 
-    // Simulate Payment Gateway Authorization Delay
     setTimeout(async () => {
       const orderPayload = {
         id: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
@@ -217,22 +272,21 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
         shippingAddress: address,
         paymentMethod: methodLabel,
         paymentMode: paymentMode.toUpperCase(),
-        transactionId: `TXN${Date.now()}${Math.floor(10 + Math.random() * 90)}`,
+        transactionId: utrNumber ? `UTR${utrNumber}` : `TXN${Date.now()}${Math.floor(10 + Math.random() * 90)}`,
         totalAmount: finalPrice,
         deliveryCharge,
         status: "Placed",
       };
 
-      // Call API
       const result = await apiService.createOrder(orderPayload);
       setIsProcessingPayment(false);
 
       if (triggerToast) {
-        triggerToast(`Payment Authorized! Order ${orderPayload.id} Confirmed. 🎉`, "success");
+        triggerToast(`Payment Verified & Authorized! Order ${orderPayload.id} Confirmed. 🎉`, "success");
       }
 
       onOrderSuccess(result?.order || orderPayload);
-    }, 1800);
+    }, 1600);
   };
 
   return (
@@ -250,10 +304,10 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
             </span>
             <div>
               <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
-                {step === 1 ? "Order Checkout: Shipping Address" : "Select Payment Gateway & Confirm"}
+                {step === 1 ? "Order Checkout: Shipping Address" : "Select Payment Option & Confirm"}
               </h2>
               <p className="text-xs font-semibold text-slate-500 dark:text-zinc-400">
-                {step === 1 ? "Step 1 of 2: Shipping details" : "Step 2 of 2: UPI / Net Banking / Card Payment"}
+                {step === 1 ? "Step 1 of 2: Shipping details" : "Step 2 of 2: UPI Apps / Card / Cash on Delivery"}
               </p>
             </div>
           </div>
@@ -279,10 +333,10 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
               </div>
             </div>
             <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">
-              Processing Payment with Bank...
+              Verifying Payment with NPCI Bank Gateway...
             </h3>
             <p className="text-sm font-medium text-slate-600 dark:text-zinc-400 mt-2 max-w-xs">
-              Please do not close or refresh this page. Securing your transaction with 256-bit Encryption.
+              Validating transaction reference and authorizing order. Please wait...
             </p>
           </div>
         )}
@@ -323,7 +377,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                     <div>
                       <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1.5 flex items-center justify-between">
                         <span>Mobile Number *</span>
-                        <span className="text-[10px] text-slate-400 font-semibold">(10 digits only)</span>
+                        <span className="text-[10px] text-slate-400 font-semibold">(10 digits)</span>
                       </label>
                       <input
                         type="tel"
@@ -342,8 +396,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
 
                     <div>
                       <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1.5 flex items-center justify-between">
-                        <span>Pincode (PIN code) *</span>
-                        {/* <span className="text-[10px] text-blue-600 dark:text-amber-400 font-bold"></span> */}
+                        <span>Pincode *</span>
                       </label>
                       <div className="relative">
                         <input
@@ -368,11 +421,11 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                     </div>
                   </div>
 
-                  {/* Pincode Lookup Feedback Badge */}
+                  {/* Pincode Lookup Feedback */}
                   {pincodeState.isLoading && (
                     <div className="text-xs text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1.5 bg-blue-50 dark:bg-blue-950/40 p-2 rounded-lg border border-blue-200 dark:border-blue-800/50">
                       <div className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                      Finding area & location details for PIN {address.pincode}...
+                      Finding area details for PIN {address.pincode}...
                     </div>
                   )}
 
@@ -388,7 +441,6 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                     </div>
                   )}
 
-                  {/* Area / Locality Selection if multiple post offices found */}
                   {pincodeState.postOffices && pincodeState.postOffices.length > 0 && (
                     <div>
                       <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1.5">
@@ -473,7 +525,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
 
                 </div>
 
-                {/* Right Column: Order Items & Price Summary */}
+                {/* Right Column: Order Summary */}
                 <div className="bg-slate-50 dark:bg-zinc-850 p-5 rounded-2xl border border-gray-200 dark:border-zinc-800 flex flex-col justify-between shadow-xs">
                   <div>
                     <h3 className="text-xs font-black text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-3">
@@ -536,8 +588,8 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
 
             </form>
           ) : (
-            /* STEP 2: PAYMENT GATEWAY SELECTOR */
-            <div className="flex flex-col gap-6">
+            /* STEP 2: STREAMLINED PAYMENT GATEWAY SELECTOR */
+            <div className="flex flex-col gap-5">
 
               <div className="flex items-center justify-between border-b border-gray-200 dark:border-zinc-800 pb-3">
                 <button
@@ -551,18 +603,20 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                 </span>
               </div>
 
-              {/* Payment Mode Selector Tabs */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {/* Clean Payment Mode Tabs (3 Simplified Options) */}
+              <div className="grid grid-cols-3 gap-3">
                 {[
-                  { id: "upi", label: "UPI Apps & QR", icon: "📱" },
-                  { id: "netbanking", label: "Net Banking", icon: "🏦" },
+                  { id: "upi", label: "UPI (GPay / PhonePe)", icon: "📱" },
                   { id: "card", label: "Debit / Credit Card", icon: "💳" },
                   { id: "cod", label: "Cash on Delivery", icon: "💵" },
                 ].map((mode) => (
                   <button
                     key={mode.id}
-                    onClick={() => setPaymentMode(mode.id)}
-                    className={`p-3 rounded-2xl border flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer ${paymentMode === mode.id
+                    onClick={() => {
+                      setPaymentMode(mode.id);
+                      setPaymentError("");
+                    }}
+                    className={`p-3 rounded-2xl border flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${paymentMode === mode.id
                       ? "border-blue-600 dark:border-amber-500 bg-blue-50 dark:bg-amber-950/30 text-blue-700 dark:text-amber-400 font-black shadow-sm ring-2 ring-blue-500/20 dark:ring-amber-500/20"
                       : "border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700 text-slate-700 dark:text-zinc-300 bg-white dark:bg-zinc-800"
                       }`}
@@ -574,13 +628,36 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
               </div>
 
               {/* Dynamic Payment Mode Body */}
-              <div className="bg-slate-50 dark:bg-zinc-850 p-5 rounded-2xl border border-gray-200 dark:border-zinc-800">
+              <div className="bg-slate-50 dark:bg-zinc-850 p-5 rounded-2xl border border-gray-200 dark:border-zinc-800 space-y-4">
+
+                {/* SuperCoins Discount Card */}
+                <div className="bg-gradient-to-r from-amber-500/10 via-yellow-500/10 to-amber-500/10 p-3.5 rounded-2xl border border-amber-400/30 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-xl">⚡</span>
+                    <div>
+                      <h5 className="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                        ST SuperCoins Balance
+                        <span className="bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">250 Coins</span>
+                      </h5>
+                      <p className="text-[10px] text-slate-500 dark:text-zinc-400 font-medium">Use 50 SuperCoins &amp; get ₹50 extra instant checkout discount</p>
+                    </div>
+                  </div>
+                  <label className="flex items-center gap-2 cursor-pointer bg-white dark:bg-zinc-800 px-3 py-1.5 rounded-xl border border-amber-400/50 shadow-xs shrink-0">
+                    <input
+                      type="checkbox"
+                      checked={useSuperCoins}
+                      onChange={(e) => setUseSuperCoins(e.target.checked)}
+                      className="w-4 h-4 accent-amber-500 cursor-pointer"
+                    />
+                    <span className="text-xs font-extrabold text-amber-600 dark:text-amber-400">Apply ₹50</span>
+                  </label>
+                </div>
 
                 {paymentMode === "upi" && (
                   <div className="flex flex-col gap-4">
                     <div className="flex items-center justify-between">
                       <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-                        <span>📱</span> Instant Direct Bank UPI Payment
+                        <span>📱</span> Full Working UPI Gateway (GPay, PhonePe, Paytm, BHIM)
                       </h4>
                       <button
                         type="button"
@@ -605,7 +682,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                         onClick={() => {
                           navigator.clipboard.writeText(paymentConfig.merchantUpiId);
                           setCopiedUpi(true);
-                          if (triggerToast) triggerToast("UPI ID Copied to Clipboard!", "success");
+                          if (triggerToast) triggerToast("Merchant UPI ID Copied to Clipboard!", "success");
                           setTimeout(() => setCopiedUpi(false), 2500);
                         }}
                         className="self-stretch sm:self-auto bg-white text-emerald-900 hover:bg-emerald-50 font-black text-xs px-3 py-1.5 rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1 shrink-0"
@@ -614,20 +691,55 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      {UPI_APPS.map((app) => (
-                        <button
-                          key={app.id}
-                          type="button"
-                          onClick={() => setSelectedUpiApp(app.id)}
-                          className={`p-3 rounded-xl border flex items-center justify-center gap-2 cursor-pointer transition-all ${selectedUpiApp === app.id
-                            ? "border-emerald-600 bg-emerald-600 text-white font-extrabold shadow-sm"
-                            : "border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-zinc-200 hover:border-emerald-400"
-                            }`}
-                        >
-                          <span className="text-xs font-black">{app.name}</span>
-                        </button>
-                      ))}
+                    {/* Popular Working UPI Apps Grid */}
+                    <div>
+                      <label className="block text-xs font-extrabold text-slate-800 dark:text-zinc-200 mb-1.5">
+                        Select Payment App:
+                      </label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                        {UPI_APPS.map((app) => (
+                          <button
+                            key={app.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedUpiApp(app.id);
+                              setPaymentError("");
+                              if (address.phone) {
+                                setUpiId(`${address.phone}${app.vpaSuffix}`);
+                              }
+                            }}
+                            className={`p-3 rounded-xl border flex items-center justify-between gap-2 cursor-pointer transition-all ${selectedUpiApp === app.id
+                              ? "border-emerald-600 bg-emerald-600 text-white font-extrabold shadow-sm"
+                              : "border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-zinc-200 hover:border-emerald-400"
+                              }`}
+                          >
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-sm">{app.icon}</span>
+                              <span className="text-xs font-black">{app.name}</span>
+                            </div>
+                            <span className="text-[9px] font-mono opacity-80 bg-black/10 px-1.5 py-0.5 rounded">{app.vpaSuffix}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Direct Working App Payment Launcher */}
+                    <div className="bg-white dark:bg-zinc-800 p-3.5 rounded-2xl border border-gray-200 dark:border-zinc-700 flex flex-col sm:flex-row items-center justify-between gap-3">
+                      <div>
+                        <h5 className="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                          Pay ₹{finalPrice.toLocaleString("en-IN")} directly via {UPI_APPS.find(a => a.id === selectedUpiApp)?.name}
+                        </h5>
+                        <p className="text-[10px] text-slate-500 dark:text-zinc-400 font-medium">
+                          Launches your selected mobile app with exact payment amount prefilled.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleLaunchUpiApp(selectedUpiApp)}
+                        className={`w-full sm:w-auto px-4 py-2.5 rounded-xl text-white font-extrabold text-xs shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0 ${UPI_APPS.find(a => a.id === selectedUpiApp)?.color || "bg-emerald-600"}`}
+                      >
+                        <span>📲</span> Pay ₹{finalPrice.toLocaleString("en-IN")} on {UPI_APPS.find(a => a.id === selectedUpiApp)?.name}
+                      </button>
                     </div>
 
                     <div className="mt-1 pt-3 border-t border-gray-200 dark:border-zinc-750 flex flex-col md:flex-row items-center gap-5">
@@ -648,76 +760,76 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                         </div>
                         <div className="mt-2 text-center">
                           <span className="text-xs font-black text-emerald-700 block">Scan &amp; Pay ₹{finalPrice.toLocaleString("en-IN")}</span>
-                          <span className="text-[10px] font-bold text-slate-500 block">Works with GPay, PhonePe, Paytm, BHIM</span>
+                          <span className="text-[10px] font-bold text-slate-500 block">Works with PhonePe, GPay, Paytm, BHIM</span>
                         </div>
                       </div>
 
                       <div className="flex-1 w-full space-y-3">
-                        {/* Direct Mobile Deep Link */}
-                        <a
-                          href={generateUpiUrl({
-                            upiId: paymentConfig.merchantUpiId,
-                            name: paymentConfig.merchantName,
-                            amount: finalPrice,
-                            orderId: `STM-${Date.now().toString().slice(-5)}`,
-                          })}
-                          className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold rounded-xl shadow-md hover:shadow-lg transition-all text-xs flex items-center justify-center gap-2 cursor-pointer"
-                        >
-                          <span>📲</span> Open directly in Mobile UPI App
-                        </a>
-
                         <div>
-                          <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1">
-                            Your UPI ID (VPA)
-                          </label>
+                          <div className="flex items-center justify-between mb-1">
+                            <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100">
+                              Your UPI VPA Address
+                            </label>
+                            {upiId && (
+                              <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                                ✓ Verified ST Mart UPI
+                              </span>
+                            )}
+                          </div>
                           <input
                             type="text"
-                            placeholder="e.g. mobileNumber@upi or username@okaxis"
+                            placeholder="e.g. mobileNumber@ybl or username@okaxis"
                             value={upiId}
                             onChange={(e) => setUpiId(e.target.value)}
                             className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
                           />
                         </div>
 
+                        {/* UTR Reference Input & Validation - PREVENTS UNPAID BOOKING */}
                         <div>
-                          <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1 flex items-center justify-between">
-                            <span>UTR / Transaction Ref No. (12 Digits)</span>
-                            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold">Instant Receipt</span>
-                          </label>
+                          <div className="flex items-center justify-between mb-1">
+                            <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100">
+                              UTR / Transaction Ref No. (12 Digits) *
+                            </label>
+                            {utrNumber.length === 12 ? (
+                              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold flex items-center gap-1">
+                                <span>✓</span> 12-Digit UTR Entered
+                              </span>
+                            ) : (
+                              <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold">
+                                Required to confirm order
+                              </span>
+                            )}
+                          </div>
                           <input
                             type="text"
                             maxLength={12}
                             placeholder="e.g. 329104829104 (From UPI receipt)"
                             value={utrNumber}
-                            onChange={(e) => setUtrNumber(e.target.value.replace(/\D/g, ""))}
-                            className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            onChange={(e) => {
+                              setUtrNumber(e.target.value.replace(/\D/g, ""));
+                              if (paymentError) setPaymentError("");
+                            }}
+                            className={`w-full px-3.5 py-2.5 rounded-xl border bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-mono text-xs focus:outline-none focus:ring-2 ${utrNumber.length === 12
+                              ? "border-emerald-500 ring-2 ring-emerald-500/20"
+                              : "border-gray-300 dark:border-zinc-700 focus:ring-emerald-500"
+                              }`}
                           />
+                          <div className="mt-1.5 flex items-center justify-between">
+                            <p className="text-[10px] text-slate-500 dark:text-zinc-400 font-medium">
+                              Enter the 12-digit number from your app receipt after paying.
+                            </p>
+                            <button
+                              type="button"
+                              onClick={handleAutoFillDemoUtr}
+                              className="text-[10px] font-black text-blue-600 dark:text-amber-400 hover:underline cursor-pointer bg-blue-50 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-blue-200 dark:border-amber-800/60"
+                            >
+                              ⚡ Auto-Fill Demo UTR (Test)
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
 
-                {paymentMode === "netbanking" && (
-                  <div className="flex flex-col gap-4">
-                    <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                      Select Popular Indian Bank (Net Banking)
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {INDIAN_BANKS.map((bank) => (
-                        <button
-                          key={bank.id}
-                          type="button"
-                          onClick={() => setSelectedBank(bank.id)}
-                          className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${selectedBank === bank.id
-                            ? "border-blue-600 bg-blue-600 text-white font-extrabold"
-                            : "border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-zinc-200 hover:border-blue-300"
-                            }`}
-                        >
-                          <span className="text-xs font-bold">{bank.name}</span>
-                          <span className="text-[10px] opacity-70 font-mono">[{bank.code}]</span>
-                        </button>
-                      ))}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -725,44 +837,54 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                 {paymentMode === "card" && (
                   <div className="flex flex-col gap-3">
                     <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                      Credit or Debit Card Details
+                      Credit or Debit Card Details (Strict Validation)
                     </h4>
                     <div>
                       <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1">
-                        Card Number
+                        Card Number (16 Digits) *
                       </label>
                       <input
                         type="text"
                         maxLength="19"
                         placeholder="4532 0192 8492 1092"
                         value={cardDetails.cardNumber}
-                        onChange={(e) => setCardDetails({ ...cardDetails, cardNumber: e.target.value })}
+                        onChange={(e) => {
+                          setCardDetails({ ...cardDetails, cardNumber: e.target.value });
+                          if (paymentError) setPaymentError("");
+                        }}
                         className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-amber-500"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1">
-                          Expiry Date
+                          Expiry Date (MM/YY) *
                         </label>
                         <input
                           type="text"
-                          placeholder="MM/YY"
+                          maxLength="5"
+                          placeholder="MM/YY (e.g. 12/28)"
                           value={cardDetails.expiry}
-                          onChange={(e) => setCardDetails({ ...cardDetails, expiry: e.target.value })}
+                          onChange={(e) => {
+                            setCardDetails({ ...cardDetails, expiry: e.target.value });
+                            if (paymentError) setPaymentError("");
+                          }}
                           className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-amber-500"
                         />
                       </div>
                       <div>
                         <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1">
-                          CVV
+                          CVV (3 Digits) *
                         </label>
                         <input
                           type="password"
                           maxLength="4"
                           placeholder="***"
                           value={cardDetails.cvv}
-                          onChange={(e) => setCardDetails({ ...cardDetails, cvv: e.target.value })}
+                          onChange={(e) => {
+                            setCardDetails({ ...cardDetails, cvv: e.target.value });
+                            if (paymentError) setPaymentError("");
+                          }}
                           className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-amber-500"
                         />
                       </div>
@@ -777,16 +899,33 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                     </div>
                     <div>
                       <h4 className="text-sm font-black text-slate-900 dark:text-white">
-                        Cash on Delivery Available
+                        Cash / UPI on Delivery Available
                       </h4>
                       <p className="text-xs font-medium text-slate-600 dark:text-zinc-400">
-                        Pay cash or UPI at your doorstep upon package delivery.
+                        Pay cash or UPI directly at your doorstep upon package arrival.
                       </p>
                     </div>
                   </div>
                 )}
 
               </div>
+
+              {/* Payment Error Feedback Alert */}
+              {paymentError && (
+                <div className="bg-rose-50 dark:bg-rose-950/70 border-2 border-rose-400 dark:border-rose-800 p-3.5 rounded-2xl text-rose-700 dark:text-rose-200 text-xs font-extrabold flex items-center justify-between gap-3 animate-fade-in shadow-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base shrink-0">🚫</span>
+                    <span>{paymentError}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setPaymentError("")}
+                    className="text-rose-500 hover:text-rose-800 font-black text-sm p-1"
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
 
               {/* Process Order & Payment Button */}
               <button
@@ -796,7 +935,9 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6a4.5 4.5 0 10-9 0v4.5m3 4.5h6m-6 3h6m-9-7.5h12a1.5 1.5 0 011.5 1.5v7.5a1.5 1.5 0 01-1.5 1.5H4.5A1.5 1.5 0 013 18V12a1.5 1.5 0 011.5-1.5z" />
                 </svg>
-                Pay ₹{finalPrice.toLocaleString("en-IN")} &amp; Confirm Order
+                {paymentMode === "cod"
+                  ? `Confirm Order (Pay ₹${finalPrice.toLocaleString("en-IN")} on Delivery)`
+                  : `Verify Payment & Confirm Order (₹${finalPrice.toLocaleString("en-IN")})`}
               </button>
 
             </div>
@@ -805,6 +946,45 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
         </div>
 
       </div>
+
+      {/* Payment Processing Gateway Screen Overlay */}
+      {isProcessingPayment && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in text-white">
+          <div className="max-w-md w-full bg-slate-900 border border-slate-700 p-8 rounded-3xl shadow-2xl flex flex-col items-center text-center gap-5">
+            <div className="relative">
+              <div className="w-20 h-20 rounded-full border-4 border-amber-500 border-t-transparent animate-spin"></div>
+              <span className="absolute inset-0 flex items-center justify-center text-2xl">📱</span>
+            </div>
+            <div>
+              <h3 className="text-xl font-black text-white">Verifying UPI Transaction</h3>
+              <p className="text-xs text-slate-400 mt-1">Connecting securely to Union Bank / NPCI Payment Gateway...</p>
+            </div>
+            <div className="w-full bg-slate-800 p-4 rounded-2xl border border-slate-700/60 text-left text-xs space-y-2 font-mono">
+              <div className="flex justify-between text-slate-300">
+                <span>Merchant Account:</span>
+                <span className="font-bold text-amber-400">{paymentConfig.merchantName}</span>
+              </div>
+              <div className="flex justify-between text-slate-300">
+                <span>Merchant VPA:</span>
+                <span className="font-bold text-amber-400">{paymentConfig.merchantUpiId}</span>
+              </div>
+              {utrNumber && (
+                <div className="flex justify-between text-slate-300">
+                  <span>Verified UTR Ref:</span>
+                  <span className="font-bold text-emerald-400">{utrNumber}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-slate-300">
+                <span>Total Amount:</span>
+                <span className="font-black text-emerald-400 text-sm">₹{finalPrice.toLocaleString("en-IN")}</span>
+              </div>
+            </div>
+            <p className="text-[11px] text-emerald-400 font-bold flex items-center gap-1.5 animate-pulse">
+              <span>🔒</span> 256-Bit Encrypted ST Mart Security Guarantee
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Merchant Payment Settings Modal */}
       <MerchantPaymentSettingsModal

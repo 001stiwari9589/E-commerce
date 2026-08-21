@@ -63,7 +63,7 @@ app.get("/api/health", async (req, res) => {
 
 // --- PRODUCT ENDPOINTS ---
 
-// GET /api/products (MongoDB Query with filtering)
+// GET /api/products (MongoDB Query with filtering & local db.json fallback)
 app.get("/api/products", async (req, res) => {
   try {
     const { category, search } = req.query;
@@ -87,7 +87,41 @@ app.get("/api/products", async (req, res) => {
     let products = [];
 
     if (isMongoConnected) {
+      // Auto-sync products from db.json if database lacks new products
+      if (fs.existsSync(SEED_JSON_PATH)) {
+        try {
+          const rawData = fs.readFileSync(SEED_JSON_PATH, "utf-8");
+          const parsed = JSON.parse(rawData);
+          if (parsed.products && parsed.products.length > 0) {
+            for (const p of parsed.products) {
+              await Product.updateOne({ id: p.id }, { $set: p }, { upsert: true });
+            }
+          }
+        } catch (e) {
+          console.warn("DB auto-sync warning:", e.message);
+        }
+      }
       products = await Product.find(filter).sort({ id: -1 }).lean();
+    }
+
+    // Fallback to reading db.json if MongoDB returns empty
+    if (products.length === 0 && fs.existsSync(SEED_JSON_PATH)) {
+      const rawData = fs.readFileSync(SEED_JSON_PATH, "utf-8");
+      const parsed = JSON.parse(rawData);
+      let allLocal = parsed.products || [];
+      if (category && category !== "all") {
+        allLocal = allLocal.filter(p => (p.category || "").toLowerCase() === category.toLowerCase());
+      }
+      if (search) {
+        const s = search.toLowerCase();
+        allLocal = allLocal.filter(p => 
+          (p.name || "").toLowerCase().includes(s) || 
+          (p.brand || "").toLowerCase().includes(s) || 
+          (p.category || "").toLowerCase().includes(s) ||
+          (p.desc || "").toLowerCase().includes(s)
+        );
+      }
+      products = allLocal;
     }
 
     res.json({ success: true, count: products.length, data: products });
@@ -199,6 +233,14 @@ app.post("/api/auth/register", async (req, res) => {
   }
 });
 
+const normalizeKey = (emailOrPhone) => {
+  if (!emailOrPhone) return "";
+  const clean = emailOrPhone.trim().toLowerCase();
+  if (clean.includes("@")) return clean;
+  const digits = clean.replace(/\D/g, "");
+  return digits.length >= 10 ? digits.slice(-10) : digits;
+};
+
 // POST /api/auth/send-otp (Send real OTP to Email/SMS)
 app.post("/api/auth/send-otp", async (req, res) => {
   try {
@@ -207,26 +249,26 @@ app.post("/api/auth/send-otp", async (req, res) => {
       return res.status(400).json({ success: false, message: "Email or Phone is required" });
     }
 
-    const key = emailOrPhone.toLowerCase().trim();
-    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+    const key = normalizeKey(emailOrPhone);
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     activeOtpStore.set(key, {
       otp,
       expiresAt: Date.now() + 10 * 60 * 1000,
     });
 
-    if (key.includes("@")) {
+    if (emailOrPhone.includes("@")) {
       try {
         await mailTransporter.sendMail({
           from: '"ST Mart Verification" <no-reply@stmart.com>',
-          to: key,
+          to: emailOrPhone.trim(),
           subject: `${otp} is your ST Mart Security Verification Code`,
           html: `
             <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f8;">
               <div style="max-width: 500px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 12px; border: 1px solid #e0e0e0;">
                 <h2 style="color: #2563eb; margin-top: 0;">ST MART Security OTP</h2>
                 <p>Hello,</p>
-                <p>Your 4-digit security verification code for <strong>ST Mart</strong> is:</p>
+                <p>Your 6-digit security verification code for <strong>ST Mart</strong> is:</p>
                 <div style="font-size: 32px; font-weight: bold; color: #059669; letter-spacing: 4px; padding: 15px; background: #ecfdf5; border-radius: 8px; text-align: center; margin: 20px 0;">
                   ${otp}
                 </div>
@@ -258,7 +300,7 @@ app.post("/api/auth/verify-otp", async (req, res) => {
       return res.status(400).json({ success: false, message: "Email/Phone and OTP are required" });
     }
 
-    const key = emailOrPhone.toLowerCase().trim();
+    const key = normalizeKey(emailOrPhone);
     const storedData = activeOtpStore.get(key);
 
     if (storedData && storedData.otp === otp.trim() && Date.now() < storedData.expiresAt) {
@@ -272,7 +314,7 @@ app.post("/api/auth/verify-otp", async (req, res) => {
 
     res.status(400).json({
       success: false,
-      message: `Invalid OTP code! Please check your Email Inbox / SMS for the correct 4-digit verification code.`,
+      message: `Invalid OTP code! Please check your Email Inbox / SMS for the correct 6-digit verification code.`,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

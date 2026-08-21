@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import OrderTrackingModal from "./OrderTrackingModal";
 
 const initialOrders = [
   {
@@ -49,6 +50,7 @@ function MyOrdersPage({ onBack, handleAddToCart, triggerToast, userOrders = [], 
   const [orders, setOrders] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState("all"); // 'all' | 'in-transit' | 'delivered'
   const [activeTrackingOrder, setActiveTrackingOrder] = useState(null);
+  const [trackingModalOrder, setTrackingModalOrder] = useState(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -261,10 +263,10 @@ function MyOrdersPage({ onBack, handleAddToCart, triggerToast, userOrders = [], 
                 {/* Action Buttons */}
                 <div className="flex flex-wrap sm:flex-col items-center sm:items-end justify-end w-full sm:w-auto gap-2 shrink-0 border-t sm:border-t-0 pt-3 sm:pt-0 border-gray-100 dark:border-zinc-800">
                   <button
-                    onClick={() => setActiveTrackingOrder(activeTrackingOrder === ord.id ? null : ord.id)}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-slate-950 font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer"
+                    onClick={() => setTrackingModalOrder(ord)}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-slate-950 font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
                   >
-                    {activeTrackingOrder === ord.id ? "Hide Live Timeline" : "Track Live Status 🚚"}
+                    <span>🗺️</span> Track Live Location
                   </button>
 
                   <button
@@ -353,6 +355,14 @@ function MyOrdersPage({ onBack, handleAddToCart, triggerToast, userOrders = [], 
           ))}
         </div>
       )}
+
+      {/* Flipkart Live Order Location Tracking Modal */}
+      <OrderTrackingModal
+        isOpen={!!trackingModalOrder}
+        onClose={() => setTrackingModalOrder(null)}
+        order={trackingModalOrder}
+        triggerToast={triggerToast}
+      />
 
     </div>
   );
