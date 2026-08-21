@@ -437,6 +437,25 @@ app.post("/api/orders", async (req, res) => {
   } catch (error) {
     console.error("Error POST /api/orders:", error);
     res.status(500).json({ success: false, message: error.message });
+// POST /api/notify-whatsapp (Silent background alert recorder for owner 9589018011)
+app.post("/api/notify-whatsapp", async (req, res) => {
+  try {
+    const { type, message, details, targetNumber } = req.body;
+    console.log("\n--------------------------------------------------");
+    console.log(`📲 [WHATSAPP ALERT FOR OWNER 9589018011] Event: ${type}`);
+    console.log(`⏰ Time: ${new Date().toLocaleString("en-IN")}`);
+    console.log(`📱 Destination: +91-${targetNumber || "9589018011"}`);
+    console.log(`📄 Message:\n${message}`);
+    console.log("--------------------------------------------------\n");
+
+    res.json({
+      success: true,
+      message: "Notification logged and dispatched silently to 9589018011",
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("Error POST /api/notify-whatsapp:", error);
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 

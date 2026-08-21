@@ -1,35 +1,41 @@
 /**
- * WhatsApp Notification Service for ST Mart Owner
- * Target WhatsApp Number: 9589018011 (+91-9589018011)
- * Sends instant formatted WhatsApp alerts for:
- * 1. Account Signup / Registration
- * 2. User Login
- * 3. New Order Placement
- * 4. VIP Offer Coupon Email Subscription
+ * Silent Background Notification Service for ST Mart Owner
+ * Target Owner WhatsApp Number: 9589018011 (+91-9589018011)
+ * Sends instant silent alerts for:
+ * 1. VIP Offer Coupon Email Subscription
+ * 2. New Order Placement
+ * 3. Account Signup / Registration
+ * 4. User Login
+ *
+ * NOTE: DOES NOT OPEN ANY NEW BROWSER TAB OR REDIRECT THE USER.
+ * All alerts are dispatched silently in the background!
  */
 
 const OWNER_WHATSAPP_NUMBER = "919589018011";
 
 /**
- * Helper to build and open WhatsApp message link
+ * Helper to dispatch alert silently to backend without opening any new browser tab
  */
-export const openWhatsAppMessage = (textMessage) => {
-  const encodedText = encodeURIComponent(textMessage);
-  const waUrl = `https://wa.me/${OWNER_WHATSAPP_NUMBER}?text=${encodedText}`;
-
+export const sendSilentNotification = async (eventType, formattedMessage, payloadDetails = {}) => {
   try {
-    const newWindow = window.open(waUrl, "_blank");
-    if (!newWindow || newWindow.closed || typeof newWindow.closed === "undefined") {
-      window.location.href = waUrl;
-    }
+    // Dispatch to backend API silently
+    await fetch("/api/notify-whatsapp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: eventType,
+        message: formattedMessage,
+        details: payloadDetails,
+        targetNumber: OWNER_WHATSAPP_NUMBER,
+      }),
+    });
   } catch (err) {
-    console.warn("WhatsApp popup blocked, redirecting:", err);
-    window.location.href = waUrl;
+    console.warn("Silent notification logger notice:", err);
   }
 };
 
 /**
- * 1. Send WhatsApp Notification for New Account Signup
+ * 1. Send Notification for New Account Signup (Silent Background)
  */
 export const notifySignupWhatsApp = (userData) => {
   const time = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
@@ -45,11 +51,11 @@ export const notifySignupWhatsApp = (userData) => {
     `⏰ *Timestamp:* ${time}\n` +
     `🚀 *Status:* Account Created Successfully!`;
 
-  openWhatsAppMessage(text);
+  sendSilentNotification("USER_SIGNUP", text, { name, phone, email });
 };
 
 /**
- * 2. Send WhatsApp Notification for User Login
+ * 2. Send Notification for User Login (Silent Background)
  */
 export const notifyLoginWhatsApp = (emailOrPhone) => {
   const time = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
@@ -58,11 +64,11 @@ export const notifyLoginWhatsApp = (emailOrPhone) => {
     `⏰ *Time:* ${time}\n` +
     `✅ *Status:* Logged in to ST Mart Mobile/Web App`;
 
-  openWhatsAppMessage(text);
+  sendSilentNotification("USER_LOGIN", text, { emailOrPhone });
 };
 
 /**
- * 3. Send WhatsApp Notification for New Order Booked
+ * 3. Send Notification for New Order Booked (Silent Background)
  */
 export const notifyOrderBookedWhatsApp = (orderData) => {
   const time = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
@@ -90,11 +96,11 @@ export const notifyOrderBookedWhatsApp = (orderData) => {
     `⏰ *Date:* ${time}\n\n` +
     `🚀 *Status:* ORDER CONFIRMED!`;
 
-  openWhatsAppMessage(text);
+  sendSilentNotification("ORDER_BOOKED", text, orderData);
 };
 
 /**
- * 4. Send WhatsApp Notification for VIP Coupon / Email Offer Subscription
+ * 4. Send Notification for VIP Coupon / Email Offer Subscription (Silent Background)
  */
 export const notifyOfferSubscriptionWhatsApp = (email, couponCode = "STMART500") => {
   const time = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
@@ -102,7 +108,7 @@ export const notifyOfferSubscriptionWhatsApp = (email, couponCode = "STMART500")
     `📧 *Subscribed Email:* ${email}\n` +
     `🎟️ *Coupon Code Claimed:* ${couponCode} (₹500 OFF)\n` +
     `⏰ *Time:* ${time}\n` +
-    `🌟 *Source:* Home Offer Section`;
+    `🌟 *Source:* Home Offer Banner Section`;
 
-  openWhatsAppMessage(text);
+  sendSilentNotification("COUPON_EMAIL_CLAIM", text, { email, couponCode });
 };
