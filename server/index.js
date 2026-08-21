@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import nodemailer from "nodemailer";
+import twilio from "twilio";
 import { connectMongoDB } from "./db.js";
 import { Product } from "./models/Product.js";
 import { User } from "./models/User.js";
@@ -9,6 +10,22 @@ import { Order } from "./models/Order.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Twilio WhatsApp Integration (replace env vars or set in .env)
+const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID || "";
+const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN || "";
+const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM || "whatsapp:+14155238886";
+const OWNER_WHATSAPP = process.env.OWNER_WHATSAPP || "whatsapp:+919589018011";
+
+let twilioClient = null;
+if (TWILIO_ACCOUNT_SID && TWILIO_ACCOUNT_SID.startsWith("AC") && TWILIO_AUTH_TOKEN) {
+  try {
+    twilioClient = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+    console.log("✅ Twilio WhatsApp SDK initialized for +919589018011");
+  } catch (err) {
+    console.warn("⚠️ Twilio setup notice:", err.message);
+  }
+}
 
 // In-memory OTP store (email/phone => { otp, expiresAt })
 const activeOtpStore = new Map();
@@ -437,20 +454,41 @@ app.post("/api/orders", async (req, res) => {
   } catch (error) {
     console.error("Error POST /api/orders:", error);
     res.status(500).json({ success: false, message: error.message });
-// POST /api/notify-whatsapp (Silent background alert recorder for owner 9589018011)
+// POST /api/notify-whatsapp (Silent background alert recorder + Twilio API dispatch to 9589018011)
 app.post("/api/notify-whatsapp", async (req, res) => {
   try {
     const { type, message, details, targetNumber } = req.body;
+    const rawNum = (targetNumber || "9589018011").replace(/\D/g, "");
+    const destPhone = `whatsapp:+${rawNum.startsWith("91") ? rawNum : "91" + rawNum}`;
+
     console.log("\n--------------------------------------------------");
     console.log(`📲 [WHATSAPP ALERT FOR OWNER 9589018011] Event: ${type}`);
     console.log(`⏰ Time: ${new Date().toLocaleString("en-IN")}`);
-    console.log(`📱 Destination: +91-${targetNumber || "9589018011"}`);
+    console.log(`📱 Destination: ${destPhone}`);
     console.log(`📄 Message:\n${message}`);
     console.log("--------------------------------------------------\n");
 
+    let twilioMsgSid = null;
+    if (twilioClient) {
+      try {
+        const twRes = await twilioClient.messages.create({
+          from: TWILIO_WHATSAPP_FROM,
+          to: destPhone,
+          body: message,
+        });
+        twilioMsgSid = twRes.sid;
+        console.log(`🚀 [TWILIO LIVE WHATSAPP SENT!] SID: ${twRes.sid}`);
+      } catch (twErr) {
+        console.error("❌ Twilio API Dispatch Error:", twErr.message);
+      }
+    }
+
     res.json({
       success: true,
-      message: "Notification logged and dispatched silently to 9589018011",
+      message: twilioMsgSid
+        ? `WhatsApp alert sent via Twilio to ${destPhone} (SID: ${twilioMsgSid})`
+        : "Notification recorded on ST Mart Server for +919589018011!",
+      sid: twilioMsgSid,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
