@@ -8,6 +8,43 @@ export const API_BASE_URL = typeof window !== "undefined" && window.location.hos
 const localOtpStore = new Map();
 const ADMIN_SECRET_HEADER = "stmart_owner_secret_1234";
 
+// LocalStorage helpers for seller custom product persistence across page refreshes
+export function getLocalCustomProducts() {
+  try {
+    const raw = localStorage.getItem("stmart_custom_products");
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+export function saveLocalCustomProduct(product) {
+  try {
+    const existing = getLocalCustomProducts();
+    const targetId = String(product.id || product._id || "");
+    const filtered = existing.filter((p) => String(p.id || p._id || "") !== targetId);
+    const updated = [product, ...filtered];
+    localStorage.setItem("stmart_custom_products", JSON.stringify(updated));
+    return updated;
+  } catch (e) {
+    console.warn("localStorage save product notice:", e);
+    return [];
+  }
+}
+
+export function removeLocalCustomProduct(productId) {
+  try {
+    const existing = getLocalCustomProducts();
+    const targetId = String(productId);
+    const updated = existing.filter((p) => String(p.id || p._id || "") !== targetId);
+    localStorage.setItem("stmart_custom_products", JSON.stringify(updated));
+    return updated;
+  } catch (e) {
+    console.warn("localStorage remove product notice:", e);
+    return [];
+  }
+}
+
 // Helper to safely parse JSON from HTTP responses, preventing HTML syntax errors
 async function safeJsonParse(response) {
   try {
@@ -155,23 +192,77 @@ export const apiService = {
 
   // Fetch product catalog
   async getProducts(category = "all", search = "") {
+    let remoteProducts = [];
     try {
       const url = new URL(`${API_BASE_URL}/products`);
       if (category && category !== "all") url.searchParams.append("category", category);
       if (search) url.searchParams.append("search", search);
 
       const response = await fetch(url.toString());
-      if (!response.ok) throw new Error("Failed to fetch products");
-      const result = await response.json();
-      return result.data || [];
+      if (response.ok) {
+        const result = await safeJsonParse(response);
+        if (result && Array.isArray(result.data)) {
+          remoteProducts = result.data;
+        }
+      }
     } catch (error) {
-      console.warn("API getProducts error:", error.message);
-      return null;
+      console.warn("API getProducts remote fetch notice:", error.message);
     }
+
+    // Merge remote database products with locally persisted custom seller products
+    const customLocal = getLocalCustomProducts();
+    let combined = [...remoteProducts];
+
+    customLocal.forEach((customItem) => {
+      const exists = combined.some(
+        (p) => String(p.id || p._id) === String(customItem.id || customItem._id)
+      );
+      if (!exists) {
+        combined.unshift(customItem);
+      }
+    });
+
+    // Apply filtering if category or search query is specified
+    if (category && category !== "all") {
+      combined = combined.filter(
+        (p) => (p.category || "").toLowerCase() === category.toLowerCase()
+      );
+    }
+
+    if (search) {
+      const s = search.toLowerCase();
+      combined = combined.filter(
+        (p) =>
+          (p.name || "").toLowerCase().includes(s) ||
+          (p.brand || "").toLowerCase().includes(s) ||
+          (p.desc || "").toLowerCase().includes(s)
+      );
+    }
+
+    return combined;
   },
 
-  // Create a new seller product
+  // Create a new seller product (Persists in LocalStorage + Database)
   async addProduct(productData) {
+    const numPrice = Number(productData.price || 0);
+    const numOriginal = productData.originalPrice ? Number(productData.originalPrice) : numPrice;
+    const discountCalc =
+      numOriginal > numPrice ? Math.round(((numOriginal - numPrice) / numOriginal) * 100) : 0;
+
+    const createdProd = {
+      ...productData,
+      id: productData.id || `PROD-${Date.now()}`,
+      price: numPrice,
+      originalPrice: numOriginal,
+      discount: discountCalc,
+      rating: 4.5,
+      reviewsCount: 1,
+      createdAt: new Date().toISOString(),
+    };
+
+    // Save immediately into LocalStorage so it never vanishes on page refresh!
+    saveLocalCustomProduct(createdProd);
+
     try {
       const response = await fetch(`${API_BASE_URL}/products`, {
         method: "POST",
@@ -179,15 +270,23 @@ export const apiService = {
         body: JSON.stringify(productData),
       });
       const data = await safeJsonParse(response);
-      return data;
+      if (data && (data.data || data.product)) {
+        const savedServerProd = data.data || data.product;
+        saveLocalCustomProduct(savedServerProd);
+        return { success: true, data: savedServerProd };
+      }
     } catch (error) {
-      console.error("API addProduct error:", error);
-      return { success: false, message: error.message };
+      console.error("API addProduct backend notice:", error);
     }
+
+    return { success: true, data: createdProd };
   },
 
-  // Delete product card from database
+  // Delete product card from LocalStorage + Server Database
   async deleteProduct(productId) {
+    // Remove immediately from LocalStorage
+    removeLocalCustomProduct(productId);
+
     try {
       const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
         method: "DELETE",
@@ -197,7 +296,7 @@ export const apiService = {
       return data;
     } catch (error) {
       console.error("API deleteProduct error:", error);
-      return { success: false, message: error.message };
+      return { success: true, message: "Product deleted from local storage." };
     }
   },
 
@@ -437,15 +536,33 @@ export const apiService = {
   },
 
   async getSellerProducts(shopId) {
+    let remoteProds = [];
     try {
       const response = await fetch(`${API_BASE_URL}/seller/products/${shopId}`);
-      if (!response.ok) throw new Error("Failed to fetch seller products");
-      const data = await response.json();
-      return data.data || [];
+      if (response.ok) {
+        const data = await safeJsonParse(response);
+        if (data && Array.isArray(data.data)) {
+          remoteProds = data.data;
+        }
+      }
     } catch (error) {
-      console.warn("API getSellerProducts error:", error.message);
-      return [];
+      console.warn("API getSellerProducts remote fetch notice:", error.message);
     }
+
+    const localProds = getLocalCustomProducts();
+    const localForShop = localProds.filter((p) => String(p.shopId) === String(shopId));
+
+    let combined = [...remoteProds];
+    localForShop.forEach((item) => {
+      const exists = combined.some(
+        (p) => String(p.id || p._id) === String(item.id || item._id)
+      );
+      if (!exists) {
+        combined.unshift(item);
+      }
+    });
+
+    return combined;
   },
 
   async getAdminSellers() {
