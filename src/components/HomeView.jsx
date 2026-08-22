@@ -21,6 +21,8 @@ function HomeView({
   const [sortOption, setSortOption] = useState("featured");
   const [subscriberEmail, setSubscriberEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [showClaimModal, setShowClaimModal] = useState(false);
+  const [waDirectUrl, setWaDirectUrl] = useState("");
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -76,9 +78,12 @@ function HomeView({
       return;
     }
     setIsSubscribed(true);
-    notifyOfferSubscriptionWhatsApp(cleanInput, "STMART500");
+    const directUrl = notifyOfferSubscriptionWhatsApp(cleanInput, "STMART500", true);
+    setWaDirectUrl(directUrl || "");
+    setShowClaimModal(true);
+
     if (triggerToast) {
-      triggerToast("🎉 Welcome to ST Mart VIP Club! Coupon Code STMART500 activated & sent to WhatsApp!", "success");
+      triggerToast("🎉 Claim Successful! Coupon Code STMART500 Activated!", "success");
     }
   };
 
@@ -409,6 +414,77 @@ function HomeView({
           )}
         </form>
       </div>
+
+      {/* VIP Coupon Claim Successful Popup Modal */}
+      {showClaimModal && (
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white dark:bg-zinc-900 border border-amber-400/50 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center relative flex flex-col items-center gap-4 animate-zoom-in">
+            {/* Close Button */}
+            <button
+              onClick={() => setShowClaimModal(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-white p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-zinc-800 transition cursor-pointer"
+              title="Close modal"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Sparkle Banner Icon */}
+            <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-300 text-blue-950 font-black text-3xl flex items-center justify-center shadow-xl animate-bounce">
+              🎉
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <span className="text-[11px] font-black uppercase tracking-widest text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 px-3.5 py-1 rounded-full border border-emerald-300 dark:border-emerald-800">
+                ✅ Claim Successful!
+              </span>
+              <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1">
+                ₹500 Off Discount Activated!
+              </h3>
+              <p className="text-xs text-slate-600 dark:text-zinc-300">
+                Coupon code activated for <span className="font-bold text-blue-600 dark:text-amber-400">{subscriberEmail}</span>. Use it at checkout for instant ₹500 discount!
+              </p>
+            </div>
+
+            {/* Coupon Code Display Box */}
+            <div className="w-full bg-slate-100 dark:bg-zinc-800/90 border-2 border-dashed border-amber-400 rounded-2xl p-4 flex items-center justify-between gap-2 shadow-inner">
+              <div className="flex flex-col items-start">
+                <span className="text-[10px] text-slate-400 dark:text-zinc-400 font-bold uppercase tracking-wider">Your Discount Code</span>
+                <span className="text-xl font-black text-amber-500 tracking-wider">STMART500</span>
+              </div>
+
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText("STMART500");
+                  if (triggerToast) triggerToast("Coupon Code 'STMART500' Copied to Clipboard! 📋", "success");
+                }}
+                className="bg-amber-400 hover:bg-amber-300 text-blue-950 font-black text-xs px-4 py-2 rounded-xl transition shadow cursor-pointer active:scale-95"
+              >
+                Copy Code
+              </button>
+            </div>
+
+            {/* WhatsApp Direct Action Button */}
+            <a
+              href={waDirectUrl || `https://wa.me/919589018011?text=${encodeURIComponent("🎉 Claim Successful! Coupon Code STMART500 (₹500 OFF) activated for ST Mart Store!")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3.5 px-5 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs rounded-2xl flex items-center justify-center gap-2 shadow-lg transition active:scale-95 cursor-pointer"
+            >
+              <span>📲</span>
+              <span>Open WhatsApp & Receive Confirmation</span>
+            </a>
+
+            <button
+              onClick={() => setShowClaimModal(false)}
+              className="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-zinc-300 font-bold underline cursor-pointer"
+            >
+              Continue Shopping
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

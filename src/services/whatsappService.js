@@ -103,9 +103,9 @@ export const notifyOrderBookedWhatsApp = (orderData) => {
 };
 
 /**
- * 4. Send Notification for VIP Coupon / Email Offer Subscription (Silent Background)
+ * 4. Send Notification for VIP Coupon / Email Offer Subscription (Silent Background + Direct Link)
  */
-export const notifyOfferSubscriptionWhatsApp = (emailOrPhone, couponCode = "STMART500") => {
+export const notifyOfferSubscriptionWhatsApp = (emailOrPhone, couponCode = "STMART500", openDirectWhatsapp = true) => {
   const time = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
   const cleanInput = (emailOrPhone || "").trim();
   const digits = cleanInput.replace(/\D/g, "");
@@ -119,4 +119,9 @@ export const notifyOfferSubscriptionWhatsApp = (emailOrPhone, couponCode = "STMA
     `🌟 *Status:* STMART500 Discount Code Active!`;
 
   sendSilentNotification("COUPON_EMAIL_CLAIM", text, { emailOrPhone: cleanInput, couponCode }, targetNum);
+
+  if (openDirectWhatsapp) {
+    const encoded = encodeURIComponent(text);
+    return `https://wa.me/91${targetNum}?text=${encoded}`;
+  }
 };
