@@ -316,5 +316,62 @@ export const apiService = {
       return { success: false, message: error.message };
     }
   },
+
+  // Seller Account & Dashboard Methods
+  async registerSeller(sellerData) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/seller/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(sellerData),
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("API registerSeller error:", error);
+      return { success: false, message: error.message };
+    }
+  },
+
+  async loginSeller(shopIdOrEmail, password) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/seller/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ shopIdOrEmail, password }),
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("API loginSeller error:", error);
+      return { success: false, message: error.message };
+    }
+  },
+
+  async getSellerProducts(shopId) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/seller/products/${shopId}`);
+      if (!response.ok) throw new Error("Failed to fetch seller products");
+      const data = await response.json();
+      return data.data || [];
+    } catch (error) {
+      console.warn("API getSellerProducts error:", error.message);
+      return [];
+    }
+  },
+
+  async getAdminSellers() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/admin/sellers`, {
+        headers: { "x-admin-secret": ADMIN_SECRET_HEADER },
+      });
+      if (!response.ok) throw new Error("Failed to fetch admin sellers");
+      const data = await response.json();
+      return data.data || [];
+    } catch (error) {
+      console.warn("API getAdminSellers error:", error.message);
+      return [];
+    }
+  },
 };
 

@@ -12,6 +12,7 @@ const productSchema = new mongoose.Schema({
   reviewsCount: { type: Number, default: 10 },
   image: String,
   desc: String,
+  shopId: String,
   createdAt: { type: Date, default: Date.now },
 });
 

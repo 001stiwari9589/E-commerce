@@ -7,6 +7,7 @@ import { connectMongoDB } from "./db.js";
 import { Product } from "./models/Product.js";
 import { User } from "./models/User.js";
 import { Order } from "./models/Order.js";
+import { Seller } from "./models/Seller.js";
 
 // Auto-load .env file if present
 try {
@@ -160,7 +161,7 @@ app.get("/api/products/:id", async (req, res) => {
 // POST /api/products (Seller Portal endpoint - Create Mongoose Document)
 app.post("/api/products", async (req, res) => {
   try {
-    const { name, brand, category, price, originalPrice, desc, image } = req.body;
+    const { name, brand, category, price, originalPrice, desc, image, shopId } = req.body;
 
     if (!name || !price || !category) {
       return res.status(400).json({
@@ -191,6 +192,7 @@ app.post("/api/products", async (req, res) => {
         image ||
         "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=500&auto=format&fit=crop&q=60",
       desc: desc || "High quality product.",
+      shopId: shopId || "OFFICIAL_STORE",
     });
 
     await newProduct.save();
@@ -569,6 +571,138 @@ app.get("/api/admin/stats", verifyAdminSecret, async (req, res) => {
     });
   } catch (error) {
     console.error("Error GET /api/admin/stats:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// GET /api/admin/sellers - Fetch all registered Seller Shops (Owner Protected)
+app.get("/api/admin/sellers", verifyAdminSecret, async (req, res) => {
+  try {
+    const sellers = await Seller.find().select("-password").sort({ createdAt: -1 }).lean();
+    res.json({ success: true, count: sellers.length, data: sellers });
+  } catch (error) {
+    console.error("Error GET /api/admin/sellers:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// --- SELLER SHOP ACCOUNTS & DASHBOARD ENDPOINTS ---
+
+// POST /api/seller/register - Create Seller Shop Account with Unique Shop ID
+app.post("/api/seller/register", async (req, res) => {
+  try {
+    const { storeName, ownerName, email, phone, category, password } = req.body;
+
+    if (!storeName || !ownerName || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Store Name, Owner Name, Email, and Password are required.",
+      });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const existingSeller = await Seller.findOne({ email: cleanEmail });
+    if (existingSeller) {
+      return res.status(400).json({
+        success: false,
+        message: `Seller account with email ${cleanEmail} already exists! Use Shop ID ${existingSeller.shopId} to login.`,
+        shopId: existingSeller.shopId,
+      });
+    }
+
+    // Generate unique Shop ID (e.g. SHOP-849201)
+    const randomDigits = Math.floor(100000 + Math.random() * 900000);
+    const shopId = `SHOP-${randomDigits}`;
+
+    const newSeller = new Seller({
+      shopId,
+      storeName: storeName.trim(),
+      ownerName: ownerName.trim(),
+      email: cleanEmail,
+      phone: phone ? phone.trim() : "N/A",
+      category: category ? category.toLowerCase() : "electronics",
+      password,
+    });
+
+    await newSeller.save();
+
+    console.log(`\n🏬 [NEW SELLER SHOP REGISTERED] Shop ID: ${shopId} | Store: ${storeName} | Owner: ${ownerName} | Email: ${cleanEmail}\n`);
+
+    res.status(201).json({
+      success: true,
+      message: `Congratulations! Seller Shop ID "${shopId}" registered successfully!`,
+      seller: {
+        shopId: newSeller.shopId,
+        storeName: newSeller.storeName,
+        ownerName: newSeller.ownerName,
+        email: newSeller.email,
+        phone: newSeller.phone,
+        category: newSeller.category,
+        createdAt: newSeller.createdAt,
+      },
+    });
+  } catch (error) {
+    console.error("Error POST /api/seller/register:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// POST /api/seller/login - Authenticate Seller by Shop ID or Email & Password
+app.post("/api/seller/login", async (req, res) => {
+  try {
+    const { shopIdOrEmail, password } = req.body;
+
+    if (!shopIdOrEmail || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Shop ID / Email and Password are required.",
+      });
+    }
+
+    const inputClean = shopIdOrEmail.trim();
+
+    const seller = await Seller.findOne({
+      $or: [
+        { shopId: inputClean.toUpperCase() },
+        { shopId: inputClean },
+        { email: inputClean.toLowerCase() },
+      ],
+    });
+
+    if (!seller || seller.password !== password) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid Shop ID / Email or Password. Please try again.",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: `Welcome back, ${seller.storeName}! Logged in as Shop ID ${seller.shopId}.`,
+      seller: {
+        shopId: seller.shopId,
+        storeName: seller.storeName,
+        ownerName: seller.ownerName,
+        email: seller.email,
+        phone: seller.phone,
+        category: seller.category,
+        createdAt: seller.createdAt,
+      },
+    });
+  } catch (error) {
+    console.error("Error POST /api/seller/login:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// GET /api/seller/products/:shopId - Fetch all products listed by specific seller
+app.get("/api/seller/products/:shopId", async (req, res) => {
+  try {
+    const { shopId } = req.params;
+    const products = await Product.find({ shopId }).sort({ createdAt: -1 }).lean();
+    res.json({ success: true, count: products.length, data: products });
+  } catch (error) {
+    console.error("Error GET /api/seller/products:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 });
