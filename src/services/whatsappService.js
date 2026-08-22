@@ -18,7 +18,8 @@ const OWNER_WHATSAPP_NUMBER = "919589018011";
 /**
  * Helper to dispatch alert silently to backend without opening any new browser tab
  */
-export const sendSilentNotification = async (eventType, formattedMessage, payloadDetails = {}) => {
+export const sendSilentNotification = async (eventType, formattedMessage, payloadDetails = {}, overrideNumber = null) => {
+  const targetNumber = overrideNumber || OWNER_WHATSAPP_NUMBER;
   try {
     // Dispatch to backend API silently
     await fetch(`${API_BASE_URL}/notify-whatsapp`, {
@@ -28,7 +29,7 @@ export const sendSilentNotification = async (eventType, formattedMessage, payloa
         type: eventType,
         message: formattedMessage,
         details: payloadDetails,
-        targetNumber: OWNER_WHATSAPP_NUMBER,
+        targetNumber: targetNumber,
       }),
     });
   } catch (err) {
@@ -104,13 +105,18 @@ export const notifyOrderBookedWhatsApp = (orderData) => {
 /**
  * 4. Send Notification for VIP Coupon / Email Offer Subscription (Silent Background)
  */
-export const notifyOfferSubscriptionWhatsApp = (email, couponCode = "STMART500") => {
+export const notifyOfferSubscriptionWhatsApp = (emailOrPhone, couponCode = "STMART500") => {
   const time = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+  const cleanInput = (emailOrPhone || "").trim();
+  const digits = cleanInput.replace(/\D/g, "");
+  const isPhone = digits.length === 10;
+  const targetNum = isPhone ? digits : OWNER_WHATSAPP_NUMBER;
+
   const text = `🎁 *NEW VIP OFFER / COUPON CLAIM - ST MART* 🎁\n\n` +
-    `📧 *Subscribed Email:* ${email}\n` +
+    `📧 *User Contact:* ${cleanInput}\n` +
     `🎟️ *Coupon Code Claimed:* ${couponCode} (₹500 OFF)\n` +
     `⏰ *Time:* ${time}\n` +
-    `🌟 *Source:* Home Offer Banner Section`;
+    `🌟 *Status:* STMART500 Discount Code Active!`;
 
-  sendSilentNotification("COUPON_EMAIL_CLAIM", text, { email, couponCode });
+  sendSilentNotification("COUPON_EMAIL_CLAIM", text, { emailOrPhone: cleanInput, couponCode }, targetNum);
 };

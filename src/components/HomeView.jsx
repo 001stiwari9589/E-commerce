@@ -70,14 +70,15 @@ function HomeView({
 
   const handleSubscribe = (e) => {
     e.preventDefault();
-    if (!subscriberEmail || !subscriberEmail.includes("@")) {
-      if (triggerToast) triggerToast("Please enter a valid email address.", "warning");
+    const cleanInput = (subscriberEmail || "").trim();
+    if (!cleanInput) {
+      if (triggerToast) triggerToast("Please enter your email or 10-digit mobile number.", "warning");
       return;
     }
     setIsSubscribed(true);
-    notifyOfferSubscriptionWhatsApp(subscriberEmail, "STMART500");
+    notifyOfferSubscriptionWhatsApp(cleanInput, "STMART500");
     if (triggerToast) {
-      triggerToast("🎉 Welcome to ST Mart VIP Club! Your ₹500 Coupon Code: STMART500 sent to WhatsApp!", "success");
+      triggerToast("🎉 Welcome to ST Mart VIP Club! Coupon Code STMART500 activated & sent to WhatsApp!", "success");
     }
   };
 
@@ -391,9 +392,9 @@ function HomeView({
           ) : (
             <>
               <input
-                type="email"
+                type="text"
                 required
-                placeholder="Enter your email address"
+                placeholder="Enter your email or 10-digit mobile number"
                 value={subscriberEmail}
                 onChange={(e) => setSubscriberEmail(e.target.value)}
                 className="px-4 py-3 rounded-2xl bg-white text-slate-900 placeholder:text-slate-400 text-xs font-semibold focus:outline-none w-full sm:w-72 shadow-inner"

@@ -39,17 +39,17 @@ const verifyAdminSecret = (req, res, next) => {
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Twilio WhatsApp Integration (replace env vars or set in .env)
+// Twilio WhatsApp Integration Configuration & Fallbacks
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID || "";
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN || "";
-const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM || "whatsapp:+14155238886";
+const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM || "whatsapp:+17372508034";
 const OWNER_WHATSAPP = process.env.OWNER_WHATSAPP || "whatsapp:+919589018011";
 
 let twilioClient = null;
 if (TWILIO_ACCOUNT_SID && TWILIO_ACCOUNT_SID.startsWith("AC") && TWILIO_AUTH_TOKEN) {
   try {
     twilioClient = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
-    console.log("✅ Twilio WhatsApp SDK initialized for +919589018011");
+    console.log("✅ Twilio WhatsApp SDK initialized for +919589018011 (From: " + TWILIO_WHATSAPP_FROM + ")");
   } catch (err) {
     console.warn("⚠️ Twilio setup notice:", err.message);
   }
