@@ -1,0 +1,94 @@
+================================================================================
+          ST MART E-COMMERCE MARKETPLACE - COMPLETE PROJECT GUIDE
+================================================================================
+
+1. LIVE URLS & REPOSITORY
+--------------------------------------------------------------------------------
+• Live Frontend (Vercel):  https://e-commerce-satyam-ecommerce.vercel.app
+• Live Backend (Render):   https://e-commerce-20vs.onrender.com/api
+• GitHub Repository:       https://github.com/001stiwari9589/E-commerce.git
+
+
+2. LOCAL RUN COMMANDS (TERMINAL)
+--------------------------------------------------------------------------------
+Open terminal in project root folder (E-commerce):
+
+• Start Local Frontend Dev Server (Vite):
+  npm run dev
+  --> Opens: http://localhost:5173
+
+• Start Local Express Backend + MongoDB Server:
+  npm run server
+  --> Opens: http://localhost:5000/api
+
+• Production Build Check:
+  npx vite build
+
+
+3. HOW TO OPEN OWNER ADMIN PANEL (👑 ADMIN DASHBOARD)
+--------------------------------------------------------------------------------
+For security, the Admin button is hidden from public customers and sellers.
+You (the Owner) can access it using 2 secret methods:
+
+• METHOD 1 (Fastest Keyboard Shortcut):
+  Press "Ctrl + Shift + A" on your keyboard anywhere on the website.
+
+• METHOD 2 (Secret Footer Link):
+  Scroll to the very bottom of the website (Footer) -> Click "✦ Owner Portal".
+
+• ADMIN UNLOCK SECURITY PIN:
+  PIN Code: 1234
+  --> Unlocks Sales Revenue, Total Orders, Users List, and Seller Shops Management.
+
+
+4. HOW SELLER PORTAL (BECOME SELLER) WORKS
+--------------------------------------------------------------------------------
+• Shopkeepers click "Become Seller" in Navbar or Footer.
+• Registering a store generates a unique Digital Shop ID (e.g., SHOP-849201).
+• Sellers can list products live with images, price, MRP, and descriptions.
+• Product Persistence: Products added by sellers stay permanently saved 
+  in LocalStorage & Database until explicitly clicked "Delete".
+
+
+5. REAL-TIME WHATSAPP NOTIFICATION SYSTEM (TWILIO)
+--------------------------------------------------------------------------------
+• Target Owner Mobile: +919589018011
+• Twilio Sandbox Number: +1 737 250 8034
+• One-time Activation (if needed):
+  Send "join twilio-trial" from WhatsApp (9589018011) to +17372508034.
+
+• Real-time WhatsApp Alerts sent for:
+  1. New Order Placement (Invoice, Customer Name, Address, Total Amount, Items)
+  2. New User Registration & Account Signup
+  3. User Login Alerts
+  4. VIP Offer Email Subscriptions
+
+
+6. ENVIRONMENT CONFIGURATION (.env)
+--------------------------------------------------------------------------------
+The project uses the following configuration in .env and Render.com Environment:
+
+PORT=5000
+TWILIO_ACCOUNT_SID=YOUR_TWILIO_ACCOUNT_SID
+TWILIO_AUTH_TOKEN=YOUR_TWILIO_AUTH_TOKEN
+TWILIO_WHATSAPP_FROM=whatsapp:+17372508034
+OWNER_WHATSAPP=whatsapp:+919589018011
+
+
+7. GIT & LIVE DEPLOYMENT COMMANDS
+--------------------------------------------------------------------------------
+Whenever you update code and want to deploy live to Vercel:
+
+1. Stage all changes:
+   git add .
+
+2. Commit changes:
+   git commit -m "Update project features"
+
+3. Push to GitHub (Auto-deploys to Vercel instantly):
+   git push origin main
+
+
+================================================================================
+             ST MART - INDIA'S MOST TRUSTED SHOPPING DESTINATION 🚀
+================================================================================
