@@ -192,11 +192,11 @@ function HomeView({
                   </h4>
                   <div className="flex items-baseline gap-2 mt-1.5">
                     <span className="text-sm font-black text-rose-600 dark:text-rose-400">
-                      ₹{product.price.toLocaleString("en-IN")}
+                      ₹{Number(product.price || 0).toLocaleString("en-IN")}
                     </span>
                     {product.originalPrice && (
                       <span className="text-[10px] text-slate-400 dark:text-zinc-500 line-through">
-                        ₹{product.originalPrice.toLocaleString("en-IN")}
+                        ₹{Number(product.originalPrice || 0).toLocaleString("en-IN")}
                       </span>
                     )}
                   </div>

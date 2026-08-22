@@ -7,7 +7,8 @@ function ProductCard({
   cartItems = [],
   handleUpdateQty,
 }) {
-  const cartItem = cartItems.find((item) => item.id === product.id);
+  if (!product) return null;
+  const cartItem = cartItems.find((item) => item && item.id === product.id);
   const cartQuantity = cartItem ? cartItem.qty : 0;
 
   return (
@@ -84,11 +85,11 @@ function ProductCard({
           {/* Pricing detail */}
           <div className="flex items-baseline gap-1 mt-2 sm:mt-3 flex-wrap">
             <span className="text-xs sm:text-base font-extrabold text-slate-900 dark:text-white">
-              ₹{product.price.toLocaleString("en-IN")}
+              ₹{Number(product.price || 0).toLocaleString("en-IN")}
             </span>
             {product.originalPrice && (
               <span className="text-[10px] sm:text-xs text-slate-400 dark:text-zinc-500 line-through">
-                ₹{product.originalPrice.toLocaleString("en-IN")}
+                ₹{Number(product.originalPrice || 0).toLocaleString("en-IN")}
               </span>
             )}
           </div>

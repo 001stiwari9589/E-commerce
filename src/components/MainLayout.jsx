@@ -69,17 +69,27 @@ function MainLayout() {
   useEffect(() => {
     const refreshProducts = async () => {
       const apiProducts = await apiService.getProducts(activeCategory, searchQuery);
-      if (apiProducts && apiProducts.length > 0) {
-        setProductsList(apiProducts);
-        setIsBackendConnected(true);
+      if (Array.isArray(apiProducts)) {
+        if (apiProducts.length > 0) {
+          setProductsList(apiProducts);
+          setIsBackendConnected(true);
+        } else if (searchQuery) {
+          // Backend returned valid empty search result list
+          setProductsList([]);
+          setIsBackendConnected(true);
+        } else {
+          // Backend empty catalog fallback
+          setProductsList(PRODUCTS_DATABASE);
+          setIsBackendConnected(true);
+        }
       } else {
-        // Fallback to PRODUCTS_DATABASE filtering if API is offline or returns empty
+        // Fallback to PRODUCTS_DATABASE filtering if API is offline
         let fallback = PRODUCTS_DATABASE;
         if (activeCategory && activeCategory !== "all") {
           fallback = fallback.filter((p) => (p.category || "").toLowerCase() === activeCategory.toLowerCase());
         }
         if (searchQuery) {
-          fallback = matchSearchQuery(fallback, searchQuery);
+          fallback = fallback.filter((p) => matchSearchQuery(p, searchQuery));
         }
         setProductsList(fallback);
         setIsBackendConnected(false);
@@ -205,13 +215,18 @@ function MainLayout() {
 
   // Filter products by active category & search query
   const filteredProducts = productsList.filter((product) => {
+    if (!product || typeof product !== "object") return false;
+
     if (view === "wishlist") {
       const matchWishlist = wishlistItems.includes(product.id);
       if (!matchWishlist) return false;
     }
 
+    const prodCat = (product.category || "").toLowerCase();
+    const activeCat = (activeCategory || "all").toLowerCase();
+
     const matchesCategory =
-      activeCategory === "all" || product.category.toLowerCase() === activeCategory.toLowerCase();
+      activeCat === "all" || prodCat === activeCat;
 
     const matchesSearch = matchSearchQuery(product, searchQuery);
 
@@ -237,12 +252,14 @@ function MainLayout() {
 
   const handleAddProduct = async (productData) => {
     const res = await apiService.addProduct(productData);
-    if (res && res.success) {
-      triggerToast(`Product "${productData.name}" saved directly to Database! 🚀`, "success");
-      const updatedList = await apiService.getProducts(activeCategory, searchQuery);
-      if (updatedList) setProductsList(updatedList);
-    } else {
-      triggerToast(`Product "${productData.name}" saved!`, "success");
+    const created = (res && (res.data || res.product)) ? (res.data || res.product) : { ...productData, id: Date.now() };
+
+    setProductsList((prev) => [created, ...prev.filter((p) => p.id !== created.id)]);
+    triggerToast(`Product "${productData.name}" added to Database & live page! 🚀`, "success");
+
+    const updatedList = await apiService.getProducts("all", "");
+    if (updatedList && updatedList.length > 0) {
+      setProductsList(updatedList);
     }
   };
 

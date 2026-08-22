@@ -8,6 +8,7 @@
  */
 
 export const matchSearchQuery = (product, rawQuery) => {
+  if (!product || typeof product !== "object") return false;
   if (!rawQuery || !rawQuery.trim()) return true;
 
   const query = rawQuery.trim().toLowerCase();
