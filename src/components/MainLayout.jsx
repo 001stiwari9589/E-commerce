@@ -111,6 +111,19 @@ function MainLayout() {
     }
   }, [isDarkMode]);
 
+  // Secret Owner Keyboard Shortcut: Ctrl + Shift + A to access Admin Panel
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "A" || e.key === "a")) {
+        e.preventDefault();
+        setView("admin");
+        if (triggerToast) triggerToast("👑 Owner Shortcut Triggered: Admin Panel Opened", "info");
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const triggerToast = (message, type = "success") => {
     setToast({ message, type });
   };

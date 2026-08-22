@@ -162,6 +162,9 @@ function Footer({ setView }) {
           <button onClick={() => setView && setView("gift-cards")} className="hover:text-amber-400 cursor-pointer transition-colors">
             Gift Cards
           </button>
+          <button onClick={() => setView && setView("admin")} className="text-zinc-600 dark:text-zinc-500 hover:text-amber-400 cursor-pointer transition-colors text-[10px]">
+            ✦ Owner Portal
+          </button>
         </div>
       </div>
     </footer>
