@@ -11,6 +11,8 @@
  * All alerts are dispatched silently in the background!
  */
 
+import { API_BASE_URL } from "./api.js";
+
 const OWNER_WHATSAPP_NUMBER = "919589018011";
 
 /**
@@ -19,7 +21,7 @@ const OWNER_WHATSAPP_NUMBER = "919589018011";
 export const sendSilentNotification = async (eventType, formattedMessage, payloadDetails = {}) => {
   try {
     // Dispatch to backend API silently
-    await fetch("/api/notify-whatsapp", {
+    await fetch(`${API_BASE_URL}/notify-whatsapp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
