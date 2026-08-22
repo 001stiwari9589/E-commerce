@@ -28,6 +28,7 @@ import SecurityPage from "./SecurityPage";
 import PrivacyPolicyPage from "./PrivacyPolicyPage";
 import AdvertisePage from "./AdvertisePage";
 import GiftCardsPage from "./GiftCardsPage";
+import AdminPanelPage from "./AdminPanelPage";
 
 import { PRODUCTS_DATABASE } from "../data/products";
 import { safeLocalStorage } from "../utils/localStorage";
@@ -450,6 +451,15 @@ function MainLayout() {
 
         {view === "gift-cards" && (
           <GiftCardsPage onBack={() => setView("home")} triggerToast={triggerToast} />
+        )}
+
+        {view === "admin" && (
+          <AdminPanelPage
+            onBack={() => setView("home")}
+            triggerToast={triggerToast}
+            setView={setView}
+            onAddProduct={handleAddProduct}
+          />
         )}
 
       </main>

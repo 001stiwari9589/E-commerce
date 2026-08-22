@@ -6,6 +6,7 @@ const API_BASE_URL = typeof window !== "undefined" && window.location.hostname =
 
 // Local in-memory OTP store fallback
 const localOtpStore = new Map();
+const ADMIN_SECRET_HEADER = "stmart_owner_secret_1234";
 
 export const apiService = {
   // Normalize email or mobile number key for reliable store lookup
@@ -164,6 +165,21 @@ export const apiService = {
     }
   },
 
+  // Delete product card from database
+  async deleteProduct(productId) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
+        method: "DELETE",
+        headers: { "x-admin-secret": ADMIN_SECRET_HEADER },
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("API deleteProduct error:", error);
+      return { success: false, message: error.message };
+    }
+  },
+
   // Authenticate User Login
   async login(email, password) {
     try {
@@ -253,4 +269,52 @@ export const apiService = {
       return [];
     }
   },
+
+  // Admin Methods
+  async getAdminUsers() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/admin/users`, {
+        headers: { "x-admin-secret": ADMIN_SECRET_HEADER },
+      });
+      if (!response.ok) throw new Error("Failed to fetch admin users");
+      const data = await response.json();
+      return data.data || [];
+    } catch (error) {
+      console.warn("API getAdminUsers error:", error.message);
+      return [];
+    }
+  },
+
+  async getAdminStats() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/admin/stats`, {
+        headers: { "x-admin-secret": ADMIN_SECRET_HEADER },
+      });
+      if (!response.ok) throw new Error("Failed to fetch admin stats");
+      const data = await response.json();
+      return data.data || null;
+    } catch (error) {
+      console.warn("API getAdminStats error:", error.message);
+      return null;
+    }
+  },
+
+  async updateOrderStatus(orderId, status) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/orders/${orderId}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-secret": ADMIN_SECRET_HEADER,
+        },
+        body: JSON.stringify({ status }),
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("API updateOrderStatus error:", error);
+      return { success: false, message: error.message };
+    }
+  },
 };
+

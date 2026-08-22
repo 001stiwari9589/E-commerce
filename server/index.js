@@ -8,6 +8,13 @@ import { Product } from "./models/Product.js";
 import { User } from "./models/User.js";
 import { Order } from "./models/Order.js";
 
+// Auto-load .env file if present
+try {
+  process.loadEnvFile();
+} catch (e) {
+  // .env file is optional or handled by environment
+}
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -104,20 +111,6 @@ app.get("/api/products", async (req, res) => {
     let products = [];
 
     if (isMongoConnected) {
-      // Auto-sync products from db.json if database lacks new products
-      if (fs.existsSync(SEED_JSON_PATH)) {
-        try {
-          const rawData = fs.readFileSync(SEED_JSON_PATH, "utf-8");
-          const parsed = JSON.parse(rawData);
-          if (parsed.products && parsed.products.length > 0) {
-            for (const p of parsed.products) {
-              await Product.updateOne({ id: p.id }, { $set: p }, { upsert: true });
-            }
-          }
-        } catch (e) {
-          console.warn("DB auto-sync warning:", e.message);
-        }
-      }
       products = await Product.find(filter).sort({ id: -1 }).lean();
     }
 
@@ -209,6 +202,51 @@ app.post("/api/products", async (req, res) => {
     });
   } catch (error) {
     console.error("Error POST /api/products:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// DELETE /api/products/:id (Owner Protected - Delete Product Card from DB & local file)
+app.delete("/api/products/:id", verifyAdminSecret, async (req, res) => {
+  try {
+    const rawId = req.params.id;
+    const numId = Number(rawId);
+
+    const isMongoConnected = mongoose.connection.readyState === 1;
+    if (isMongoConnected) {
+      await Product.findOneAndDelete({
+        $or: [
+          { id: numId },
+          { _id: mongoose.Types.ObjectId.isValid(rawId) ? rawId : null },
+        ],
+      });
+    }
+
+    // Also remove from db.json if present
+    if (fs.existsSync(SEED_JSON_PATH)) {
+      try {
+        const rawData = fs.readFileSync(SEED_JSON_PATH, "utf-8");
+        const parsed = JSON.parse(rawData);
+        if (parsed.products && Array.isArray(parsed.products)) {
+          const initialLen = parsed.products.length;
+          parsed.products = parsed.products.filter(
+            (p) => p.id !== numId && String(p.id) !== rawId && String(p._id) !== rawId
+          );
+          if (parsed.products.length !== initialLen) {
+            fs.writeFileSync(SEED_JSON_PATH, JSON.stringify(parsed, null, 2), "utf-8");
+          }
+        }
+      } catch (e) {
+        console.warn("Notice updating db.json during delete:", e.message);
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `Product card #${rawId} deleted successfully from database!`,
+    });
+  } catch (error) {
+    console.error("Error DELETE /api/products/:id:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 });
@@ -454,6 +492,119 @@ app.post("/api/orders", async (req, res) => {
   } catch (error) {
     console.error("Error POST /api/orders:", error);
     res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// --- ADMIN PANEL SECURITY MIDDLEWARE & ENDPOINTS ---
+const ADMIN_SECRET = process.env.ADMIN_SECRET || "stmart_owner_secret_1234";
+
+const verifyAdminSecret = (req, res, next) => {
+  const reqSecret = req.headers["x-admin-secret"];
+  if (!reqSecret || reqSecret !== ADMIN_SECRET) {
+    return res.status(403).json({
+      success: false,
+      message: "Access Denied: Backend Admin Authorization Required.",
+    });
+  }
+  next();
+};
+
+// GET /api/admin/users - Fetch all registered users (Owner Protected)
+app.get("/api/admin/users", verifyAdminSecret, async (req, res) => {
+  try {
+    const users = await User.find().select("-password").sort({ createdAt: -1 }).lean();
+    res.json({ success: true, count: users.length, data: users });
+  } catch (error) {
+    console.error("Error GET /api/admin/users:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// GET /api/admin/stats - Overview metrics & sales analytics (Owner Protected)
+app.get("/api/admin/stats", verifyAdminSecret, async (req, res) => {
+  try {
+    const totalOrders = await Order.countDocuments();
+    const totalUsers = await User.countDocuments();
+    const totalProducts = await Product.countDocuments();
+
+    const orders = await Order.find().lean();
+    const totalRevenue = orders.reduce((sum, order) => sum + (Number(order.totalAmount) || 0), 0);
+
+    // Calculate product sales aggregation
+    const productSalesMap = {};
+    orders.forEach((ord) => {
+      if (Array.isArray(ord.items)) {
+        ord.items.forEach((item) => {
+          const id = item.id || item._id || item.name;
+          if (!productSalesMap[id]) {
+            productSalesMap[id] = {
+              id: item.id,
+              name: item.name,
+              qtySold: 0,
+              revenue: 0,
+              image: item.image || "",
+            };
+          }
+          const itemQty = Number(item.qty) || 1;
+          const itemPrice = Number(item.price) || 0;
+          productSalesMap[id].qtySold += itemQty;
+          productSalesMap[id].revenue += itemPrice * itemQty;
+        });
+      }
+    });
+
+    const topProducts = Object.values(productSalesMap)
+      .sort((a, b) => b.qtySold - a.qtySold)
+      .slice(0, 10);
+
+    res.json({
+      success: true,
+      data: {
+        totalRevenue,
+        totalOrders,
+        totalUsers,
+        totalProducts,
+        topProducts,
+      },
+    });
+  } catch (error) {
+    console.error("Error GET /api/admin/stats:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// PATCH /api/orders/:id/status - Update order status (Owner Protected)
+app.patch("/api/orders/:id/status", verifyAdminSecret, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status) {
+      return res.status(400).json({ success: false, message: "Status is required." });
+    }
+
+    const updatedOrder = await Order.findOneAndUpdate(
+      { $or: [{ id }, { _id: mongoose.Types.ObjectId.isValid(id) ? id : null }] },
+      { $set: { status } },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ success: false, message: "Order not found." });
+    }
+
+    res.json({
+      success: true,
+      message: `Order status updated to "${status}" successfully!`,
+      order: updatedOrder,
+    });
+  } catch (error) {
+    console.error("Error PATCH /api/orders/:id/status:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+
 // POST /api/notify-whatsapp (Silent background alert recorder + Twilio API dispatch to 9589018011)
 app.post("/api/notify-whatsapp", async (req, res) => {
   try {
