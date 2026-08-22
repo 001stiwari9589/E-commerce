@@ -12,6 +12,13 @@ import { User } from "./models/User.js";
 import { Order } from "./models/Order.js";
 import { Seller } from "./models/Seller.js";
 
+// Auto-load .env file if present
+try {
+  process.loadEnvFile();
+} catch (e) {
+  // .env file is optional or handled by environment
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const SEED_JSON_PATH = path.join(__dirname, "db.json");
@@ -28,13 +35,6 @@ const verifyAdminSecret = (req, res, next) => {
   }
   next();
 };
-
-// Auto-load .env file if present
-try {
-  process.loadEnvFile();
-} catch (e) {
-  // .env file is optional or handled by environment
-}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
