@@ -28,6 +28,7 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
     category: "electronics",
     password: "",
   });
+  const [registerErrors, setRegisterErrors] = useState({});
   const [isRegistering, setIsRegistering] = useState(false);
   const [registeredBadge, setRegisteredBadge] = useState(null);
 
@@ -36,6 +37,7 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
     shopIdOrEmail: "",
     password: "",
   });
+  const [loginErrors, setLoginErrors] = useState({});
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   // Add Product Form State in Dashboard
@@ -50,6 +52,7 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
     image: "",
     desc: "",
   });
+  const [productErrors, setProductErrors] = useState({});
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -58,6 +61,105 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
       fetchSellerProducts(activeSeller.shopId);
     }
   }, [activeSeller?.shopId]);
+
+  // Validate Seller Registration Form
+  const validateRegisterForm = () => {
+    const errs = {};
+    const store = (registerForm.storeName || "").trim();
+    const owner = (registerForm.ownerName || "").trim();
+    const email = (registerForm.email || "").trim();
+    const phone = (registerForm.phone || "").trim().replace(/\D/g, "");
+    const pass = registerForm.password || "";
+
+    if (!store) {
+      errs.storeName = "Store Name is required.";
+    } else if (store.length < 3) {
+      errs.storeName = "Store Name must be at least 3 characters long.";
+    }
+
+    if (!owner) {
+      errs.ownerName = "Owner Name is required.";
+    } else if (owner.length < 3 || !/^[a-zA-Z\s.]{3,}$/.test(owner)) {
+      errs.ownerName = "Owner Name must contain only letters & spaces (min 3 chars).";
+    }
+
+    if (!email) {
+      errs.email = "Business Email is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errs.email = "Enter a valid email address (e.g. seller@stmart.com).";
+    }
+
+    if (phone && (phone.length !== 10 || !/^[6-9]\d{9}$/.test(phone))) {
+      errs.phone = "Mobile phone must be a 10-digit number starting with 6, 7, 8, or 9.";
+    }
+
+    if (!pass) {
+      errs.password = "Password is required.";
+    } else if (pass.length < 6) {
+      errs.password = "Password must be at least 6 characters long.";
+    }
+
+    setRegisterErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  // Validate Seller Login Form
+  const validateLoginForm = () => {
+    const errs = {};
+    const identifier = (loginForm.shopIdOrEmail || "").trim();
+    const pass = loginForm.password || "";
+
+    if (!identifier) {
+      errs.shopIdOrEmail = "Shop ID or Email is required.";
+    }
+
+    if (!pass) {
+      errs.password = "Password is required.";
+    }
+
+    setLoginErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  // Validate Add Product Form
+  const validateProductForm = () => {
+    const errs = {};
+    const name = (newProductForm.name || "").trim();
+    const brand = (newProductForm.brand || "").trim();
+    const priceNum = Number(newProductForm.price);
+    const origPriceNum = newProductForm.originalPrice ? Number(newProductForm.originalPrice) : null;
+    const image = (newProductForm.image || "").trim();
+    const desc = (newProductForm.desc || "").trim();
+
+    if (!name) {
+      errs.name = "Product name is required.";
+    } else if (name.length < 3) {
+      errs.name = "Product name must be at least 3 characters.";
+    }
+
+    if (brand && brand.length < 2) {
+      errs.brand = "Brand name must be at least 2 characters.";
+    }
+
+    if (!newProductForm.price || isNaN(priceNum) || priceNum <= 0) {
+      errs.price = "Enter a valid selling price greater than ₹0.";
+    }
+
+    if (origPriceNum !== null && (isNaN(origPriceNum) || origPriceNum < priceNum)) {
+      errs.originalPrice = "Original Price (MRP) cannot be less than Selling Price.";
+    }
+
+    if (image && !/^https?:\/\/.+/i.test(image)) {
+      errs.image = "Please enter a valid HTTP/HTTPS image URL.";
+    }
+
+    if (desc && desc.length < 10) {
+      errs.desc = "Description must be at least 10 characters.";
+    }
+
+    setProductErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
 
   // Fetch Seller Products
   const fetchSellerProducts = async (shopId) => {
@@ -76,8 +178,8 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
   // Handle Shop Registration
   const handleRegisterShop = async (e) => {
     e.preventDefault();
-    if (!registerForm.storeName || !registerForm.ownerName || !registerForm.email || !registerForm.password) {
-      if (triggerToast) triggerToast("Please complete all required fields!", "warning");
+    if (!validateRegisterForm()) {
+      if (triggerToast) triggerToast("Please fix the highlighted errors in the form!", "warning");
       return;
     }
 
@@ -88,6 +190,7 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
         setRegisteredBadge(res.seller);
         setActiveSeller(res.seller);
         localStorage.setItem("stmart_active_seller", JSON.stringify(res.seller));
+        setRegisterErrors({});
 
         if (triggerToast) {
           triggerToast(`🎉 Shop ID "${res.seller.shopId}" generated successfully!`, "success");
@@ -106,8 +209,8 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
   // Handle Seller Login
   const handleSellerLogin = async (e) => {
     e.preventDefault();
-    if (!loginForm.shopIdOrEmail || !loginForm.password) {
-      if (triggerToast) triggerToast("Please enter Shop ID / Email and Password!", "warning");
+    if (!validateLoginForm()) {
+      if (triggerToast) triggerToast("Please enter valid credentials!", "warning");
       return;
     }
 
@@ -118,13 +221,14 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
         setActiveSeller(res.seller);
         localStorage.setItem("stmart_active_seller", JSON.stringify(res.seller));
         setActiveTab("dashboard");
+        setLoginErrors({});
         fetchSellerProducts(res.seller.shopId);
 
         if (triggerToast) {
           triggerToast(`Welcome back, ${res.seller.storeName}! Logged in as Shop ID ${res.seller.shopId}`, "success");
         }
       } else {
-        if (triggerToast) triggerToast(res.message || "Invalid credentials!", "error");
+        if (triggerToast) triggerToast(res.message || "Invalid Shop ID / Email or Password!", "error");
       }
     } catch (err) {
       console.error("Error logging in seller:", err);
@@ -356,9 +460,19 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
                     required
                     placeholder="e.g. Satyam Electronics &amp; Mobiles"
                     value={registerForm.storeName}
-                    onChange={(e) => setRegisterForm({ ...registerForm, storeName: e.target.value })}
-                    className="px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-slate-200 dark:border-zinc-700 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-500 outline-none"
+                    onChange={(e) => {
+                      setRegisterForm({ ...registerForm, storeName: e.target.value });
+                      if (registerErrors.storeName) setRegisterErrors({ ...registerErrors, storeName: "" });
+                    }}
+                    className={`px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border ${
+                      registerErrors.storeName ? "border-red-500 ring-2 ring-red-500/20" : "border-slate-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500"
+                    } rounded-xl text-xs font-semibold outline-none transition-all`}
                   />
+                  {registerErrors.storeName && (
+                    <p className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-0.5">
+                      ⚠️ {registerErrors.storeName}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex flex-col gap-1">
@@ -368,9 +482,19 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
                     required
                     placeholder="e.g. Satyam Tiwari"
                     value={registerForm.ownerName}
-                    onChange={(e) => setRegisterForm({ ...registerForm, ownerName: e.target.value })}
-                    className="px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-slate-200 dark:border-zinc-700 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-500 outline-none"
+                    onChange={(e) => {
+                      setRegisterForm({ ...registerForm, ownerName: e.target.value });
+                      if (registerErrors.ownerName) setRegisterErrors({ ...registerErrors, ownerName: "" });
+                    }}
+                    className={`px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border ${
+                      registerErrors.ownerName ? "border-red-500 ring-2 ring-red-500/20" : "border-slate-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500"
+                    } rounded-xl text-xs font-semibold outline-none transition-all`}
                   />
+                  {registerErrors.ownerName && (
+                    <p className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-0.5">
+                      ⚠️ {registerErrors.ownerName}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -382,9 +506,19 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
                     required
                     placeholder="e.g. seller@stmart.com"
                     value={registerForm.email}
-                    onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
-                    className="px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-slate-200 dark:border-zinc-700 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-500 outline-none"
+                    onChange={(e) => {
+                      setRegisterForm({ ...registerForm, email: e.target.value });
+                      if (registerErrors.email) setRegisterErrors({ ...registerErrors, email: "" });
+                    }}
+                    className={`px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border ${
+                      registerErrors.email ? "border-red-500 ring-2 ring-red-500/20" : "border-slate-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500"
+                    } rounded-xl text-xs font-semibold outline-none transition-all`}
                   />
+                  {registerErrors.email && (
+                    <p className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-0.5">
+                      ⚠️ {registerErrors.email}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex flex-col gap-1">
@@ -393,9 +527,19 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
                     type="tel"
                     placeholder="e.g. 9589018011"
                     value={registerForm.phone}
-                    onChange={(e) => setRegisterForm({ ...registerForm, phone: e.target.value })}
-                    className="px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-slate-200 dark:border-zinc-700 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-500 outline-none"
+                    onChange={(e) => {
+                      setRegisterForm({ ...registerForm, phone: e.target.value });
+                      if (registerErrors.phone) setRegisterErrors({ ...registerErrors, phone: "" });
+                    }}
+                    className={`px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border ${
+                      registerErrors.phone ? "border-red-500 ring-2 ring-red-500/20" : "border-slate-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500"
+                    } rounded-xl text-xs font-semibold outline-none transition-all`}
                   />
+                  {registerErrors.phone && (
+                    <p className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-0.5">
+                      ⚠️ {registerErrors.phone}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -421,11 +565,21 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
                   <input
                     type="password"
                     required
-                    placeholder="Create a strong password"
+                    placeholder="Create a strong password (min 6 chars)"
                     value={registerForm.password}
-                    onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
-                    className="px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-slate-200 dark:border-zinc-700 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-500 outline-none"
+                    onChange={(e) => {
+                      setRegisterForm({ ...registerForm, password: e.target.value });
+                      if (registerErrors.password) setRegisterErrors({ ...registerErrors, password: "" });
+                    }}
+                    className={`px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border ${
+                      registerErrors.password ? "border-red-500 ring-2 ring-red-500/20" : "border-slate-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500"
+                    } rounded-xl text-xs font-semibold outline-none transition-all`}
                   />
+                  {registerErrors.password && (
+                    <p className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-0.5">
+                      ⚠️ {registerErrors.password}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -464,9 +618,19 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
                 required
                 placeholder="e.g. SHOP-849201 or seller@stmart.com"
                 value={loginForm.shopIdOrEmail}
-                onChange={(e) => setLoginForm({ ...loginForm, shopIdOrEmail: e.target.value })}
-                className="px-4 py-3 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-slate-200 dark:border-zinc-700 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-500 outline-none"
+                onChange={(e) => {
+                  setLoginForm({ ...loginForm, shopIdOrEmail: e.target.value });
+                  if (loginErrors.shopIdOrEmail) setLoginErrors({ ...loginErrors, shopIdOrEmail: "" });
+                }}
+                className={`px-4 py-3 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border ${
+                  loginErrors.shopIdOrEmail ? "border-red-500 ring-2 ring-red-500/20" : "border-slate-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500"
+                } rounded-xl text-xs font-semibold outline-none transition-all`}
               />
+              {loginErrors.shopIdOrEmail && (
+                <p className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-0.5">
+                  ⚠️ {loginErrors.shopIdOrEmail}
+                </p>
+              )}
             </div>
 
             <div className="flex flex-col gap-1">
@@ -476,9 +640,19 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
                 required
                 placeholder="Enter password"
                 value={loginForm.password}
-                onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                className="px-4 py-3 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-slate-200 dark:border-zinc-700 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-500 outline-none"
+                onChange={(e) => {
+                  setLoginForm({ ...loginForm, password: e.target.value });
+                  if (loginErrors.password) setLoginErrors({ ...loginErrors, password: "" });
+                }}
+                className={`px-4 py-3 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border ${
+                  loginErrors.password ? "border-red-500 ring-2 ring-red-500/20" : "border-slate-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500"
+                } rounded-xl text-xs font-semibold outline-none transition-all`}
               />
+              {loginErrors.password && (
+                <p className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-0.5">
+                  ⚠️ {loginErrors.password}
+                </p>
+              )}
             </div>
 
             <button
@@ -620,9 +794,19 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
                   required
                   placeholder="e.g. Wireless Bluetooth Headphones"
                   value={newProductForm.name}
-                  onChange={(e) => setNewProductForm({ ...newProductForm, name: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+                  onChange={(e) => {
+                    setNewProductForm({ ...newProductForm, name: e.target.value });
+                    if (productErrors.name) setProductErrors({ ...productErrors, name: "" });
+                  }}
+                  className={`w-full px-3.5 py-2.5 rounded-xl border ${
+                    productErrors.name ? "border-red-500 ring-2 ring-red-500/20" : "border-slate-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500"
+                  } bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold outline-none transition-all`}
                 />
+                {productErrors.name && (
+                  <p className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-0.5">
+                    ⚠️ {productErrors.name}
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -648,9 +832,19 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
                     type="text"
                     placeholder="e.g. Boat / Sony"
                     value={newProductForm.brand}
-                    onChange={(e) => setNewProductForm({ ...newProductForm, brand: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+                    onChange={(e) => {
+                      setNewProductForm({ ...newProductForm, brand: e.target.value });
+                      if (productErrors.brand) setProductErrors({ ...productErrors, brand: "" });
+                    }}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border ${
+                      productErrors.brand ? "border-red-500 ring-2 ring-red-500/20" : "border-slate-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500"
+                    } bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold outline-none transition-all`}
                   />
+                  {productErrors.brand && (
+                    <p className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-0.5">
+                      ⚠️ {productErrors.brand}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -662,9 +856,19 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
                     required
                     placeholder="e.g. 1499"
                     value={newProductForm.price}
-                    onChange={(e) => setNewProductForm({ ...newProductForm, price: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+                    onChange={(e) => {
+                      setNewProductForm({ ...newProductForm, price: e.target.value });
+                      if (productErrors.price) setProductErrors({ ...productErrors, price: "" });
+                    }}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border ${
+                      productErrors.price ? "border-red-500 ring-2 ring-red-500/20" : "border-slate-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500"
+                    } bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold outline-none transition-all`}
                   />
+                  {productErrors.price && (
+                    <p className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-0.5">
+                      ⚠️ {productErrors.price}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -673,9 +877,19 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
                     type="number"
                     placeholder="e.g. 2999"
                     value={newProductForm.originalPrice}
-                    onChange={(e) => setNewProductForm({ ...newProductForm, originalPrice: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+                    onChange={(e) => {
+                      setNewProductForm({ ...newProductForm, originalPrice: e.target.value });
+                      if (productErrors.originalPrice) setProductErrors({ ...productErrors, originalPrice: "" });
+                    }}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border ${
+                      productErrors.originalPrice ? "border-red-500 ring-2 ring-red-500/20" : "border-slate-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500"
+                    } bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold outline-none transition-all`}
                   />
+                  {productErrors.originalPrice && (
+                    <p className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-0.5">
+                      ⚠️ {productErrors.originalPrice}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -685,9 +899,19 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
                   type="url"
                   placeholder="https://images.unsplash.com/..."
                   value={newProductForm.image}
-                  onChange={(e) => setNewProductForm({ ...newProductForm, image: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+                  onChange={(e) => {
+                    setNewProductForm({ ...newProductForm, image: e.target.value });
+                    if (productErrors.image) setProductErrors({ ...productErrors, image: "" });
+                  }}
+                  className={`w-full px-3.5 py-2.5 rounded-xl border ${
+                    productErrors.image ? "border-red-500 ring-2 ring-red-500/20" : "border-slate-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500"
+                  } bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold outline-none transition-all`}
                 />
+                {productErrors.image && (
+                  <p className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-0.5">
+                    ⚠️ {productErrors.image}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -696,9 +920,19 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
                   rows={2}
                   placeholder="Product description and details..."
                   value={newProductForm.desc}
-                  onChange={(e) => setNewProductForm({ ...newProductForm, desc: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold outline-none resize-none focus:ring-2 focus:ring-emerald-500"
+                  onChange={(e) => {
+                    setNewProductForm({ ...newProductForm, desc: e.target.value });
+                    if (productErrors.desc) setProductErrors({ ...productErrors, desc: "" });
+                  }}
+                  className={`w-full px-3.5 py-2.5 rounded-xl border ${
+                    productErrors.desc ? "border-red-500 ring-2 ring-red-500/20" : "border-slate-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500"
+                  } bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold outline-none resize-none transition-all`}
                 />
+                {productErrors.desc && (
+                  <p className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-0.5">
+                    ⚠️ {productErrors.desc}
+                  </p>
+                )}
               </div>
 
               <div className="flex items-center justify-end gap-2 mt-3">

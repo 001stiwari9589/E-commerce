@@ -2,15 +2,49 @@ import { useState, useEffect } from "react";
 
 function ContactUsPage({ onBack, triggerToast }) {
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
+  const validate = () => {
+    const errs = {};
+    const name = formData.name.trim();
+    const email = formData.email.trim();
+    const subject = formData.subject.trim();
+    const message = formData.message.trim();
+
+    if (!name || name.length < 3 || !/^[a-zA-Z\s.]{3,}$/.test(name)) {
+      errs.name = "Full Name must contain at least 3 letters (letters & spaces only).";
+    }
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errs.email = "Please enter a valid email address.";
+    }
+
+    if (!subject || subject.length < 3) {
+      errs.subject = "Subject must be at least 3 characters.";
+    }
+
+    if (!message || message.length < 10) {
+      errs.message = "Message must be at least 10 characters long.";
+    }
+
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validate()) {
+      if (triggerToast) triggerToast("Please fix the highlighted errors in the form!", "warning");
+      return;
+    }
+
     triggerToast("Thank you for reaching out! Our support team will get back to you within 2 hours.", "success");
     setFormData({ name: "", email: "", subject: "", message: "" });
+    setErrors({});
   };
 
   return (
@@ -34,7 +68,7 @@ function ContactUsPage({ onBack, triggerToast }) {
             ✦ 24x7 Customer Support
           </span>
           <h1 className="text-3xl font-black text-slate-900 dark:text-white mt-1">
-            Contact Us & Help Center
+            Contact Us &amp; Help Center
           </h1>
           <p className="text-xs text-slate-400 dark:text-zinc-400 mt-1 max-w-lg">
             Have questions about orders, refunds, or seller onboarding? We are available 24/7 to assist you.
@@ -68,10 +102,16 @@ function ContactUsPage({ onBack, triggerToast }) {
                 type="text"
                 required
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, name: e.target.value });
+                  if (errors.name) setErrors({ ...errors, name: "" });
+                }}
                 placeholder="John Doe"
-                className="px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-gray-200 dark:border-zinc-700 rounded-xl text-sm font-semibold focus:border-blue-500 dark:focus:border-amber-500 transition-all placeholder-gray-400 dark:placeholder-zinc-600"
+                className={`px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border ${
+                  errors.name ? "border-red-500 ring-2 ring-red-500/20" : "border-gray-200 dark:border-zinc-700 focus:border-blue-500 dark:focus:border-amber-500"
+                } rounded-xl text-sm font-semibold transition-all placeholder-gray-400 dark:placeholder-zinc-600 outline-none`}
               />
+              {errors.name && <p className="text-[11px] font-bold text-red-500 mt-0.5">⚠️ {errors.name}</p>}
             </div>
             <div className="flex flex-col gap-1">
               <label className="text-xs font-bold text-slate-400 dark:text-zinc-500">Email Address</label>
@@ -79,10 +119,16 @@ function ContactUsPage({ onBack, triggerToast }) {
                 type="email"
                 required
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, email: e.target.value });
+                  if (errors.email) setErrors({ ...errors, email: "" });
+                }}
                 placeholder="john@example.com"
-                className="px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-gray-200 dark:border-zinc-700 rounded-xl text-sm font-semibold focus:border-blue-500 dark:focus:border-amber-500 transition-all placeholder-gray-400 dark:placeholder-zinc-600"
+                className={`px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border ${
+                  errors.email ? "border-red-500 ring-2 ring-red-500/20" : "border-gray-200 dark:border-zinc-700 focus:border-blue-500 dark:focus:border-amber-500"
+                } rounded-xl text-sm font-semibold transition-all placeholder-gray-400 dark:placeholder-zinc-600 outline-none`}
               />
+              {errors.email && <p className="text-[11px] font-bold text-red-500 mt-0.5">⚠️ {errors.email}</p>}
             </div>
           </div>
 
@@ -92,10 +138,16 @@ function ContactUsPage({ onBack, triggerToast }) {
               type="text"
               required
               value={formData.subject}
-              onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, subject: e.target.value });
+                if (errors.subject) setErrors({ ...errors, subject: "" });
+              }}
               placeholder="Order Inquiry / Account Issue"
-              className="px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-gray-200 dark:border-zinc-700 rounded-xl text-sm font-semibold focus:border-blue-500 dark:focus:border-amber-500 transition-all placeholder-gray-400 dark:placeholder-zinc-600"
+              className={`px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border ${
+                errors.subject ? "border-red-500 ring-2 ring-red-500/20" : "border-gray-200 dark:border-zinc-700 focus:border-blue-500 dark:focus:border-amber-500"
+              } rounded-xl text-sm font-semibold transition-all placeholder-gray-400 dark:placeholder-zinc-600 outline-none`}
             />
+            {errors.subject && <p className="text-[11px] font-bold text-red-500 mt-0.5">⚠️ {errors.subject}</p>}
           </div>
 
           <div className="flex flex-col gap-1">
@@ -104,10 +156,16 @@ function ContactUsPage({ onBack, triggerToast }) {
               required
               rows={4}
               value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, message: e.target.value });
+                if (errors.message) setErrors({ ...errors, message: "" });
+              }}
               placeholder="Describe your issue or query in detail..."
-              className="px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border border-gray-200 dark:border-zinc-700 rounded-xl text-sm font-semibold focus:border-blue-500 dark:focus:border-amber-500 transition-all placeholder-gray-400 dark:placeholder-zinc-650"
+              className={`px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border ${
+                errors.message ? "border-red-500 ring-2 ring-red-500/20" : "border-gray-200 dark:border-zinc-700 focus:border-blue-500 dark:focus:border-amber-500"
+              } rounded-xl text-sm font-semibold transition-all placeholder-gray-400 dark:placeholder-zinc-650 outline-none`}
             ></textarea>
+            {errors.message && <p className="text-[11px] font-bold text-red-500 mt-0.5">⚠️ {errors.message}</p>}
           </div>
 
           <button

@@ -3,11 +3,31 @@ import cors from "cors";
 import mongoose from "mongoose";
 import nodemailer from "nodemailer";
 import twilio from "twilio";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import { connectMongoDB } from "./db.js";
 import { Product } from "./models/Product.js";
 import { User } from "./models/User.js";
 import { Order } from "./models/Order.js";
 import { Seller } from "./models/Seller.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const SEED_JSON_PATH = path.join(__dirname, "db.json");
+
+const ADMIN_SECRET = process.env.ADMIN_SECRET || "stmart_owner_secret_1234";
+
+const verifyAdminSecret = (req, res, next) => {
+  const reqSecret = req.headers["x-admin-secret"];
+  if (!reqSecret || reqSecret !== ADMIN_SECRET) {
+    return res.status(403).json({
+      success: false,
+      message: "Access Denied: Backend Admin Authorization Required.",
+    });
+  }
+  next();
+};
 
 // Auto-load .env file if present
 try {
@@ -497,19 +517,7 @@ app.post("/api/orders", async (req, res) => {
   }
 });
 
-// --- ADMIN PANEL SECURITY MIDDLEWARE & ENDPOINTS ---
-const ADMIN_SECRET = process.env.ADMIN_SECRET || "stmart_owner_secret_1234";
-
-const verifyAdminSecret = (req, res, next) => {
-  const reqSecret = req.headers["x-admin-secret"];
-  if (!reqSecret || reqSecret !== ADMIN_SECRET) {
-    return res.status(403).json({
-      success: false,
-      message: "Access Denied: Backend Admin Authorization Required.",
-    });
-  }
-  next();
-};
+// --- ADMIN PANEL SECURITY ENDPOINTS ---
 
 // GET /api/admin/users - Fetch all registered users (Owner Protected)
 app.get("/api/admin/users", verifyAdminSecret, async (req, res) => {

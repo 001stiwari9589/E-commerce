@@ -56,15 +56,20 @@ function LoginPage({ onLoginSuccess, onBack }) {
     if (e) e.preventDefault();
     const cleanInput = emailOrPhone.trim();
     if (!cleanInput) {
-      setError("Please enter a valid Email or 10-digit Mobile Number");
+      setError("Please enter a valid Email Address or 10-digit Mobile Number.");
       return;
     }
 
     const isEmail = cleanInput.includes("@");
-    if (!isEmail) {
+    if (isEmail) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanInput)) {
+        setError("Please enter a valid Email Address (e.g. name@example.com).");
+        return;
+      }
+    } else {
       const digits = cleanInput.replace(/\D/g, "");
-      if (digits.length < 10) {
-        setError("Please enter a valid 10-digit Mobile Number (e.g. 9876543210)");
+      if (digits.length !== 10 || !/^[6-9]\d{9}$/.test(digits)) {
+        setError("Please enter a valid 10-digit Mobile Number starting with 6, 7, 8, or 9.");
         return;
       }
     }
