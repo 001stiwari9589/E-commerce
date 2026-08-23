@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { getWhatsappOrderUrl } from "../services/whatsappService";
 
 function ReceiptModal({ order, isOpen, onClose, onViewOrders }) {
   useEffect(() => {
@@ -222,15 +223,26 @@ function ReceiptModal({ order, isOpen, onClose, onViewOrders }) {
 
         {/* Modal Bottom Buttons (Hidden on Print) */}
         <div className="p-4 sm:p-5 bg-slate-100 dark:bg-zinc-850 border-t border-gray-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3 print:hidden">
-          <button
-            onClick={handlePrint}
-            className="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer flex items-center justify-center gap-2 transform active:scale-98"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231a1.125 1.125 0 01-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-19.126 0C1.04 7.441.272 8.375.272 9.456v6.294A2.25 2.25 0 002.523 18h1.092" />
-            </svg>
-            Print Receipt / PDF
-          </button>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <button
+              onClick={handlePrint}
+              className="flex-1 sm:flex-initial px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer flex items-center justify-center gap-2 transform active:scale-98"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231a1.125 1.125 0 01-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-19.126 0C1.04 7.441.272 8.375.272 9.456v6.294A2.25 2.25 0 002.523 18h1.092" />
+              </svg>
+              Print / PDF
+            </button>
+
+            <a
+              href={getWhatsappOrderUrl(order)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 sm:flex-initial px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-extrabold text-xs rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 transform active:scale-98"
+            >
+              <span>📲</span> Send to WhatsApp
+            </a>
+          </div>
 
           <div className="w-full sm:w-auto flex items-center gap-2">
             <button
@@ -238,13 +250,13 @@ function ReceiptModal({ order, isOpen, onClose, onViewOrders }) {
                 onClose();
                 if (onViewOrders) onViewOrders();
               }}
-              className="flex-1 sm:flex-initial px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all cursor-pointer shadow-md"
+              className="flex-1 sm:flex-initial px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all cursor-pointer shadow-md"
             >
               View My Orders
             </button>
             <button
               onClick={onClose}
-              className="flex-1 sm:flex-initial px-5 py-3 bg-slate-200 dark:bg-zinc-700 hover:bg-slate-300 dark:hover:bg-zinc-600 text-slate-800 dark:text-zinc-200 font-bold text-xs rounded-xl transition-all cursor-pointer"
+              className="flex-1 sm:flex-initial px-4 py-3 bg-slate-200 dark:bg-zinc-700 hover:bg-slate-300 dark:hover:bg-zinc-600 text-slate-800 dark:text-zinc-200 font-bold text-xs rounded-xl transition-all cursor-pointer"
             >
               Continue Shopping
             </button>
