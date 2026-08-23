@@ -82,8 +82,16 @@ function HomeView({
     setWaDirectUrl(directUrl || "");
     setShowClaimModal(true);
 
+    if (directUrl) {
+      try {
+        window.open(directUrl, "_blank");
+      } catch {
+        window.location.href = directUrl;
+      }
+    }
+
     if (triggerToast) {
-      triggerToast("🎉 Claim Successful! Coupon Code STMART500 Activated!", "success");
+      triggerToast("🎉 Offer Claimed! Opening WhatsApp with Coupon STMART500...", "success");
     }
   };
 
