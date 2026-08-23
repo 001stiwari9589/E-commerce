@@ -117,7 +117,7 @@ function ContactUsPage({ onBack, triggerToast }) {
           <h3 className="text-lg font-bold text-slate-900 dark:text-white border-b border-gray-100 dark:border-zinc-800 pb-3 flex items-center justify-between">
             <span>Send us a Direct Message</span>
             <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
-              ⚡ Instant WhatsApp Dispatch
+              ⚡ 24x7 Support Response
             </span>
           </h3>
 
@@ -234,9 +234,9 @@ function ContactUsPage({ onBack, triggerToast }) {
 
           <button
             type="submit"
-            className="mt-2 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer transform active:scale-98 text-sm flex items-center justify-center gap-2 uppercase tracking-wider"
+            className="mt-2 w-full bg-blue-600 hover:bg-blue-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-slate-950 font-extrabold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer transform active:scale-98 text-sm uppercase tracking-wider"
           >
-            <span>📲</span> Send Message via WhatsApp (+91 9589018011)
+            Send Message
           </button>
         </form>
 
