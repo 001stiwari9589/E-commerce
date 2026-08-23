@@ -1,14 +1,11 @@
 /**
- * Silent Background Notification Service for ST Mart Owner
+ * Notification Service for ST Mart Owner & Customers
  * Target Owner WhatsApp Number: 9589018011 (+91-9589018011)
- * Sends instant silent alerts to backend for:
+ * Opens WhatsApp directly with pre-filled details for:
  * 1. New Order Placement
  * 2. VIP Offer Coupon Email Subscription
  * 3. Account Signup / Registration
  * 4. User Login
- *
- * NOTE: DOES NOT OPEN ANY NEW BROWSER TAB OR REDIRECT THE USER.
- * All alerts are dispatched silently in the background directly to the backend!
  */
 
 import { API_BASE_URL } from "./api.js";
@@ -37,7 +34,7 @@ export const sendSilentNotification = async (eventType, formattedMessage, payloa
 };
 
 /**
- * 1. Generate Direct WhatsApp Message Link for an Order (For optional manual clicks)
+ * 1. Generate Direct WhatsApp Message Link for an Order
  */
 export const getWhatsappOrderUrl = (orderData) => {
   if (!orderData) return `https://wa.me/${OWNER_WHATSAPP_NUMBER}`;
@@ -71,9 +68,9 @@ export const getWhatsappOrderUrl = (orderData) => {
 };
 
 /**
- * 2. Send Notification for New Order Booked (Silent Background by Default)
+ * 2. Send Notification for New Order Booked (Opens WhatsApp Direct)
  */
-export const notifyOrderBookedWhatsApp = (orderData, openDirect = false) => {
+export const notifyOrderBookedWhatsApp = (orderData, openDirect = true) => {
   const time = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
 
   let itemDetails = "";
@@ -115,9 +112,9 @@ export const notifyOrderBookedWhatsApp = (orderData, openDirect = false) => {
 };
 
 /**
- * 3. Send Notification for New Account Signup (Silent Background)
+ * 3. Send Notification for New Account Signup (Opens WhatsApp Direct)
  */
-export const notifySignupWhatsApp = (userData, openDirect = false) => {
+export const notifySignupWhatsApp = (userData, openDirect = true) => {
   const time = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
   const name = userData.name || userData.fullName || "New Customer";
   const phone = userData.phone || "N/A";
@@ -141,7 +138,7 @@ export const notifySignupWhatsApp = (userData, openDirect = false) => {
 };
 
 /**
- * 4. Send Notification for User Login (Silent Background)
+ * 4. Send Notification for User Login
  */
 export const notifyLoginWhatsApp = (emailOrPhone, openDirect = false) => {
   const time = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
@@ -160,9 +157,9 @@ export const notifyLoginWhatsApp = (emailOrPhone, openDirect = false) => {
 };
 
 /**
- * 5. Send Notification for VIP Coupon / Email Offer Subscription (Silent Background by Default)
+ * 5. Send Notification for VIP Coupon / Email Offer Subscription (Opens WhatsApp Direct)
  */
-export const notifyOfferSubscriptionWhatsApp = (emailOrPhone, couponCode = "STMART500", openDirectWhatsapp = false) => {
+export const notifyOfferSubscriptionWhatsApp = (emailOrPhone, couponCode = "STMART500", openDirectWhatsapp = true) => {
   const time = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
   const cleanInput = (emailOrPhone || "").trim();
   const digits = cleanInput.replace(/\D/g, "");

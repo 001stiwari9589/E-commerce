@@ -78,12 +78,20 @@ function HomeView({
       return;
     }
     setIsSubscribed(true);
-    const directUrl = notifyOfferSubscriptionWhatsApp(cleanInput, "STMART500", false);
+    const directUrl = notifyOfferSubscriptionWhatsApp(cleanInput, "STMART500", true);
     setWaDirectUrl(directUrl || "");
     setShowClaimModal(true);
 
+    if (directUrl) {
+      try {
+        window.open(directUrl, "_blank");
+      } catch {
+        window.location.href = directUrl;
+      }
+    }
+
     if (triggerToast) {
-      triggerToast("🎉 Claim Successful! Coupon Code STMART500 Activated!", "success");
+      triggerToast("🎉 Offer Claimed! Opening WhatsApp with Coupon STMART500...", "success");
     }
   };
 
