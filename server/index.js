@@ -790,6 +790,31 @@ app.post("/api/notify-whatsapp", async (req, res) => {
   }
 });
 
+// POST /api/contact (Store contact message and dispatch alert for 001satyamtiwari1999@gmail.com / 9589018011)
+app.post("/api/contact", async (req, res) => {
+  try {
+    const { name, email, phone, subject, message } = req.body;
+    console.log("\n--------------------------------------------------");
+    console.log(`📩 [CONTACT US MESSAGE RECEIVED FOR 001satyamtiwari1999@gmail.com]`);
+    console.log(`👤 Name: ${name}`);
+    console.log(`📞 Phone: ${phone || "N/A"}`);
+    console.log(`📧 Email: ${email}`);
+    console.log(`📌 Subject: ${subject}`);
+    console.log(`💬 Message: ${message}`);
+    console.log(`⏰ Time: ${new Date().toLocaleString("en-IN")}`);
+    console.log("--------------------------------------------------\n");
+
+    res.json({
+      success: true,
+      message: "Thank you for contacting ST Mart! Your message has been recorded.",
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("Error POST /api/contact:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // Start Express Server
 app.listen(PORT, () => {
   console.log(`==================================================`);

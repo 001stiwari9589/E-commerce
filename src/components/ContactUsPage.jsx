@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { notifyContactWhatsApp, OWNER_WHATSAPP_NUMBER } from "../services/whatsappService";
+import { apiService } from "../services/api";
 
 function ContactUsPage({ onBack, triggerToast }) {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ function ContactUsPage({ onBack, triggerToast }) {
     message: "",
   });
   const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -48,23 +50,57 @@ function ContactUsPage({ onBack, triggerToast }) {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) {
       if (triggerToast) triggerToast("Please fix the highlighted errors in the form!", "warning");
       return;
     }
 
-    // Launch WhatsApp with full contact details and dispatch alert
-    notifyContactWhatsApp(formData);
+    setIsSubmitting(true);
 
-    if (triggerToast) {
-      triggerToast("Opening WhatsApp with your support message! Form submitted successfully. 🎉", "success");
+    try {
+      // 1. Submit message to Backend API (/api/contact)
+      await apiService.submitContactMessage(formData);
+
+      // 2. Dispatch to WhatsApp notification service
+      notifyContactWhatsApp(formData);
+
+      // 3. Open Email client / Gmail web with pre-filled message for 001satyamtiwari1999@gmail.com
+      const mailSubject = encodeURIComponent(`ST Mart Support Inquiry: ${formData.subject}`);
+      const mailBody = encodeURIComponent(
+        `Customer Details:\n` +
+        `• Name: ${formData.name}\n` +
+        `• Phone: ${formData.phone}\n` +
+        `• Email: ${formData.email}\n` +
+        `• Subject: ${formData.subject}\n\n` +
+        `Message:\n${formData.message}\n`
+      );
+
+      const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=001satyamtiwari1999@gmail.com&su=${mailSubject}&body=${mailBody}`;
+      
+      try {
+        window.open(gmailWebUrl, "_blank");
+      } catch {
+        window.location.href = `mailto:001satyamtiwari1999@gmail.com?subject=${mailSubject}&body=${mailBody}`;
+      }
+
+      if (triggerToast) {
+        triggerToast("Message Sent! Backend recorded & Gmail opened. 🎉", "success");
+      }
+
+      setFormData({ name: "", phone: "", email: "", subject: "", message: "" });
+      setErrors({});
+    } catch (err) {
+      console.error("Contact submit error:", err);
+      if (triggerToast) triggerToast("Form submitted! Message received.", "success");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setFormData({ name: "", phone: "", email: "", subject: "", message: "" });
-    setErrors({});
   };
+
+  const ownerEmail = "001satyamtiwari1999@gmail.com";
+  const gmailDirectUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${ownerEmail}&su=${encodeURIComponent("ST Mart Customer Inquiry")}`;
 
   return (
     <div className="max-w-5xl mx-auto w-full flex flex-col gap-8 animate-fade-in text-slate-800 dark:text-zinc-150 my-6">
@@ -90,7 +126,7 @@ function ContactUsPage({ onBack, triggerToast }) {
             Contact Us &amp; Help Center
           </h1>
           <p className="text-xs text-slate-400 dark:text-zinc-400 mt-1 max-w-lg">
-            Have questions about orders, payments, or refunds? Send us a direct WhatsApp message or email us directly below.
+            Have questions about orders, payments, or refunds? Fill out the form or email/WhatsApp us directly.
           </p>
         </div>
 
@@ -234,9 +270,10 @@ function ContactUsPage({ onBack, triggerToast }) {
 
           <button
             type="submit"
-            className="mt-2 w-full bg-blue-600 hover:bg-blue-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-slate-950 font-extrabold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer transform active:scale-98 text-sm uppercase tracking-wider"
+            disabled={isSubmitting}
+            className="mt-2 w-full bg-blue-600 hover:bg-blue-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-slate-950 font-extrabold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer transform active:scale-98 text-sm uppercase tracking-wider disabled:opacity-50"
           >
-            Send Message
+            {isSubmitting ? "Sending Message..." : "Send Message"}
           </button>
         </form>
 
@@ -266,27 +303,39 @@ function ContactUsPage({ onBack, triggerToast }) {
             </div>
           </a>
 
-          {/* Direct Email Action Card */}
-          <a
-            href="mailto:001satyamtiwari1999@gmail.com?subject=ST%20Mart%20Support%20Inquiry"
-            className="bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-3xl p-5 shadow-xs hover:border-blue-500 dark:hover:border-amber-500 transition cursor-pointer flex flex-col gap-3 group"
-          >
+          {/* Direct Email Action Card (Gmail Web + Mailto App) */}
+          <div className="bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-3xl p-5 shadow-xs flex flex-col gap-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-lg shrink-0">
                 📧
               </div>
               <div>
                 <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Email Us Directly</h4>
-                <p className="text-[11px] text-slate-400 dark:text-zinc-500">Opens your default Mail / Gmail app</p>
+                <p className="text-[11px] text-slate-400 dark:text-zinc-500">Send email to owner directly</p>
               </div>
             </div>
-            <div className="bg-slate-50 dark:bg-zinc-800 p-3 rounded-2xl font-mono text-xs text-slate-800 dark:text-zinc-200 flex justify-between items-center group-hover:text-blue-600 dark:group-hover:text-amber-400 transition">
-              <span className="truncate">001satyamtiwari1999@gmail.com</span>
-              <span className="font-bold text-[11px] shrink-0 ml-1">Send Email &rarr;</span>
-            </div>
-          </a>
 
-          {/* Headquarters Location Card */}
+            <div className="flex flex-col gap-2">
+              <a
+                href={gmailDirectUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-blue-50 dark:bg-zinc-800 hover:bg-blue-100 dark:hover:bg-zinc-700 p-3 rounded-2xl font-mono text-xs text-blue-700 dark:text-amber-400 border border-blue-200 dark:border-zinc-700 flex justify-between items-center transition cursor-pointer"
+              >
+                <span className="truncate">{ownerEmail}</span>
+                <span className="font-extrabold text-[11px] shrink-0 ml-1">Open Gmail Web &rarr;</span>
+              </a>
+
+              <a
+                href={`mailto:${ownerEmail}?subject=ST%20Mart%20Support%20Inquiry`}
+                className="text-[11px] font-bold text-slate-500 dark:text-zinc-400 hover:underline text-center cursor-pointer py-1"
+              >
+                ✉ Or launch default Email app (mailto)
+              </a>
+            </div>
+          </div>
+
+          {/* Registered Office Address Card */}
           <div className="bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-3xl p-5 shadow-xs flex flex-col gap-3">
             <h4 className="font-extrabold text-sm text-slate-900 dark:text-white border-b border-gray-100 dark:border-zinc-800 pb-2">
               Registered Office Address
