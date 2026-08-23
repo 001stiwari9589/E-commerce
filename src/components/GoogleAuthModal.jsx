@@ -127,7 +127,7 @@ function GoogleAuthModal({ isOpen, onClose, onSelectAccount }) {
           <div className="flex flex-col gap-2">
             <span className="text-xs font-bold text-zinc-400">Choose Google Account to Sign In:</span>
             {[
-              { name: "Satyam Tiwari", email: "001satyamtiwari1999@gmail.com" },
+              { name: "ST Mart", email: "stmart.user@gmail.com" },
               { name: "ST Mart Google User", email: "user.stmart@gmail.com" },
             ].map((acc) => (
               <button

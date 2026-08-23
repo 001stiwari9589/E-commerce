@@ -458,7 +458,7 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Satyam Electronics &amp; Mobiles"
+                    placeholder="e.g. ST Mart Electronics &amp; Mobiles"
                     value={registerForm.storeName}
                     onChange={(e) => {
                       setRegisterForm({ ...registerForm, storeName: e.target.value });
@@ -480,7 +480,7 @@ function SellerPortalPage({ onBack, triggerToast, onAddProduct }) {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Satyam Tiwari"
+                    placeholder="e.g. ST Mart Owner"
                     value={registerForm.ownerName}
                     onChange={(e) => {
                       setRegisterForm({ ...registerForm, ownerName: e.target.value });
