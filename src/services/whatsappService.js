@@ -186,3 +186,30 @@ export const notifyOfferSubscriptionWhatsApp = (emailOrPhone, couponCode = "STMA
 
   return whatsappUrl;
 };
+
+/**
+ * 6. Send Notification for Contact Us Form Submission (Direct WhatsApp Launch)
+ */
+export const notifyContactWhatsApp = (contactData) => {
+  const time = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+  const text = `📩 *NEW CONTACT US MESSAGE - ST MART* 📩\n\n` +
+    `👤 *Customer Name:* ${contactData.name}\n` +
+    `📞 *Phone:* ${contactData.phone || "N/A"}\n` +
+    `📧 *Email:* ${contactData.email}\n` +
+    `📌 *Subject:* ${contactData.subject}\n\n` +
+    `💬 *Message Details:*\n${contactData.message}\n\n` +
+    `⏰ *Date & Time:* ${time}\n` +
+    `🚀 *Status:* Support Inquiry Received!`;
+
+  sendSilentNotification("CONTACT_MESSAGE", text, contactData);
+
+  const whatsappUrl = `https://wa.me/${OWNER_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+
+  try {
+    window.open(whatsappUrl, "_blank");
+  } catch {
+    window.location.href = whatsappUrl;
+  }
+
+  return whatsappUrl;
+};

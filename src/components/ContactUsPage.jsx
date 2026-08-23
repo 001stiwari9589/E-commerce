@@ -1,7 +1,14 @@
 import { useState, useEffect } from "react";
+import { notifyContactWhatsApp, OWNER_WHATSAPP_NUMBER } from "../services/whatsappService";
 
 function ContactUsPage({ onBack, triggerToast }) {
-  const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -11,20 +18,26 @@ function ContactUsPage({ onBack, triggerToast }) {
   const validate = () => {
     const errs = {};
     const name = formData.name.trim();
+    const phone = formData.phone.trim();
     const email = formData.email.trim();
     const subject = formData.subject.trim();
     const message = formData.message.trim();
 
-    if (!name || name.length < 3 || !/^[a-zA-Z\s.]{3,}$/.test(name)) {
-      errs.name = "Full Name must contain at least 3 letters (letters & spaces only).";
+    if (!name || name.length < 2 || !/^[a-zA-Z\s.]{2,}$/.test(name)) {
+      errs.name = "Full Name must contain at least 2 letters (letters & spaces only).";
+    }
+
+    const cleanPhone = phone.replace(/\D/g, "");
+    if (!cleanPhone || cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+      errs.phone = "Mobile Number must be a valid 10-digit Indian number (starts with 6-9).";
     }
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errs.email = "Please enter a valid email address.";
+      errs.email = "Please enter a valid email address (e.g. name@example.com).";
     }
 
     if (!subject || subject.length < 3) {
-      errs.subject = "Subject must be at least 3 characters.";
+      errs.subject = "Subject must be at least 3 characters long.";
     }
 
     if (!message || message.length < 10) {
@@ -42,8 +55,14 @@ function ContactUsPage({ onBack, triggerToast }) {
       return;
     }
 
-    triggerToast("Thank you for reaching out! Our support team will get back to you within 2 hours.", "success");
-    setFormData({ name: "", email: "", subject: "", message: "" });
+    // Launch WhatsApp with full contact details and dispatch alert
+    notifyContactWhatsApp(formData);
+
+    if (triggerToast) {
+      triggerToast("Opening WhatsApp with your support message! Form submitted successfully. 🎉", "success");
+    }
+
+    setFormData({ name: "", phone: "", email: "", subject: "", message: "" });
     setErrors({});
   };
 
@@ -65,39 +84,49 @@ function ContactUsPage({ onBack, triggerToast }) {
       <div className="bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-3xl p-8 sm:p-10 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
           <span className="text-[10px] font-extrabold text-blue-600 dark:text-amber-400 uppercase tracking-widest block">
-            ✦ 24x7 Customer Support
+            ✦ 24x7 Direct Customer Support
           </span>
           <h1 className="text-3xl font-black text-slate-900 dark:text-white mt-1">
             Contact Us &amp; Help Center
           </h1>
           <p className="text-xs text-slate-400 dark:text-zinc-400 mt-1 max-w-lg">
-            Have questions about orders, refunds, or seller onboarding? We are available 24/7 to assist you.
+            Have questions about orders, payments, or refunds? Send us a direct WhatsApp message or email us directly below.
           </p>
         </div>
 
-        <div className="flex items-center gap-4 shrink-0 bg-blue-50 dark:bg-zinc-850 p-4 rounded-2xl border border-blue-100 dark:border-zinc-800">
-          <div className="w-10 h-10 rounded-xl bg-blue-600 dark:bg-amber-500 text-white dark:text-slate-950 flex items-center justify-center font-bold">
-            ☎
+        {/* Direct Call / Helpline Button */}
+        <a
+          href="tel:+919589018011"
+          className="flex items-center gap-4 shrink-0 bg-blue-50 hover:bg-blue-100 dark:bg-zinc-850 dark:hover:bg-zinc-800 p-4 rounded-2xl border border-blue-100 dark:border-zinc-800 transition cursor-pointer"
+        >
+          <div className="w-10 h-10 rounded-xl bg-blue-600 dark:bg-amber-500 text-white dark:text-slate-950 flex items-center justify-center font-bold text-lg">
+            📞
           </div>
           <div>
-            <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 block">Toll-Free Helpline</span>
-            <span className="font-extrabold text-sm text-slate-900 dark:text-white">1800-200-STMART (7862)</span>
+            <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 block">Direct Call Support</span>
+            <span className="font-extrabold text-sm text-slate-900 dark:text-white">+91 9589018011</span>
           </div>
-        </div>
+        </a>
       </div>
 
-      {/* Main Grid: Form + Info */}
+      {/* Main Grid: Form + Interactive Quick Contact Cards */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
         
-        {/* Contact Form */}
+        {/* Contact Form with Validation */}
         <form onSubmit={handleSubmit} className="md:col-span-3 bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col gap-4">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white border-b border-gray-100 dark:border-zinc-800 pb-3">
-            Send us a Direct Message
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white border-b border-gray-100 dark:border-zinc-800 pb-3 flex items-center justify-between">
+            <span>Send us a Direct Message</span>
+            <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
+              ⚡ Instant WhatsApp Dispatch
+            </span>
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Full Name */}
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-bold text-slate-400 dark:text-zinc-500">Your Full Name</label>
+              <label className="text-xs font-bold text-slate-700 dark:text-zinc-300">
+                Your Full Name *
+              </label>
               <input
                 type="text"
                 required
@@ -106,15 +135,44 @@ function ContactUsPage({ onBack, triggerToast }) {
                   setFormData({ ...formData, name: e.target.value });
                   if (errors.name) setErrors({ ...errors, name: "" });
                 }}
-                placeholder="John Doe"
+                placeholder="e.g. Rahul Sharma"
                 className={`px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border ${
                   errors.name ? "border-red-500 ring-2 ring-red-500/20" : "border-gray-200 dark:border-zinc-700 focus:border-blue-500 dark:focus:border-amber-500"
                 } rounded-xl text-sm font-semibold transition-all placeholder-gray-400 dark:placeholder-zinc-600 outline-none`}
               />
               {errors.name && <p className="text-[11px] font-bold text-red-500 mt-0.5">⚠️ {errors.name}</p>}
             </div>
+
+            {/* Mobile Number */}
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-bold text-slate-400 dark:text-zinc-500">Email Address</label>
+              <label className="text-xs font-bold text-slate-700 dark:text-zinc-300">
+                Mobile Number (10 Digits) *
+              </label>
+              <input
+                type="tel"
+                required
+                maxLength={10}
+                value={formData.phone}
+                onChange={(e) => {
+                  const clean = e.target.value.replace(/\D/g, "").slice(0, 10);
+                  setFormData({ ...formData, phone: clean });
+                  if (errors.phone) setErrors({ ...errors, phone: "" });
+                }}
+                placeholder="10 digit mobile number"
+                className={`px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border ${
+                  errors.phone ? "border-red-500 ring-2 ring-red-500/20" : "border-gray-200 dark:border-zinc-700 focus:border-blue-500 dark:focus:border-amber-500"
+                } rounded-xl text-sm font-semibold transition-all placeholder-gray-400 dark:placeholder-zinc-600 outline-none`}
+              />
+              {errors.phone && <p className="text-[11px] font-bold text-red-500 mt-0.5">⚠️ {errors.phone}</p>}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Email Address */}
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-bold text-slate-700 dark:text-zinc-300">
+                Email Address *
+              </label>
               <input
                 type="email"
                 required
@@ -123,35 +181,41 @@ function ContactUsPage({ onBack, triggerToast }) {
                   setFormData({ ...formData, email: e.target.value });
                   if (errors.email) setErrors({ ...errors, email: "" });
                 }}
-                placeholder="john@example.com"
+                placeholder="rahul@example.com"
                 className={`px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border ${
                   errors.email ? "border-red-500 ring-2 ring-red-500/20" : "border-gray-200 dark:border-zinc-700 focus:border-blue-500 dark:focus:border-amber-500"
                 } rounded-xl text-sm font-semibold transition-all placeholder-gray-400 dark:placeholder-zinc-600 outline-none`}
               />
               {errors.email && <p className="text-[11px] font-bold text-red-500 mt-0.5">⚠️ {errors.email}</p>}
             </div>
+
+            {/* Subject */}
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-bold text-slate-700 dark:text-zinc-300">
+                Subject / Topic *
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.subject}
+                onChange={(e) => {
+                  setFormData({ ...formData, subject: e.target.value });
+                  if (errors.subject) setErrors({ ...errors, subject: "" });
+                }}
+                placeholder="Order Status / Refund / Inquiry"
+                className={`px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border ${
+                  errors.subject ? "border-red-500 ring-2 ring-red-500/20" : "border-gray-200 dark:border-zinc-700 focus:border-blue-500 dark:focus:border-amber-500"
+                } rounded-xl text-sm font-semibold transition-all placeholder-gray-400 dark:placeholder-zinc-600 outline-none`}
+              />
+              {errors.subject && <p className="text-[11px] font-bold text-red-500 mt-0.5">⚠️ {errors.subject}</p>}
+            </div>
           </div>
 
+          {/* Message Textarea */}
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-bold text-slate-400 dark:text-zinc-500">Subject</label>
-            <input
-              type="text"
-              required
-              value={formData.subject}
-              onChange={(e) => {
-                setFormData({ ...formData, subject: e.target.value });
-                if (errors.subject) setErrors({ ...errors, subject: "" });
-              }}
-              placeholder="Order Inquiry / Account Issue"
-              className={`px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border ${
-                errors.subject ? "border-red-500 ring-2 ring-red-500/20" : "border-gray-200 dark:border-zinc-700 focus:border-blue-500 dark:focus:border-amber-500"
-              } rounded-xl text-sm font-semibold transition-all placeholder-gray-400 dark:placeholder-zinc-600 outline-none`}
-            />
-            {errors.subject && <p className="text-[11px] font-bold text-red-500 mt-0.5">⚠️ {errors.subject}</p>}
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-bold text-slate-400 dark:text-zinc-500">Message</label>
+            <label className="text-xs font-bold text-slate-700 dark:text-zinc-300">
+              Your Message *
+            </label>
             <textarea
               required
               rows={4}
@@ -160,7 +224,7 @@ function ContactUsPage({ onBack, triggerToast }) {
                 setFormData({ ...formData, message: e.target.value });
                 if (errors.message) setErrors({ ...errors, message: "" });
               }}
-              placeholder="Describe your issue or query in detail..."
+              placeholder="Describe your issue or question in detail..."
               className={`px-4 py-2.5 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white border ${
                 errors.message ? "border-red-500 ring-2 ring-red-500/20" : "border-gray-200 dark:border-zinc-700 focus:border-blue-500 dark:focus:border-amber-500"
               } rounded-xl text-sm font-semibold transition-all placeholder-gray-400 dark:placeholder-zinc-650 outline-none`}
@@ -170,26 +234,67 @@ function ContactUsPage({ onBack, triggerToast }) {
 
           <button
             type="submit"
-            className="mt-2 w-full bg-blue-600 hover:bg-blue-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-slate-950 font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer transform active:scale-98 text-sm"
+            className="mt-2 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer transform active:scale-98 text-sm flex items-center justify-center gap-2 uppercase tracking-wider"
           >
-            Submit Support Request
+            <span>📲</span> Send Message via WhatsApp (+91 9589018011)
           </button>
         </form>
 
-        {/* Office Details Side Card */}
+        {/* Quick Contact Interactive Side Cards */}
         <div className="md:col-span-2 flex flex-col gap-4">
-          <div className="bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-3xl p-6 shadow-xs flex flex-col gap-4">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white border-b border-gray-100 dark:border-zinc-800 pb-3">
-              Headquarters Office
-            </h3>
+          
+          {/* Direct WhatsApp Action Card */}
+          <a
+            href={`https://wa.me/${OWNER_WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi ST Mart Support, I have a question regarding my order.")}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white rounded-3xl p-5 shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5 cursor-pointer flex flex-col justify-between gap-3 group"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <span className="text-3xl">📲</span>
+                <div>
+                  <h4 className="font-extrabold text-base leading-tight">Direct WhatsApp Support</h4>
+                  <p className="text-[11px] text-emerald-100 font-medium">Click to chat instantly with owner</p>
+                </div>
+              </div>
+              <span className="bg-white/20 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">ONLINE</span>
+            </div>
+            <div className="bg-white/10 p-3 rounded-2xl border border-white/20 font-mono text-xs flex justify-between items-center group-hover:bg-white/20 transition">
+              <span>+91 9589018011</span>
+              <span className="font-extrabold underline">Open Chat &rarr;</span>
+            </div>
+          </a>
 
-            <div className="flex items-start gap-3">
-              <svg className="w-5 h-5 text-blue-600 dark:text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-              </svg>
+          {/* Direct Email Action Card */}
+          <a
+            href="mailto:001satyamtiwari1999@gmail.com?subject=ST%20Mart%20Support%20Inquiry"
+            className="bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-3xl p-5 shadow-xs hover:border-blue-500 dark:hover:border-amber-500 transition cursor-pointer flex flex-col gap-3 group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-lg shrink-0">
+                📧
+              </div>
               <div>
-                <h4 className="font-bold text-xs text-slate-800 dark:text-zinc-200">ST Mart India Pvt. Ltd.</h4>
+                <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Email Us Directly</h4>
+                <p className="text-[11px] text-slate-400 dark:text-zinc-500">Opens your default Mail / Gmail app</p>
+              </div>
+            </div>
+            <div className="bg-slate-50 dark:bg-zinc-800 p-3 rounded-2xl font-mono text-xs text-slate-800 dark:text-zinc-200 flex justify-between items-center group-hover:text-blue-600 dark:group-hover:text-amber-400 transition">
+              <span className="truncate">001satyamtiwari1999@gmail.com</span>
+              <span className="font-bold text-[11px] shrink-0 ml-1">Send Email &rarr;</span>
+            </div>
+          </a>
+
+          {/* Headquarters Location Card */}
+          <div className="bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-3xl p-5 shadow-xs flex flex-col gap-3">
+            <h4 className="font-extrabold text-sm text-slate-900 dark:text-white border-b border-gray-100 dark:border-zinc-800 pb-2">
+              Registered Office Address
+            </h4>
+            <div className="flex items-start gap-3">
+              <span className="text-xl shrink-0 mt-0.5">📍</span>
+              <div>
+                <h5 className="font-bold text-xs text-slate-800 dark:text-zinc-200">ST Mart India Retail Pvt. Ltd.</h5>
                 <p className="text-xs text-slate-400 dark:text-zinc-500 leading-relaxed mt-0.5">
                   Embassy Tech Village, Outer Ring Road,<br />
                   Devarabeesanahalli Village, Bengaluru,<br />
@@ -197,17 +302,8 @@ function ContactUsPage({ onBack, triggerToast }) {
                 </p>
               </div>
             </div>
-
-            <div className="flex items-start gap-3">
-              <svg className="w-5 h-5 text-blue-600 dark:text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-              </svg>
-              <div>
-                <h4 className="font-bold text-xs text-slate-800 dark:text-zinc-200">Email Support</h4>
-                <p className="text-xs text-slate-400 dark:text-zinc-500 mt-0.5">support@st-mart.com</p>
-              </div>
-            </div>
           </div>
+
         </div>
 
       </div>
