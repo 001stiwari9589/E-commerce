@@ -4,7 +4,7 @@ function Footer({ setView }) {
       {/* Top Banner Brand Bar */}
       <div className="bg-zinc-900/80 border-b border-zinc-800/80 py-3.5 px-4 sm:px-8">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div className="flex items-center gap-2 text-center sm:text-left">
+          <div className="flex items-center gap-2 text-center sm:text-left cursor-pointer" onClick={() => setView && setView("home")}>
             <span className="text-xl font-black italic tracking-wide text-white">
               ST <span className="text-amber-400">Mart</span>
             </span>
