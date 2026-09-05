@@ -126,7 +126,7 @@ function HomeView({
           {
             icon: "💳",
             title: "Secure 256-Bit Encrypted",
-            sub: "UPI, Cards, NetBanking & COD",
+            sub: "UPI, Cards & NetBanking",
             color: "from-purple-500/10 to-pink-500/10 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800/40",
           },
         ].map((item, idx) => (

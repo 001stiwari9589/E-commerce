@@ -255,7 +255,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
 
     setIsProcessingPayment(true);
 
-    let methodLabel = "Cash on Delivery";
+    let methodLabel = "Online Payment";
     if (paymentMode === "upi") {
       const appObj = UPI_APPS.find((a) => a.id === selectedUpiApp);
       methodLabel = `Verified UPI (${appObj?.name || "UPI"} | UTR: ${utrNumber})`;
@@ -311,7 +311,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                 {step === 1 ? "Order Checkout: Shipping Address" : "Select Payment Option & Confirm"}
               </h2>
               <p className="text-xs font-semibold text-slate-500 dark:text-zinc-400">
-                {step === 1 ? "Step 1 of 2: Shipping details" : "Step 2 of 2: UPI Apps / Card / Cash on Delivery"}
+                {step === 1 ? "Step 1 of 2: Shipping details" : "Step 2 of 2: UPI Apps / Credit & Debit Cards"}
               </p>
             </div>
           </div>
@@ -607,12 +607,11 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                 </span>
               </div>
 
-              {/* Clean Payment Mode Tabs (3 Simplified Options) */}
-              <div className="grid grid-cols-3 gap-3">
+              {/* Clean Payment Mode Tabs (2 Simplified Options) */}
+              <div className="grid grid-cols-2 gap-3">
                 {[
                   { id: "upi", label: "UPI (GPay / PhonePe)", icon: "📱" },
                   { id: "card", label: "Debit / Credit Card", icon: "💳" },
-                  { id: "cod", label: "Cash on Delivery", icon: "💵" },
                 ].map((mode) => (
                   <button
                     key={mode.id}
@@ -896,21 +895,6 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                   </div>
                 )}
 
-                {paymentMode === "cod" && (
-                  <div className="flex items-center gap-4 py-2">
-                    <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 flex items-center justify-center shrink-0 text-2xl font-bold">
-                      ✓
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-black text-slate-900 dark:text-white">
-                        Cash / UPI on Delivery Available
-                      </h4>
-                      <p className="text-xs font-medium text-slate-600 dark:text-zinc-400">
-                        Pay cash or UPI directly at your doorstep upon package arrival.
-                      </p>
-                    </div>
-                  </div>
-                )}
 
               </div>
 
@@ -939,9 +923,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6a4.5 4.5 0 10-9 0v4.5m3 4.5h6m-6 3h6m-9-7.5h12a1.5 1.5 0 011.5 1.5v7.5a1.5 1.5 0 01-1.5 1.5H4.5A1.5 1.5 0 013 18V12a1.5 1.5 0 011.5-1.5z" />
                 </svg>
-                {paymentMode === "cod"
-                  ? `Confirm Order (Pay ₹${finalPrice.toLocaleString("en-IN")} on Delivery)`
-                  : `Verify Payment & Confirm Order (₹${finalPrice.toLocaleString("en-IN")})`}
+                {`Verify Payment & Confirm Order (₹${finalPrice.toLocaleString("en-IN")})`}
               </button>
 
             </div>

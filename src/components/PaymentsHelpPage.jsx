@@ -10,11 +10,11 @@ function PaymentsHelpPage({ onBack }) {
   const paymentFaqs = [
     {
       q: "What payment methods are supported on ST Mart?",
-      a: "We support UPI (Google Pay, PhonePe, Paytm, BHIM), Credit/Debit Cards (Visa, Mastercard, RuPay, Maestro), Netbanking across all major banks, Cash on Delivery (COD), and No-Cost EMI options."
+      a: "We support UPI (Google Pay, PhonePe, Paytm, BHIM), Credit/Debit Cards (Visa, Mastercard, RuPay, Maestro), Netbanking across all major banks, and No-Cost EMI options."
     },
     {
-      q: "Is Cash on Delivery (COD) available for all orders?",
-      a: "COD is available for most pincodes across India up to an order value of ₹20,000. Some high-value electronics or customized items may require online prepayment."
+      q: "Why is online payment required for all orders?",
+      a: "To ensure fast, automated order processing and instant merchant verification, ST Mart processes all orders via 100% secure digital UPI and Card gateways."
     },
     {
       q: "How does the refund process work if a payment fails?",
@@ -62,9 +62,9 @@ function PaymentsHelpPage({ onBack }) {
           <p className="text-[11px] text-slate-400 dark:text-zinc-500 mt-1">No-Cost EMI up to 12m</p>
         </div>
         <div className="bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 p-5 rounded-2xl text-center shadow-xs">
-          <div className="text-2xl mb-1">💵</div>
-          <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Cash on Delivery</h4>
-          <p className="text-[11px] text-slate-400 dark:text-zinc-500 mt-1">Pay at doorstep</p>
+          <div className="text-2xl mb-1">🏦</div>
+          <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Net Banking</h4>
+          <p className="text-[11px] text-slate-400 dark:text-zinc-500 mt-1">All major banks supported</p>
         </div>
         <div className="bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 p-5 rounded-2xl text-center shadow-xs">
           <div className="text-2xl mb-1">🛡️</div>

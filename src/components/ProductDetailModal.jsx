@@ -264,7 +264,7 @@ function ProductDetailModal({ product, onClose, addToCart, onBuyNow, isWishliste
                     <p>{pinResult.message}</p>
                     {pinResult.success && (
                       <p className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400 mt-0.5">
-                        📦 Delivered within 2-3 business days. Cash on Delivery Available.
+                        📦 Delivered within 2-3 business days. 100% Verified Online Payments.
                       </p>
                     )}
                   </div>

@@ -60,7 +60,7 @@ export const getWhatsappOrderUrl = (orderData) => {
     `• *Phone:* ${addr.phone || "N/A"}\n` +
     `• *Address:* ${fullAddress}\n\n` +
     `🛒 *Items Ordered:*\n${itemDetails}\n\n` +
-    `💳 *Payment Method:* ${orderData.paymentMethod || "COD"}\n` +
+    `💳 *Payment Method:* ${orderData.paymentMethod || "UPI / Online"}\n` +
     `⏰ *Date:* ${time}\n\n` +
     `🚀 *Status:* ORDER CONFIRMED!`;
 
@@ -92,7 +92,7 @@ export const notifyOrderBookedWhatsApp = (orderData, openDirect = true) => {
     `• *Phone:* ${addr.phone || "N/A"}\n` +
     `• *Address:* ${fullAddress}\n\n` +
     `🛒 *Items Ordered:*\n${itemDetails}\n\n` +
-    `💳 *Payment Method:* ${orderData.paymentMethod || "COD"}\n` +
+    `💳 *Payment Method:* ${orderData.paymentMethod || "UPI / Online"}\n` +
     `⏰ *Date:* ${time}\n\n` +
     `🚀 *Status:* ORDER CONFIRMED!`;
 

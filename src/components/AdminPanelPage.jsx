@@ -677,7 +677,7 @@ export default function AdminPanelPage({ onBack, triggerToast, onAddProduct }) {
                     <div className="text-xs text-slate-500 dark:text-zinc-400 bg-slate-100/70 dark:bg-zinc-900/50 p-3 rounded-xl border border-slate-200/40 dark:border-zinc-800">
                       📍 <strong>Shipping Address:</strong> {addr.streetAddress || addr || "Standard Delivery Address"}, {addr.city || ""} {addr.state || ""} - {addr.pincode || ""}
                       <span className="ml-3 font-semibold text-slate-700 dark:text-zinc-300">
-                        💳 Payment Mode: {ord.paymentMethod || "COD / UPI"}
+                        💳 Payment Mode: {ord.paymentMethod || "UPI / Online"}
                       </span>
                     </div>
 
