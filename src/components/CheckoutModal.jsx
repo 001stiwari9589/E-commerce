@@ -47,8 +47,8 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
     postOffices: [],
   });
 
-  // Payment State
-  const [paymentMode, setPaymentMode] = useState("upi"); // 'upi' | 'card' | 'cod'
+  // Payment State (Digital Pre-paid: UPI & Cards)
+  const [paymentMode, setPaymentMode] = useState("upi"); // 'upi' | 'card'
   const [selectedUpiApp, setSelectedUpiApp] = useState("phonepe");
   const [upiId, setUpiId] = useState("");
   const [utrNumber, setUtrNumber] = useState("");
@@ -672,12 +672,17 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                     </div>
 
                     {/* Merchant Payee Account Card */}
-                    <div className="bg-gradient-to-r from-emerald-600 via-teal-700 to-slate-900 text-white p-3.5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+                    <div className="bg-gradient-to-r from-emerald-600 via-teal-700 to-slate-900 text-white p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm border border-emerald-500/30">
                       <div>
-                        <span className="text-[10px] uppercase font-black text-emerald-200 tracking-wider">Recipient Bank Account</span>
-                        <h5 className="font-extrabold text-sm flex flex-wrap items-center gap-2 mt-0.5">
-                          {paymentConfig.merchantName}
-                          <span className="text-[11px] font-mono bg-white/20 px-2 py-0.5 rounded text-white">{paymentConfig.merchantUpiId}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] uppercase font-black text-emerald-200 tracking-wider">Official Store Recipient</span>
+                          <span className="bg-emerald-400 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase flex items-center gap-0.5">
+                            ✓ Verified Store
+                          </span>
+                        </div>
+                        <h5 className="font-extrabold text-sm sm:text-base flex flex-wrap items-center gap-2 mt-1">
+                          ST MART
+                          <span className="text-[11px] font-mono bg-white/20 px-2.5 py-0.5 rounded-lg text-white border border-white/20">{paymentConfig.merchantUpiId}</span>
                         </h5>
                       </div>
                       <button
@@ -688,10 +693,18 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                           if (triggerToast) triggerToast("Merchant UPI ID Copied to Clipboard!", "success");
                           setTimeout(() => setCopiedUpi(false), 2500);
                         }}
-                        className="self-stretch sm:self-auto bg-white text-emerald-900 hover:bg-emerald-50 font-black text-xs px-3 py-1.5 rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1 shrink-0"
+                        className="self-stretch sm:self-auto bg-white text-emerald-900 hover:bg-emerald-50 active:scale-95 font-black text-xs px-3.5 py-2 rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
                       >
                         {copiedUpi ? "✓ Copied!" : "📋 Copy UPI ID"}
                       </button>
+                    </div>
+
+                    {/* NPCI Trust Note */}
+                    <div className="bg-emerald-50/70 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40 px-3 py-2 rounded-xl text-[11px] text-emerald-800 dark:text-emerald-300 flex items-start gap-2">
+                      <span className="text-xs shrink-0 mt-0.5">🛡️</span>
+                      <p className="leading-snug">
+                        <strong>Direct Merchant Credit:</strong> Payment is received directly by <strong>ST Mart Store</strong>. (Note: If your UPI app shows the bank KYC account holder name, this is standard NPCI verification).
+                      </p>
                     </div>
 
                     {/* Popular Working UPI Apps Grid */}
@@ -746,24 +759,27 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                     </div>
 
                     <div className="mt-1 pt-3 border-t border-gray-200 dark:border-zinc-750 flex flex-col md:flex-row items-center gap-5">
-                      {/* Live Dynamic QR Code */}
-                      <div className="bg-white p-3 rounded-2xl border border-gray-200 shadow-md flex flex-col items-center shrink-0 text-slate-900">
-                        <div className="relative">
+                      {/* Live Dynamic QR Code Card with ST Mart Store Branding */}
+                      <div className="bg-white dark:bg-zinc-800 p-4 rounded-3xl border border-gray-200 dark:border-zinc-700 shadow-lg flex flex-col items-center shrink-0 text-slate-900 dark:text-white">
+                        <div className="flex items-center gap-1.5 mb-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/50">
+                          <span>✓</span> ST MART STORE QR
+                        </div>
+                        <div className="relative bg-white p-2 rounded-2xl border border-gray-150 shadow-inner">
                           <img
                             src={getUpiQrCodeUrl({
                               upiId: paymentConfig.merchantUpiId,
-                              name: paymentConfig.merchantName,
+                              name: "ST MART",
                               amount: finalPrice,
                               orderId: `STM-${Date.now().toString().slice(-5)}`,
                               customQrUrl: paymentConfig.customQrUrl,
                             })}
-                            alt="Live Dynamic Payment QR Code"
-                            className="w-40 h-40 object-contain rounded-lg border border-gray-100"
+                            alt="ST Mart Live Dynamic Payment QR Code"
+                            className="w-40 h-40 object-contain rounded-xl"
                           />
                         </div>
                         <div className="mt-2 text-center">
-                          <span className="text-xs font-black text-emerald-700 block">Scan &amp; Pay ₹{finalPrice.toLocaleString("en-IN")}</span>
-                          <span className="text-[10px] font-bold text-slate-500 block">Works with PhonePe, GPay, Paytm, BHIM</span>
+                          <span className="text-xs font-black text-emerald-700 dark:text-emerald-400 block">Scan &amp; Pay ₹{finalPrice.toLocaleString("en-IN")}</span>
+                          <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 block mt-0.5">Works with PhonePe, GPay, Paytm, BHIM</span>
                         </div>
                       </div>
 
@@ -948,7 +964,7 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
             <div className="w-full bg-slate-800 p-4 rounded-2xl border border-slate-700/60 text-left text-xs space-y-2 font-mono">
               <div className="flex justify-between text-slate-300">
                 <span>Merchant Account:</span>
-                <span className="font-bold text-amber-400">{paymentConfig.merchantName}</span>
+                <span className="font-bold text-amber-400">ST MART (Verified Store)</span>
               </div>
               <div className="flex justify-between text-slate-300">
                 <span>Merchant VPA:</span>

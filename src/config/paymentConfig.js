@@ -46,11 +46,12 @@ export const generateUpiUrl = ({ upiId, name, amount, orderId }) => {
   const formattedAmount = Number(amount || 0).toFixed(2);
 
   // Standard NPCI UPI URI Scheme with %20 encoding for PhonePe / GPay / Paytm display
+  // Using mc=5399 (General Merchandise / Retail) and mode=02 (Secure QR/Intent) ensures compliant merchant intent
   const encodedUpi = encodeURIComponent(cleanUpi);
   const encodedName = encodeURIComponent(cleanName);
-  const encodedNote = encodeURIComponent(cleanNote);
+  const encodedNote = encodeURIComponent(`Order ${orderId || "STM"} at ST MART Store`);
 
-  return `upi://pay?pa=${encodedUpi}&pn=${encodedName}&mc=0000&mode=02&purpose=00&am=${formattedAmount}&cu=INR&tn=${encodedNote}`;
+  return `upi://pay?pa=${encodedUpi}&pn=${encodedName}&mc=5399&mode=02&purpose=00&am=${formattedAmount}&cu=INR&tn=${encodedNote}`;
 };
 
 export const getUpiQrCodeUrl = ({ upiId, name, amount, orderId, customQrUrl }) => {
