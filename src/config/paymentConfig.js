@@ -45,13 +45,13 @@ export const generateUpiUrl = ({ upiId, name, amount, orderId }) => {
   const cleanNote = `Payment for Order ${orderId || "STM"}`;
   const formattedAmount = Number(amount || 0).toFixed(2);
 
-  // Standard NPCI UPI URI Scheme with %20 encoding for PhonePe / GPay / Paytm display
-  // Using mc=5399 (General Merchandise / Retail) and mode=02 (Secure QR/Intent) ensures compliant merchant intent
+  // Clean universal NPCI standard UPI URI Scheme
+  // We avoid mode=02 / mc flags because for personal/standard VPAs, PhonePe's security filter flags them as unauthorized merchant spoofing
   const encodedUpi = encodeURIComponent(cleanUpi);
   const encodedName = encodeURIComponent(cleanName);
-  const encodedNote = encodeURIComponent(`Order ${orderId || "STM"} at ST MART Store`);
+  const encodedNote = encodeURIComponent(`Order ${orderId || "STM"} ST MART`);
 
-  return `upi://pay?pa=${encodedUpi}&pn=${encodedName}&mc=5399&mode=02&purpose=00&am=${formattedAmount}&cu=INR&tn=${encodedNote}`;
+  return `upi://pay?pa=${encodedUpi}&pn=${encodedName}&am=${formattedAmount}&cu=INR&tn=${encodedNote}`;
 };
 
 export const getUpiQrCodeUrl = ({ upiId, name, amount, orderId, customQrUrl }) => {

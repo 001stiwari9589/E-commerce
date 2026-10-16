@@ -758,6 +758,14 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                       </button>
                     </div>
 
+                    {/* PhonePe Security Helper Notice */}
+                    <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800/50 p-2.5 rounded-xl flex items-center gap-2 text-[11px] text-amber-900 dark:text-amber-300 font-semibold">
+                      <span className="text-base shrink-0">💡</span>
+                      <span>
+                        <strong>PhonePe Tip:</strong> If PhonePe deep-link shows "Declined for security reasons", simply <strong>Scan the QR Code below</strong> or send to UPI ID <code className="bg-white/80 dark:bg-zinc-800 px-1 py-0.5 rounded font-mono font-bold">{paymentConfig.merchantUpiId}</code>. It succeeds instantly!
+                      </span>
+                    </div>
+
                     <div className="mt-1 pt-3 border-t border-gray-200 dark:border-zinc-750 flex flex-col md:flex-row items-center gap-5">
                       {/* Live Dynamic QR Code Card with ST Mart Store Branding */}
                       <div className="bg-white dark:bg-zinc-800 p-4 rounded-3xl border border-gray-200 dark:border-zinc-700 shadow-lg flex flex-col items-center shrink-0 text-slate-900 dark:text-white">

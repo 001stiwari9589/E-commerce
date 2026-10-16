@@ -151,25 +151,27 @@ function ProductDetailPage({
             )}
           </div>
 
-          {/* Checkout buttons */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* Checkout buttons - Fully responsive side-by-side on mobile & desktop */}
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
             <button
               onClick={() => addToCart(product)}
-              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 dark:shadow-none hover:shadow-xl transition-all cursor-pointer transform active:scale-98 text-sm"
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-extrabold py-3 sm:py-3.5 px-2.5 sm:px-4 rounded-xl flex items-center justify-center gap-1.5 sm:gap-2 shadow-md shadow-blue-500/20 dark:shadow-none hover:shadow-lg transition-all cursor-pointer transform active:scale-95 text-xs sm:text-sm whitespace-nowrap min-w-0"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
               </svg>
-              Add to Shopping Cart
+              <span className="hidden sm:inline truncate">Add to Shopping Cart</span>
+              <span className="sm:hidden truncate">Add to Cart</span>
             </button>
             <button
               onClick={() => onBuyNow(product)}
-              className="bg-amber-500 hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-700 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 dark:shadow-none hover:shadow-xl transition-all cursor-pointer transform active:scale-98 text-sm"
+              className="bg-amber-500 hover:bg-amber-600 dark:bg-amber-500 dark:hover:bg-amber-600 text-slate-950 font-black py-3 sm:py-3.5 px-2.5 sm:px-4 rounded-xl flex items-center justify-center gap-1.5 sm:gap-2 shadow-md shadow-amber-500/25 dark:shadow-none hover:shadow-lg transition-all cursor-pointer transform active:scale-95 text-xs sm:text-sm whitespace-nowrap min-w-0"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-slate-950" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
               </svg>
-              Buy Now / Checkout
+              <span className="hidden sm:inline truncate">Buy Now / Checkout</span>
+              <span className="sm:hidden truncate">Buy Now</span>
             </button>
           </div>
         </div>
