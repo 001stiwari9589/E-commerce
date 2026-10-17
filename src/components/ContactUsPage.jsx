@@ -66,7 +66,7 @@ function ContactUsPage({ onBack, triggerToast }) {
       // 2. Dispatch to WhatsApp notification service
       notifyContactWhatsApp(formData);
 
-      // 3. Open Email client / Gmail web with pre-filled message for 001satyamtiwari1999@gmail.com
+      // 3. Open Email client / Gmail web with pre-filled message for 001stiwari9589@gmail.com
       const mailSubject = encodeURIComponent(`ST Mart Support Inquiry: ${formData.subject}`);
       const mailBody = encodeURIComponent(
         `Customer Details:\n` +
@@ -77,12 +77,12 @@ function ContactUsPage({ onBack, triggerToast }) {
         `Message:\n${formData.message}\n`
       );
 
-      const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=001satyamtiwari1999@gmail.com&su=${mailSubject}&body=${mailBody}`;
+      const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=001stiwari9589@gmail.com&su=${mailSubject}&body=${mailBody}`;
       
       try {
         window.open(gmailWebUrl, "_blank");
       } catch {
-        window.location.href = `mailto:001satyamtiwari1999@gmail.com?subject=${mailSubject}&body=${mailBody}`;
+        window.location.href = `mailto:001stiwari9589@gmail.com?subject=${mailSubject}&body=${mailBody}`;
       }
 
       if (triggerToast) {
@@ -99,7 +99,7 @@ function ContactUsPage({ onBack, triggerToast }) {
     }
   };
 
-  const ownerEmail = "001satyamtiwari1999@gmail.com";
+  const ownerEmail = "001stiwari9589@gmail.com";
   const gmailDirectUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${ownerEmail}&su=${encodeURIComponent("ST Mart Customer Inquiry")}`;
 
   return (

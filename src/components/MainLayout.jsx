@@ -35,6 +35,7 @@ import { safeLocalStorage } from "../utils/localStorage";
 import { apiService } from "../services/api";
 import CheckoutModal from "./CheckoutModal";
 import ReceiptModal from "./ReceiptModal";
+import { notifyAddToCartEmail, notifyOrderBookedEmail } from "../services/emailNotificationService";
 
 function MainLayout() {
   // Global States
@@ -139,7 +140,9 @@ function MainLayout() {
         );
       }
       triggerToast(`Added ${product.name.split(" (")[0]} to Cart!`, "success");
-      return [...prev, { ...product, qty: 1 }];
+      const nextCart = [...prev, { ...product, qty: 1 }];
+      notifyAddToCartEmail({ product, userEmail, currentCartCount: nextCart.length });
+      return nextCart;
     });
   };
 
@@ -218,6 +221,7 @@ function MainLayout() {
     setCompletedOrder(order);
     setIsCheckoutOpen(false);
     setIsReceiptOpen(true);
+    notifyOrderBookedEmail(order);
   };
 
   // Open ReceiptModal for any order (from My Orders or Receipt history)

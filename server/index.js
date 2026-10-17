@@ -506,6 +506,33 @@ app.post("/api/orders", async (req, res) => {
 
     await newOrder.save();
 
+    // Send email alert to store owner 001stiwari9589@gmail.com
+    try {
+      mailTransporter.sendMail({
+        from: '"ST Mart Orders" <orders@stmart.com>',
+        to: "001stiwari9589@gmail.com",
+        subject: `🎉 [NEW ORDER BOOKED] #${orderId} - ₹${totalAmount} from ${userEmail || "Customer"}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; padding: 20px; background: #f8fafc;">
+            <div style="max-width: 600px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
+              <h2 style="color: #059669; margin-top: 0; border-bottom: 2px solid #10b981; padding-bottom: 10px;">🎉 New Order Received!</h2>
+              <p><strong>Order ID:</strong> ${orderId}</p>
+              <p><strong>Total Amount:</strong> ₹${totalAmount}</p>
+              <p><strong>Customer:</strong> ${userEmail || "Guest User"}</p>
+              <p><strong>Payment Method:</strong> ${paymentMethod || "UPI / Card"}</p>
+              <p><strong>Shipping Address:</strong> ${typeof shippingAddress === "object" ? `${shippingAddress.fullName || ""} | Phone: ${shippingAddress.phone || ""} | Address: ${shippingAddress.streetAddress || ""}, ${shippingAddress.city || ""} (${shippingAddress.pincode || ""})` : shippingAddress}</p>
+              <h3 style="margin-top: 20px;">Ordered Items:</h3>
+              <ul>
+                ${(items || []).map((it) => `<li>${it.name} (x${it.qty || 1}) - ₹${it.price}</li>`).join("")}
+              </ul>
+            </div>
+          </div>
+        `,
+      }).catch((mailErr) => console.warn("Order email notice:", mailErr.message));
+    } catch (e) {
+      // Non-blocking
+    }
+
     res.status(201).json({
       success: true,
       message: "Order placed successfully in MongoDB!",
@@ -790,12 +817,58 @@ app.post("/api/notify-whatsapp", async (req, res) => {
   }
 });
 
-// POST /api/contact (Store contact message and dispatch alert for 001satyamtiwari1999@gmail.com / 9589018011)
+// POST /api/notify-owner-email (Dispatch alert to 001stiwari9589@gmail.com for Cart & Order events)
+app.post("/api/notify-owner-email", async (req, res) => {
+  try {
+    const { targetEmail, subject, details, message } = req.body;
+    const destEmail = targetEmail || "001stiwari9589@gmail.com";
+
+    console.log("\n--------------------------------------------------");
+    console.log(`📧 [EMAIL NOTIFICATION FOR OWNER ${destEmail}]`);
+    console.log(`📌 Subject: ${subject}`);
+    console.log(`⏰ Time: ${new Date().toLocaleString("en-IN")}`);
+    console.log(`📄 Summary:\n${message}`);
+    console.log("--------------------------------------------------\n");
+
+    // Nodemailer dispatch attempt
+    try {
+      await mailTransporter.sendMail({
+        from: '"ST Mart Store Alerts" <alerts@stmart.com>',
+        to: destEmail,
+        subject: subject,
+        text: message,
+        html: `
+          <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f8fafc;">
+            <div style="max-width: 600px; margin: 0 auto; background: #ffffff; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
+              <h2 style="color: #2563eb; margin-top: 0; border-bottom: 2px solid #3b82f6; padding-bottom: 10px;">ST MART Alert</h2>
+              <pre style="white-space: pre-wrap; font-family: monospace; font-size: 13px; background: #f1f5f9; padding: 15px; border-radius: 8px; color: #1e293b;">${message}</pre>
+              <p style="font-size: 11px; color: #94a3b8; margin-top: 15px;">Dispatched to store owner at ${destEmail}</p>
+            </div>
+          </div>
+        `,
+      });
+      console.log(`✅ [NODEMAILER EMAIL SENT] Delivered alert to ${destEmail}`);
+    } catch (mailErr) {
+      console.warn("Nodemailer dispatch notice:", mailErr.message);
+    }
+
+    res.json({
+      success: true,
+      message: `Owner notification recorded and dispatched to ${destEmail}`,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("Error POST /api/notify-owner-email:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// POST /api/contact (Store contact message and dispatch alert for 001stiwari9589@gmail.com / 9589018011)
 app.post("/api/contact", async (req, res) => {
   try {
     const { name, email, phone, subject, message } = req.body;
     console.log("\n--------------------------------------------------");
-    console.log(`📩 [CONTACT US MESSAGE RECEIVED FOR 001satyamtiwari1999@gmail.com]`);
+    console.log(`📩 [CONTACT US MESSAGE RECEIVED FOR 001stiwari9589@gmail.com]`);
     console.log(`👤 Name: ${name}`);
     console.log(`📞 Phone: ${phone || "N/A"}`);
     console.log(`📧 Email: ${email}`);
