@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import BuyProductButton from "./BuyProductButton";
 
 function CartPage({
   cartItems,
@@ -99,8 +100,8 @@ function CartPage({
                             Remove
                           </button>
                         </div>
-                        <p className="text-xs text-slate-400 dark:text-zinc-500 mt-1">
-                          Seller: ST Mart Retailer
+                        <p className="text-xs text-slate-400 dark:text-zinc-500 mt-1 flex items-center gap-1">
+                          <span>✓ Verified Deal • Fulfilled by {item.merchant || "Amazon"}</span>
                         </p>
 
                         {/* Prices */}
@@ -121,8 +122,8 @@ function CartPage({
                         </div>
                       </div>
 
-                      {/* Quantity operations */}
-                      <div className="flex items-center gap-4 mt-4">
+                      {/* Quantity operations & Direct Merchant Buy Button */}
+                      <div className="flex flex-wrap items-center justify-between gap-3 mt-4 pt-3 border-t border-slate-100 dark:border-zinc-800">
                         <div className="flex items-center border border-gray-200 dark:border-zinc-700 rounded-lg overflow-hidden bg-slate-50 dark:bg-zinc-800">
                           <button
                             onClick={() => updateQuantity(item.id, item.qty - 1)}
@@ -140,6 +141,13 @@ function CartPage({
                             +
                           </button>
                         </div>
+
+                        <BuyProductButton
+                          product={item}
+                          sourcePage="cart_page"
+                          size="sm"
+                          label={`Buy on ${item.merchant || "Amazon"} ↗`}
+                        />
                       </div>
                     </div>
                   </div>
@@ -203,11 +211,18 @@ function CartPage({
               )}
 
               <button
-                onClick={onCheckout}
-                className="w-full bg-amber-500 hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-700 text-slate-900 dark:text-white font-bold py-3.5 rounded-xl text-center shadow-lg hover:shadow-xl transition-all cursor-pointer transform active:scale-98 text-sm mt-3"
+                onClick={() => onCheckout(cartItems)}
+                className="w-full bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 font-black py-4 rounded-xl text-center shadow-lg hover:shadow-xl transition-all cursor-pointer transform active:scale-98 text-sm mt-3 flex items-center justify-center gap-2"
               >
-                Confirm Order & Checkout
+                <span>🚀 Proceed to Buy on Amazon (Safe Checkout) ↗</span>
               </button>
+
+              <div className="bg-emerald-50/70 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/40 p-3 rounded-xl text-[11px] text-emerald-800 dark:text-emerald-300 flex items-start gap-2">
+                <span className="text-sm shrink-0">🛡️</span>
+                <p className="leading-snug">
+                  <strong>Zero Payment Risk:</strong> Payments and deliveries are securely handled directly by Amazon / partner merchants. Satyam / ST Mart never collects or holds customer money.
+                </p>
+              </div>
             </div>
           )}
         </div>

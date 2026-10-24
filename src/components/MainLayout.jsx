@@ -215,21 +215,24 @@ function MainLayout() {
     triggerToast("Logged out successfully. Login again to continue.", "info");
   };
 
-  // Interactive Multi-step Checkout handling
+  // Safe Affiliate Outbound Checkout handling (Protects Satyam from fulfillment risk)
   const handleCheckout = (customItems = null) => {
     const itemsToProcess = customItems || cartItems;
     if (!itemsToProcess || itemsToProcess.length === 0) {
       triggerToast("Your cart is empty!", "warning");
       return;
     }
-    setActiveCheckoutItems(itemsToProcess);
-    setIsCheckoutOpen(true);
+    const item = itemsToProcess[0];
+    const targetUrl = item.affiliateUrl || `https://www.amazon.in/s?k=${encodeURIComponent(item.name)}&tag=stmart05-21`;
+    triggerToast(`Opening official ${item.merchant || "Amazon"} deal securely...`, "info");
+    window.open(targetUrl, "_blank", "noopener,noreferrer");
   };
 
-  // Buy Now flow from detail page or product card
+  // Safe Affiliate Buy Now flow
   const handleBuyNow = (product) => {
-    setActiveCheckoutItems([{ ...product, qty: 1 }]);
-    setIsCheckoutOpen(true);
+    const targetUrl = product.affiliateUrl || `https://www.amazon.in/s?k=${encodeURIComponent(product.name)}&tag=stmart05-21`;
+    triggerToast(`Opening official ${product.merchant || "Amazon"} deal securely...`, "info");
+    window.open(targetUrl, "_blank", "noopener,noreferrer");
   };
 
   // Callback when order is placed successfully in CheckoutModal
@@ -533,15 +536,7 @@ function MainLayout() {
       {/* Footer Area (Render everywhere except LoginPage) */}
       {view !== "login" && <Footer setView={setView} />}
 
-      {/* Interactive Checkout Modal (Address & Payment Gateway) */}
-      <CheckoutModal
-        isOpen={isCheckoutOpen}
-        onClose={() => setIsCheckoutOpen(false)}
-        cartItems={activeCheckoutItems}
-        userEmail={userEmail}
-        onOrderSuccess={handleOrderSuccess}
-        triggerToast={triggerToast}
-      />
+
 
       {/* Tax Invoice & Order Receipt Modal (Printable) */}
       <ReceiptModal
