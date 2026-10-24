@@ -26,6 +26,9 @@ function Footer({ setView }) {
           <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider border-b border-zinc-800/80 pb-1.5 mb-1">
             About ST Mart
           </h4>
+          <button onClick={() => setView && setView("deals")} className="text-left text-xs text-amber-400 font-bold hover:text-amber-300 transition-colors cursor-pointer py-0.5">
+            🔥 Deals &amp; Top Recommendations
+          </button>
           <button onClick={() => setView && setView("contact")} className="text-left text-xs text-zinc-400 hover:text-amber-300 transition-colors cursor-pointer py-0.5">
             Contact Us
           </button>
@@ -67,6 +70,9 @@ function Footer({ setView }) {
           <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider border-b border-zinc-800/80 pb-1.5 mb-1">
             Consumer Policy
           </h4>
+          <button onClick={() => setView && setView("affiliate-disclosure")} className="text-left text-xs text-amber-400 font-bold hover:text-amber-300 transition-colors cursor-pointer py-0.5">
+            🛡️ Affiliate Disclosure
+          </button>
           <button onClick={() => setView && setView("return-policy")} className="text-left text-xs text-zinc-400 hover:text-amber-300 transition-colors cursor-pointer py-0.5">
             Return Policy
           </button>

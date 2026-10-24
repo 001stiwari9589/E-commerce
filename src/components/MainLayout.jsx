@@ -29,6 +29,8 @@ import PrivacyPolicyPage from "./PrivacyPolicyPage";
 import AdvertisePage from "./AdvertisePage";
 import GiftCardsPage from "./GiftCardsPage";
 import AdminPanelPage from "./AdminPanelPage";
+import DealsRecommendationsPage from "./DealsRecommendationsPage";
+import AffiliateDisclosurePage from "./AffiliateDisclosurePage";
 
 import { PRODUCTS_DATABASE } from "../data/products";
 import { safeLocalStorage } from "../utils/localStorage";
@@ -111,6 +113,23 @@ function MainLayout() {
       safeLocalStorage.setItem("darkMode", "false");
     }
   }, [isDarkMode]);
+
+  // Dynamic SEO page titles per view
+  useEffect(() => {
+    const titles = {
+      home: "ST Mart | Curated Shopping & Affiliate Recommendations",
+      deals: "Top Deals & Verified Recommendations | ST Mart",
+      "affiliate-disclosure": "Affiliate Disclosure & Transparency Policy | ST Mart",
+      "product-detail": activeProductDetails ? `${activeProductDetails.name} | ST Mart` : "Product Details | ST Mart",
+      about: "About Us | ST Mart Affiliate Shopping",
+      contact: "Contact Us | ST Mart Support",
+      privacy: "Privacy Policy | ST Mart",
+      terms: "Terms of Use | ST Mart",
+      wishlist: "My Wishlist | ST Mart",
+      cart: "Shopping Cart | ST Mart",
+    };
+    document.title = titles[view] || "ST Mart | India's Trusted Affiliate Shopping Guide";
+  }, [view, activeProductDetails]);
 
   // Secret Owner Keyboard Shortcut: Ctrl + Shift + A to access Admin Panel
   useEffect(() => {
@@ -336,6 +355,7 @@ function MainLayout() {
             triggerToast={triggerToast}
             cartItems={cartItems}
             handleUpdateCartQuantity={handleUpdateCartQuantity}
+            setView={setView}
           />
         )}
 
@@ -407,6 +427,18 @@ function MainLayout() {
             setView={setView}
             onBack={handleBackNavigation}
           />
+        )}
+
+        {view === "deals" && (
+          <DealsRecommendationsPage
+            products={productsList}
+            onSelectProduct={handleProductSelect}
+            setView={setView}
+          />
+        )}
+
+        {view === "affiliate-disclosure" && (
+          <AffiliateDisclosurePage onBack={() => setView("home")} />
         )}
 
         {view === "about" && (

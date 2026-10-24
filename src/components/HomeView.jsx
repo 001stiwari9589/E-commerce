@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import HeroCarousel from "./HeroCarousel";
 import ProductCard from "./ProductCard";
+import AffiliateDisclosureBanner from "./AffiliateDisclosureBanner";
 import { notifyOfferSubscriptionWhatsApp } from "../services/whatsappService";
 
 function HomeView({
@@ -14,6 +15,7 @@ function HomeView({
   triggerToast,
   cartItems = [],
   handleUpdateCartQuantity,
+  setView,
 }) {
   // Live Countdown Timer state for Flash Deals
   const [timeLeft, setTimeLeft] = useState({ hours: 14, minutes: 32, seconds: 45 });
@@ -231,17 +233,30 @@ function HomeView({
         </div>
       )}
 
+      {/* Affiliate Transparency Disclosure */}
+      <AffiliateDisclosureBanner setView={setView} />
+
       {/* Main Deals & Products Catalog */}
       <div className="bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-3xl shadow-xs p-5 sm:p-7 transition-colors flex flex-col gap-6">
         
         {/* Header & Controls */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-150 dark:border-zinc-850 pb-5">
           <div>
-            <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-              Explore All Products Catalog
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                Recommended Products Catalog
+              </h2>
+              {setView && (
+                <button
+                  onClick={() => setView("deals")}
+                  className="hidden sm:inline-flex items-center gap-1 bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 text-xs font-bold px-2.5 py-1 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer"
+                >
+                  🔥 Curated Deals
+                </button>
+              )}
+            </div>
             <p className="text-xs text-slate-500 dark:text-zinc-400 font-semibold mt-0.5">
-              Showing {displayedProducts.length} premium products available for instant order
+              Showing {displayedProducts.length} verified products with direct partner links
             </p>
           </div>
 

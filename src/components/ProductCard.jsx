@@ -1,3 +1,5 @@
+import BuyProductButton from "./BuyProductButton";
+
 function ProductCard({
   product,
   addToCart,
@@ -11,10 +13,17 @@ function ProductCard({
   const cartItem = cartItems.find((item) => item && item.id === product.id);
   const cartQuantity = cartItem ? cartItem.qty : 0;
 
+  const merchant = product.merchant || (product.brand?.toLowerCase().includes("apple") ? "Flipkart" : "Partner Store");
+  const isAmazon = merchant.toLowerCase().includes("amazon");
+  const isAffiliate = product.isAffiliate || Boolean(product.affiliateUrl);
+
+  const price = product.currentPrice || product.price || 0;
+  const listedPrice = product.listedPrice || product.originalPrice || 0;
+
   return (
     <div
       onClick={() => onSelect(product)}
-      className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-2.5 sm:p-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between group"
+      className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xs border border-gray-100 dark:border-zinc-800 p-2.5 sm:p-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between group"
     >
       {/* Product Image & Wishlist Link */}
       <div className="relative bg-slate-50 dark:bg-zinc-850 rounded-xl p-2 sm:p-4 flex items-center justify-center h-36 sm:h-52 w-full overflow-hidden border border-slate-100 dark:border-zinc-800/50">
@@ -28,6 +37,17 @@ function ProductCard({
           className="max-h-full max-w-full object-contain rounded-lg transition-transform duration-500 group-hover:scale-105"
         />
 
+        {/* Merchant Partner Tag */}
+        <span
+          className={`absolute top-2 left-2 text-[9px] font-extrabold px-2 py-0.5 rounded-md shadow-xs ${
+            isAmazon
+              ? "bg-slate-950 text-amber-400"
+              : "bg-blue-600 text-white"
+          }`}
+        >
+          {merchant}
+        </span>
+
         {/* Floating Wishlist Button */}
         <button
           onClick={(e) => {
@@ -39,6 +59,7 @@ function ProductCard({
               ? "bg-rose-50 dark:bg-rose-950/20 text-rose-500"
               : "bg-white/80 dark:bg-zinc-800/80 hover:bg-white dark:hover:bg-zinc-700 text-slate-400 dark:text-zinc-500 hover:text-rose-500"
           }`}
+          title="Save to Wishlist"
         >
           <svg
             className={`w-4 h-4 sm:w-5 sm:h-5 ${isWishlisted ? "fill-current animate-heartbeat" : ""}`}
@@ -63,92 +84,82 @@ function ProductCard({
       <div className="flex-1 flex flex-col justify-between mt-2.5 sm:mt-4">
         <div>
           <span className="text-[9px] sm:text-[10px] font-bold text-blue-600 dark:text-amber-500 uppercase tracking-widest block truncate">
-            {product.brand || "ST Mart Choice"}
+            {product.brand || product.category}
           </span>
           <h2 className="text-xs sm:text-sm font-bold text-slate-850 dark:text-white line-clamp-1 mt-0.5 group-hover:text-blue-600 dark:group-hover:text-amber-400 transition-colors">
             {product.name}
           </h2>
 
-          {/* Rating & ST Assured banner */}
+          {/* Rating & Verified banner */}
           <div className="flex items-center gap-1.5 mt-1 sm:mt-1.5 flex-wrap">
             <span className="bg-emerald-600 text-white text-[9px] sm:text-[10px] font-black px-1.5 py-0.2 rounded flex items-center gap-0.5 shadow-sm">
               {product.rating} ★
             </span>
             <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-zinc-500">
-              ({product.reviewsCount || "432"})
+              ({product.reviewsCount || "430"})
             </span>
             <span className="bg-blue-600/10 text-blue-700 dark:bg-amber-500/15 dark:text-amber-400 border border-blue-200 dark:border-amber-500/30 text-[9px] font-black px-1.5 py-0.5 rounded-full flex items-center gap-0.5 shadow-2xs">
-              ST Assured✦
+              Verified Recommendation
             </span>
           </div>
 
           {/* Pricing detail */}
           <div className="flex items-baseline gap-1 mt-2 sm:mt-3 flex-wrap">
             <span className="text-xs sm:text-base font-extrabold text-slate-900 dark:text-white">
-              ₹{Number(product.price || 0).toLocaleString("en-IN")}
+              ₹{Number(price).toLocaleString("en-IN")}
             </span>
-            {product.originalPrice && (
+            {listedPrice > price && (
               <span className="text-[10px] sm:text-xs text-slate-400 dark:text-zinc-500 line-through">
-                ₹{Number(product.originalPrice || 0).toLocaleString("en-IN")}
+                ₹{Number(listedPrice).toLocaleString("en-IN")}
               </span>
             )}
           </div>
           
-          {/* Delivery tags */}
-          <p className="text-[9px] sm:text-[10px] text-emerald-600 dark:text-emerald-500 font-bold mt-0.5 sm:mt-1">
-            Free Delivery
+          {/* Availability timestamp notice */}
+          <p className="text-[9px] sm:text-[10px] text-slate-400 dark:text-zinc-500 font-semibold mt-0.5 sm:mt-1 truncate">
+            {product.availabilityCheckedAt ? `Price: ${product.availabilityCheckedAt}` : "Check merchant for live price"}
           </p>
         </div>
 
-        {/* Add to Cart / Interactive Quantity Buttons */}
-        {cartQuantity > 0 ? (
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="mt-2.5 sm:mt-4 w-full flex items-center justify-between bg-blue-50 dark:bg-zinc-800 border border-blue-200 dark:border-zinc-700 rounded-xl p-1 shadow-xs"
-          >
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (handleUpdateQty) {
-                  handleUpdateQty(product.id, cartQuantity - 1);
-                }
-              }}
-              className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white dark:bg-zinc-700 text-slate-800 dark:text-white font-black text-base flex items-center justify-center shadow-xs hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 transition-all cursor-pointer active:scale-90 shrink-0"
-              title="Decrease Quantity"
-            >
-              −
-            </button>
-            <div className="flex flex-col items-center">
-              <span className="text-[9px] text-blue-600 dark:text-amber-400 font-extrabold uppercase leading-none">In Cart</span>
-              <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-none mt-0.5">{cartQuantity}</span>
+        {/* Action Button: Direct Affiliate Buy or Add to Cart */}
+        <div className="mt-2.5 sm:mt-4" onClick={(e) => e.stopPropagation()}>
+          {isAffiliate ? (
+            <BuyProductButton
+              product={product}
+              sourcePage="home_card"
+              size="sm"
+              className="w-full"
+            />
+          ) : cartQuantity > 0 ? (
+            <div className="w-full flex items-center justify-between bg-blue-50 dark:bg-zinc-800 border border-blue-200 dark:border-zinc-700 rounded-xl p-1 shadow-xs">
+              <button
+                type="button"
+                onClick={() => handleUpdateQty && handleUpdateQty(product.id, cartQuantity - 1)}
+                className="w-7 h-7 rounded-lg bg-white dark:bg-zinc-700 text-slate-800 dark:text-white font-black text-base flex items-center justify-center shadow-xs hover:bg-rose-50 hover:text-rose-600 transition-all cursor-pointer"
+              >
+                −
+              </button>
+              <div className="flex flex-col items-center">
+                <span className="text-[9px] text-blue-600 dark:text-amber-400 font-extrabold uppercase leading-none">In Cart</span>
+                <span className="text-xs font-black text-slate-900 dark:text-white leading-none mt-0.5">{cartQuantity}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => addToCart && addToCart(product)}
+                className="w-7 h-7 rounded-lg bg-blue-600 text-white font-black text-base flex items-center justify-center shadow-xs hover:bg-blue-700 transition-all cursor-pointer"
+              >
+                +
+              </button>
             </div>
+          ) : (
             <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                addToCart(product);
-              }}
-              className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-600 dark:bg-amber-500 text-white dark:text-slate-950 font-black text-base flex items-center justify-center shadow-xs hover:bg-blue-700 dark:hover:bg-amber-600 transition-all cursor-pointer active:scale-90 shrink-0"
-              title="Increase Quantity"
+              onClick={() => addToCart && addToCart(product)}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] sm:text-xs w-full py-2 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1 shadow-xs"
             >
-              +
+              <span>Add to Cart</span>
             </button>
-          </div>
-        ) : (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              addToCart(product);
-            }}
-            className="bg-blue-600 hover:bg-blue-700 dark:bg-zinc-800 dark:hover:bg-zinc-750 text-white font-bold text-[11px] sm:text-xs w-full mt-2.5 sm:mt-4 py-2 sm:py-2.5 rounded-xl transition-all cursor-pointer transform active:scale-98 flex items-center justify-center gap-1 border border-transparent dark:border-zinc-700 shadow-xs"
-          >
-            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            <span>Add to Cart</span>
-          </button>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

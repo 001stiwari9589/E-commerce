@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { validatePincode, lookupPincode } from "../services/pincodeService";
+import BuyProductButton from "./BuyProductButton";
+import AffiliateDisclosureBanner from "./AffiliateDisclosureBanner";
 
 function ProductDetailPage({
   product,
@@ -151,28 +153,36 @@ function ProductDetailPage({
             )}
           </div>
 
-          {/* Checkout buttons - Fully responsive side-by-side on mobile & desktop */}
-          <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
-            <button
-              onClick={() => addToCart(product)}
-              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-extrabold py-3 sm:py-3.5 px-2.5 sm:px-4 rounded-xl flex items-center justify-center gap-1.5 sm:gap-2 shadow-md shadow-blue-500/20 dark:shadow-none hover:shadow-lg transition-all cursor-pointer transform active:scale-95 text-xs sm:text-sm whitespace-nowrap min-w-0"
-            >
-              <svg className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-              </svg>
-              <span className="hidden sm:inline truncate">Add to Shopping Cart</span>
-              <span className="sm:hidden truncate">Add to Cart</span>
-            </button>
-            <button
-              onClick={() => onBuyNow(product)}
-              className="bg-amber-500 hover:bg-amber-600 dark:bg-amber-500 dark:hover:bg-amber-600 text-slate-950 font-black py-3 sm:py-3.5 px-2.5 sm:px-4 rounded-xl flex items-center justify-center gap-1.5 sm:gap-2 shadow-md shadow-amber-500/25 dark:shadow-none hover:shadow-lg transition-all cursor-pointer transform active:scale-95 text-xs sm:text-sm whitespace-nowrap min-w-0"
-            >
-              <svg className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-slate-950" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-              </svg>
-              <span className="hidden sm:inline truncate">Buy Now / Checkout</span>
-              <span className="sm:hidden truncate">Buy Now</span>
-            </button>
+          {/* Affiliate Buy & Direct Links */}
+          <div className="flex flex-col gap-3">
+            <BuyProductButton
+              product={product}
+              sourcePage="product_detail"
+              size="lg"
+              className="w-full"
+            />
+            
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
+              <button
+                onClick={() => addToCart(product)}
+                className="bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-750 text-slate-800 dark:text-zinc-200 font-extrabold py-3 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer transform active:scale-95 text-xs sm:text-sm whitespace-nowrap min-w-0"
+              >
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                </svg>
+                <span>Add to Cart</span>
+              </button>
+              <button
+                onClick={() => onBuyNow(product)}
+                className="bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-750 text-slate-800 dark:text-zinc-200 font-bold py-3 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer transform active:scale-95 text-xs sm:text-sm whitespace-nowrap min-w-0"
+              >
+                <span>Local Checkout</span>
+              </button>
+            </div>
+
+            <p className="text-[11px] text-slate-400 dark:text-zinc-500 text-center leading-snug">
+              🔒 Purchases through official partner links are protected by merchant buyer protection & warranty policies.
+            </p>
           </div>
         </div>
 
@@ -218,10 +228,35 @@ function ProductDetailPage({
                 </>
               )}
             </div>
-            <p className="text-xs text-emerald-600 dark:text-emerald-500 font-bold mt-1">
-              Special Discount Price (Free Shipping Included)
-            </p>
+            <div className="mt-3 pt-3 border-t border-slate-200 dark:border-zinc-700/60 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <span className="text-slate-600 dark:text-zinc-300">
+                Partner Store: <strong className="text-blue-600 dark:text-amber-400 font-extrabold">{product.merchant || "Flipkart"}</strong>
+              </span>
+              <span className="text-slate-400 dark:text-zinc-500 font-semibold">
+                {product.availabilityCheckedAt ? `Price & Stock: ${product.availabilityCheckedAt}` : "Check merchant for live price"}
+              </span>
+            </div>
           </div>
+
+          {/* Key Product Highlights / Features */}
+          {product.features && product.features.length > 0 && (
+            <div className="p-4 bg-slate-50 dark:bg-zinc-850 rounded-2xl border border-slate-200 dark:border-zinc-800">
+              <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Key Features &amp; Highlights
+              </h3>
+              <ul className="space-y-1.5 text-xs text-slate-700 dark:text-zinc-300">
+                {product.features.map((feat, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="text-blue-600 dark:text-amber-400 font-bold">•</span>
+                    <span>{feat}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Check Pincode & Area Availability */}
           <div className="p-4 bg-blue-50/50 dark:bg-zinc-800/60 border border-blue-100 dark:border-zinc-700/60 rounded-2xl flex flex-col gap-2.5">

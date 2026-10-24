@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { apiService } from "../services/api";
 import { PRODUCTS_DATABASE } from "../data/products";
+import { analyticsService } from "../services/analyticsService";
 
 export default function AdminPanelPage({ onBack, triggerToast, onAddProduct }) {
   // Security Passcode PIN State (Default PIN: 1234)
@@ -33,6 +34,9 @@ export default function AdminPanelPage({ onBack, triggerToast, onAddProduct }) {
     originalPrice: "",
     image: "",
     desc: "",
+    merchant: "Flipkart",
+    affiliateUrl: "",
+    isAffiliate: true,
   });
 
   // Unlock Admin Panel handler
@@ -110,6 +114,10 @@ export default function AdminPanelPage({ onBack, triggerToast, onAddProduct }) {
           newCard.image.trim() ||
           "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=500&auto=format&fit=crop&q=60",
         desc: newCard.desc.trim() || "High quality product.",
+        merchant: newCard.merchant || "Flipkart",
+        affiliateUrl: (newCard.affiliateUrl || "").trim(),
+        isAffiliate: true,
+        availabilityCheckedAt: "Verified Today",
       };
 
       const res = await apiService.addProduct(payload);
@@ -135,6 +143,9 @@ export default function AdminPanelPage({ onBack, triggerToast, onAddProduct }) {
         originalPrice: "",
         image: "",
         desc: "",
+        merchant: "Flipkart",
+        affiliateUrl: "",
+        isAffiliate: true,
       });
 
       // Background sync fresh dataset
@@ -453,6 +464,16 @@ export default function AdminPanelPage({ onBack, triggerToast, onAddProduct }) {
             }`}
         >
           📊 Sales Leaderboard & Analytics
+        </button>
+
+        <button
+          onClick={() => setActiveTab("affiliate-clicks")}
+          className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === "affiliate-clicks"
+            ? "bg-amber-500 text-white shadow-md shadow-amber-500/25"
+            : "bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800 border border-slate-200/80 dark:border-zinc-800"
+            }`}
+        >
+          🔗 Affiliate Click Tracker
         </button>
       </div>
 
@@ -880,6 +901,103 @@ export default function AdminPanelPage({ onBack, triggerToast, onAddProduct }) {
         </div>
       )}
 
+      {/* TAB 6: AFFILIATE OUTBOUND CLICK TRACKER */}
+      {activeTab === "affiliate-clicks" && (
+        <div className="bg-white dark:bg-zinc-900 rounded-3xl p-5 sm:p-6 border border-slate-200/80 dark:border-zinc-800 shadow-sm flex flex-col gap-6 animate-fade-in">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-150 dark:border-zinc-800 pb-4">
+            <div>
+              <h3 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                🔗 Outbound Affiliate Click Analytics
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                Privacy-respecting log of customer clicks on Flipkart &amp; Amazon product buttons. (Stored locally; official sales are tracked in merchant affiliate consoles).
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                analyticsService.clearClickStats();
+                if (triggerToast) triggerToast("Affiliate click history cleared.", "info");
+              }}
+              className="text-xs font-bold text-rose-600 hover:text-rose-700 dark:text-rose-400 px-3 py-1.5 rounded-xl border border-rose-200 dark:border-rose-900/50 hover:bg-rose-50 dark:hover:bg-rose-950/30 cursor-pointer self-start sm:self-auto"
+            >
+              Clear Local Logs
+            </button>
+          </div>
+
+          {/* Quick Metrics */}
+          {(() => {
+            const clickStats = analyticsService.getClickStats();
+            return (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-zinc-850 border border-slate-200 dark:border-zinc-800">
+                    <p className="text-xs text-slate-400 dark:text-zinc-500 uppercase font-bold">Total Link Clicks</p>
+                    <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">
+                      {clickStats.totalClicks}
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-blue-50/60 dark:bg-zinc-850 border border-blue-200/60 dark:border-zinc-800">
+                    <p className="text-xs text-blue-600 dark:text-blue-400 uppercase font-bold">Flipkart Clicks</p>
+                    <p className="text-2xl font-black text-blue-700 dark:text-blue-300 mt-1">
+                      {clickStats.byMerchant["Flipkart"] || 0}
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-amber-50/60 dark:bg-zinc-850 border border-amber-200/60 dark:border-zinc-800">
+                    <p className="text-xs text-amber-600 dark:text-amber-400 uppercase font-bold">Amazon Clicks</p>
+                    <p className="text-2xl font-black text-amber-700 dark:text-amber-300 mt-1">
+                      {clickStats.byMerchant["Amazon"] || 0}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Table of recent clicks */}
+                <div className="overflow-x-auto">
+                  <h4 className="text-xs font-bold text-slate-700 dark:text-zinc-300 uppercase tracking-wider mb-2">
+                    Recent Outbound Click Stream (Latest 20)
+                  </h4>
+                  {clickStats.recentClicks.length === 0 ? (
+                    <div className="text-center py-8 bg-slate-50 dark:bg-zinc-850 rounded-2xl border border-slate-200 dark:border-zinc-800">
+                      <p className="text-xs text-slate-400">No affiliate clicks recorded yet. When visitors click "Buy on Flipkart" or "Buy on Amazon", clicks will register here.</p>
+                    </div>
+                  ) : (
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="border-b border-slate-200 dark:border-zinc-800 text-slate-400 uppercase">
+                          <th className="py-2.5 px-3">Time</th>
+                          <th className="py-2.5 px-3">Product Name</th>
+                          <th className="py-2.5 px-3">Partner Store</th>
+                          <th className="py-2.5 px-3">Source View</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-zinc-800 text-slate-700 dark:text-zinc-300">
+                        {clickStats.recentClicks.map((c) => (
+                          <tr key={c.id} className="hover:bg-slate-50 dark:hover:bg-zinc-800/40">
+                            <td className="py-2.5 px-3 whitespace-nowrap text-slate-400">
+                              {new Date(c.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                            </td>
+                            <td className="py-2.5 px-3 font-semibold text-slate-900 dark:text-white max-w-xs truncate">
+                              {c.productName}
+                            </td>
+                            <td className="py-2.5 px-3">
+                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${c.merchant === "Amazon" ? "bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300" : "bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-300"}`}>
+                                {c.merchant}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-3 text-slate-400 capitalize">
+                              {c.sourcePage}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </>
+            );
+          })()}
+        </div>
+      )}
+
       {/* MODAL: ADD PRODUCT CARD */}
       {showAddCardModal && (
         <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
@@ -975,6 +1093,30 @@ export default function AdminPanelPage({ onBack, triggerToast, onAddProduct }) {
                   onChange={(e) => setNewCard({ ...newCard, image: e.target.value })}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold focus:ring-2 focus:ring-amber-500 outline-none"
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-zinc-300 block mb-1">Affiliate Partner Store *</label>
+                  <select
+                    value={newCard.merchant}
+                    onChange={(e) => setNewCard({ ...newCard, merchant: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white font-semibold focus:ring-2 focus:ring-amber-500 outline-none"
+                  >
+                    <option value="Flipkart">Flipkart</option>
+                    <option value="Amazon">Amazon</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-zinc-300 block mb-1">Affiliate Tracking URL</label>
+                  <input
+                    type="url"
+                    placeholder="https://affiliate.flipkart.com/... or https://amzn.to/..."
+                    value={newCard.affiliateUrl}
+                    onChange={(e) => setNewCard({ ...newCard, affiliateUrl: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold focus:ring-2 focus:ring-amber-500 outline-none"
+                  />
+                </div>
               </div>
 
               <div>

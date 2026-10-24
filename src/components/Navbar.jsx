@@ -312,6 +312,16 @@ function Navbar({
               </button>
             )}
 
+            {/* Deals & Top Recommendations */}
+            <button
+              onClick={() => setView("deals")}
+              className={`flex items-center gap-1.5 text-xs sm:text-sm font-extrabold cursor-pointer transition-colors py-1 px-2.5 rounded-lg hover:bg-white/10 ${
+                view === "deals" ? "text-yellow-400 font-black" : "text-white hover:text-yellow-300"
+              }`}
+            >
+              <span>🔥 Deals</span>
+            </button>
+
             {/* Become a Seller */}
             <button
               onClick={handleBecomeSeller}
@@ -487,6 +497,34 @@ function Navbar({
                       {cartCount}
                     </span>
                   )}
+                </button>
+
+                <button
+                  onClick={() => {
+                    setView("deals");
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center gap-2.5 p-3.5 rounded-2xl transition-all text-left cursor-pointer ${
+                    view === "deals" ? "bg-yellow-400 text-blue-950 font-black shadow-md" : "bg-white/10 dark:bg-zinc-800/60 text-white hover:bg-white/20"
+                  }`}
+                >
+                  <span className="text-base">🔥</span>
+                  <span>Curated Deals &amp; Picks</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setView("affiliate-disclosure");
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center gap-2.5 p-3.5 rounded-2xl transition-all text-left cursor-pointer ${
+                    view === "affiliate-disclosure" ? "bg-yellow-400 text-blue-950 font-black shadow-md" : "bg-white/10 dark:bg-zinc-800/60 text-white hover:bg-white/20"
+                  }`}
+                >
+                  <svg className="w-4.5 h-4.5 text-sky-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                  </svg>
+                  <span>Affiliate Disclosure</span>
                 </button>
 
                 <button
