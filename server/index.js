@@ -23,11 +23,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const SEED_JSON_PATH = path.join(__dirname, "db.json");
 
-const ADMIN_SECRET = process.env.ADMIN_SECRET || "stmart_owner_secret_1234";
+const ADMIN_SECRET = process.env.ADMIN_SECRET || "";
 
 const verifyAdminSecret = (req, res, next) => {
   const reqSecret = req.headers["x-admin-secret"];
-  if (!reqSecret || reqSecret !== ADMIN_SECRET) {
+  if (!ADMIN_SECRET || !reqSecret || reqSecret !== ADMIN_SECRET) {
     return res.status(403).json({
       success: false,
       message: "Access Denied: Backend Admin Authorization Required.",
@@ -49,7 +49,7 @@ let twilioClient = null;
 if (TWILIO_ACCOUNT_SID && TWILIO_ACCOUNT_SID.startsWith("AC") && TWILIO_AUTH_TOKEN) {
   try {
     twilioClient = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
-    console.log("✅ Twilio WhatsApp SDK initialized for +919589018011 (From: " + TWILIO_WHATSAPP_FROM + ")");
+    console.log("✅ Twilio WhatsApp SDK initialized for +919589018011");
   } catch (err) {
     console.warn("⚠️ Twilio setup notice:", err.message);
   }
@@ -61,10 +61,10 @@ const activeOtpStore = new Map();
 // Nodemailer SMTP Transporter
 const mailTransporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || "smtp.ethereal.email",
-  port: process.env.SMTP_PORT || 587,
+  port: Number(process.env.SMTP_PORT) || 587,
   auth: {
-    user: process.env.SMTP_USER || "stmart.verify@ethereal.email",
-    pass: process.env.SMTP_PASS || "stmartPass123",
+    user: process.env.SMTP_USER || "",
+    pass: process.env.SMTP_PASS || "",
   },
 });
 
@@ -545,6 +545,32 @@ app.post("/api/orders", async (req, res) => {
 });
 
 // --- ADMIN PANEL SECURITY ENDPOINTS ---
+
+// POST /api/admin/login - Authenticate admin with server-side environment secret
+app.post("/api/admin/login", (req, res) => {
+  try {
+    const { pin } = req.body || {};
+    if (!ADMIN_SECRET) {
+      return res.status(503).json({
+        success: false,
+        message: "Admin authentication is disabled because ADMIN_SECRET is not configured on the server.",
+      });
+    }
+    if (!pin || typeof pin !== "string" || pin.trim() !== ADMIN_SECRET) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid admin authorization secret or PIN.",
+      });
+    }
+    return res.json({
+      success: true,
+      message: "Admin authenticated successfully.",
+      secret: ADMIN_SECRET,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Authentication server error." });
+  }
+});
 
 // GET /api/admin/users - Fetch all registered users (Owner Protected)
 app.get("/api/admin/users", verifyAdminSecret, async (req, res) => {

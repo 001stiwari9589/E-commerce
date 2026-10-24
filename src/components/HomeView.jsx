@@ -375,62 +375,51 @@ function HomeView({
         )}
       </div>
 
-      {/* Verified Customer Reviews Section */}
-      <div className="bg-slate-900 dark:bg-zinc-950 text-white rounded-3xl p-6 sm:p-8 border border-zinc-800">
+      {/* Honest Shopping Guide Section (Replaces fabricated reviews) */}
+      <div className="bg-slate-900 dark:bg-zinc-950 text-white rounded-3xl p-6 sm:p-10 border border-zinc-800">
         <div className="text-center max-w-xl mx-auto mb-8">
           <span className="text-xs font-extrabold uppercase tracking-widest text-amber-400">
-            Real Customer Testimonials
+            Transparent Affiliate Shopping
           </span>
           <h3 className="text-2xl font-black mt-1 text-white">
-            Loved by 100,000+ Happy Shoppers Across India
+            How Shopping on ST Mart Works
           </h3>
+          <p className="text-xs text-zinc-400 mt-1.5 leading-relaxed">
+            We help you discover verified electronics, accessories, and study essentials with direct links to official partner merchants.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
             {
-              name: "Vikram Mehta",
-              location: "New Delhi",
-              review: "Ordered the iPhone 15 Pro and got it delivered within 2 hours! The 256-bit encrypted checkout with pincode area finder was super fast.",
-              rating: 5,
-              product: "Apple iPhone 15 Pro",
+              icon: "🔍",
+              title: "1. Curated Deals & Products",
+              desc: "Browse our hand-picked collection of high-rated electronics, earphones, computer accessories, and student gear without sponsored clutter.",
             },
             {
-              name: "Priya Sharma",
-              location: "Bengaluru",
-              review: "Amazing shopping experience! Got genuine warranty for my Sony XM5 headphones. Free express shipping and responsive customer support.",
-              rating: 5,
-              product: "Sony WH-1000XM5",
+              icon: "🏷️",
+              title: "2. Zero Extra Cost To You",
+              desc: "You pay the exact same price as directly on Amazon or Flipkart. Qualifying purchases support our independent platform via affiliate commission.",
             },
             {
-              name: "Amitabh Roy",
-              location: "Kolkata",
-              review: "Loved the easy PIN code location auto-fill feature. Payment receipt invoice generated instantly after my UPI payment.",
-              rating: 5,
-              product: "Samsung Galaxy S24 Ultra",
+              icon: "📦",
+              title: "3. Official Merchant Fulfillment",
+              desc: "Orders, secure online payments, fast courier shipping, manufacturer warranty, and customer returns are 100% fulfilled by the merchant.",
             },
-          ].map((rev, idx) => (
+          ].map((item, idx) => (
             <div
               key={idx}
-              className="bg-zinc-800/80 p-5 rounded-2xl border border-zinc-700/60 flex flex-col justify-between"
+              className="bg-zinc-850 p-6 rounded-2xl border border-zinc-750 flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center gap-1 text-amber-400 text-sm mb-3">
-                  {"★".repeat(rev.rating)}
-                </div>
+                <span className="text-3xl mb-3 block">{item.icon}</span>
+                <h4 className="text-sm font-extrabold text-white mb-2">{item.title}</h4>
                 <p className="text-xs text-zinc-300 leading-relaxed font-medium">
-                  "{rev.review}"
+                  {item.desc}
                 </p>
               </div>
-
-              <div className="mt-4 pt-3 border-t border-zinc-700/50 flex items-center justify-between">
-                <div>
-                  <h4 className="text-xs font-extrabold text-white">{rev.name}</h4>
-                  <p className="text-[10px] text-zinc-400">{rev.location} • Verified Buyer</p>
-                </div>
-                <span className="text-[10px] bg-zinc-700 px-2 py-0.5 rounded text-amber-300 font-semibold">
-                  {rev.product}
-                </span>
+              <div className="mt-4 pt-3 border-t border-zinc-700/60 text-[11px] text-amber-400 font-bold">
+                ✓ 100% Genuine Partner Links
               </div>
             </div>
           ))}

@@ -6,7 +6,11 @@ export const API_BASE_URL = typeof window !== "undefined" && window.location.hos
 
 // Local in-memory OTP store fallback
 const localOtpStore = new Map();
-const ADMIN_SECRET_HEADER = "stmart_owner_secret_1234";
+
+export const getAdminToken = () => {
+  if (typeof window === "undefined") return "";
+  return sessionStorage.getItem("stmart_admin_token") || "";
+};
 
 // LocalStorage helpers for seller custom product persistence across page refreshes
 export function getLocalCustomProducts() {
@@ -290,7 +294,7 @@ export const apiService = {
     try {
       const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
         method: "DELETE",
-        headers: { "x-admin-secret": ADMIN_SECRET_HEADER },
+        headers: { "x-admin-secret": getAdminToken() },
       });
       const data = await safeJsonParse(response);
       return data;
@@ -391,10 +395,28 @@ export const apiService = {
   },
 
   // Admin Methods
+  async verifyAdminLogin(pin) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/admin/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pin }),
+      });
+      const data = await safeJsonParse(response);
+      if (data && data.success && data.secret) {
+        sessionStorage.setItem("stmart_admin_token", data.secret);
+      }
+      return data;
+    } catch (err) {
+      // Offline fallback: if pin matches locally stored fallback
+      return { success: false, message: "Unable to reach server to verify admin pin." };
+    }
+  },
+
   async getAdminUsers() {
     try {
       const response = await fetch(`${API_BASE_URL}/admin/users`, {
-        headers: { "x-admin-secret": ADMIN_SECRET_HEADER },
+        headers: { "x-admin-secret": getAdminToken() },
       });
       if (!response.ok) throw new Error("Failed to fetch admin users");
       const data = await safeJsonParse(response);
@@ -408,7 +430,7 @@ export const apiService = {
   async getAdminStats() {
     try {
       const response = await fetch(`${API_BASE_URL}/admin/stats`, {
-        headers: { "x-admin-secret": ADMIN_SECRET_HEADER },
+        headers: { "x-admin-secret": getAdminToken() },
       });
       if (!response.ok) throw new Error("Failed to fetch admin stats");
       const data = await safeJsonParse(response);
@@ -425,7 +447,7 @@ export const apiService = {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          "x-admin-secret": ADMIN_SECRET_HEADER,
+          "x-admin-secret": getAdminToken(),
         },
         body: JSON.stringify({ status }),
       });
@@ -568,7 +590,7 @@ export const apiService = {
   async getAdminSellers() {
     try {
       const response = await fetch(`${API_BASE_URL}/admin/sellers`, {
-        headers: { "x-admin-secret": ADMIN_SECRET_HEADER },
+        headers: { "x-admin-secret": getAdminToken() },
       });
       if (!response.ok) throw new Error("Failed to fetch admin sellers");
       const data = await response.json();

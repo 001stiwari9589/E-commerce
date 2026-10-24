@@ -36,8 +36,8 @@ You (the Owner) can access it using 2 secret methods:
 • METHOD 2 (Secret Footer Link):
   Scroll to the very bottom of the website (Footer) -> Click "✦ Owner Portal".
 
-• ADMIN UNLOCK SECURITY PIN:
-  PIN Code: 1234
+• ADMIN UNLOCK SECURITY:
+  Configured via ADMIN_SECRET in server environment variables (defaults to secure token).
   --> Unlocks Sales Revenue, Total Orders, Users List, and Seller Shops Management.
 
 

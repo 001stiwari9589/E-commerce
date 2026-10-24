@@ -194,16 +194,15 @@ function ProductDetailPage({
               {product.name}
             </h1>
 
-            {/* Ratings and review badge */}
+            {/* Ratings and Partner badge */}
             <div className="flex items-center gap-2 mt-2.5 flex-wrap">
-              <span className="bg-emerald-600 text-white font-bold text-xs px-2 py-0.5 rounded flex items-center gap-0.5 shadow-xs">
-                {product.rating} ★
-              </span>
-              <span className="text-xs font-semibold text-slate-500 dark:text-zinc-400">
-                {product.reviewsCount || "1,420"} Ratings &amp; {product.comments?.length || "3"} Reviews
-              </span>
-              <span className="bg-blue-600/10 text-blue-700 dark:bg-amber-500/15 dark:text-amber-400 border border-blue-200 dark:border-amber-500/30 text-xs font-black px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                ST Assured✦ 100% Quality Checked
+              {product.rating ? (
+                <span className="bg-emerald-600 text-white font-bold text-xs px-2 py-0.5 rounded flex items-center gap-0.5 shadow-xs">
+                  {product.rating} ★
+                </span>
+              ) : null}
+              <span className="bg-slate-100 text-slate-800 dark:bg-zinc-800 dark:text-zinc-200 border border-slate-200 dark:border-zinc-700 text-xs font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                Fulfilled by {product.merchant || "Amazon"}
               </span>
             </div>
           </div>
@@ -211,26 +210,36 @@ function ProductDetailPage({
           {/* Pricing detail container */}
           <div className="p-5 bg-slate-50 dark:bg-zinc-800/40 border border-slate-100 dark:border-zinc-800 rounded-xl">
             <div className="flex items-baseline gap-3">
-              <span className="text-3xl font-black text-slate-900 dark:text-white">
-                ₹{product.price.toLocaleString("en-IN")}
-              </span>
-              {product.originalPrice && (
+              {product.price && Number(product.price) > 0 ? (
                 <>
-                  <span className="text-sm text-slate-400 dark:text-zinc-550 line-through">
-                    ₹{product.originalPrice.toLocaleString("en-IN")}
+                  <span className="text-3xl font-black text-slate-900 dark:text-white">
+                    ₹{Number(product.price).toLocaleString("en-IN")}
                   </span>
-                  <span className="text-sm font-bold text-emerald-600 dark:text-emerald-500">
-                    {product.discount}% Off
-                  </span>
+                  {product.originalPrice && product.originalPrice > product.price && (
+                    <>
+                      <span className="text-sm text-slate-400 dark:text-zinc-550 line-through">
+                        ₹{Number(product.originalPrice).toLocaleString("en-IN")}
+                      </span>
+                      {product.discount > 0 && (
+                        <span className="text-sm font-bold text-emerald-600 dark:text-emerald-500">
+                          {product.discount}% Off
+                        </span>
+                      )}
+                    </>
+                  )}
                 </>
+              ) : (
+                <span className="text-base font-extrabold text-amber-600 dark:text-amber-400">
+                  Check current live price on merchant website
+                </span>
               )}
             </div>
             <div className="mt-3 pt-3 border-t border-slate-200 dark:border-zinc-700/60 flex flex-wrap items-center justify-between gap-2 text-xs">
               <span className="text-slate-600 dark:text-zinc-300">
-                Partner Store: <strong className="text-blue-600 dark:text-amber-400 font-extrabold">{product.merchant || "Flipkart"}</strong>
+                Partner Merchant: <strong className="text-blue-600 dark:text-amber-400 font-extrabold">{product.merchant || "Amazon"}</strong>
               </span>
-              <span className="text-slate-400 dark:text-zinc-500 font-semibold">
-                {product.availabilityCheckedAt ? `Price & Stock: ${product.availabilityCheckedAt}` : "Check merchant for live price"}
+              <span className="text-slate-400 dark:text-zinc-500 font-medium">
+                Note: Merchant prices and availability may change over time.
               </span>
             </div>
           </div>

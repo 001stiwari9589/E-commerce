@@ -90,34 +90,41 @@ function ProductCard({
             {product.name}
           </h2>
 
-          {/* Rating & Verified banner */}
+          {/* Rating & Merchant banner */}
           <div className="flex items-center gap-1.5 mt-1 sm:mt-1.5 flex-wrap">
-            <span className="bg-emerald-600 text-white text-[9px] sm:text-[10px] font-black px-1.5 py-0.2 rounded flex items-center gap-0.5 shadow-sm">
-              {product.rating} ★
-            </span>
-            <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-zinc-500">
-              ({product.reviewsCount || "430"})
-            </span>
-            <span className="bg-blue-600/10 text-blue-700 dark:bg-amber-500/15 dark:text-amber-400 border border-blue-200 dark:border-amber-500/30 text-[9px] font-black px-1.5 py-0.5 rounded-full flex items-center gap-0.5 shadow-2xs">
-              Verified Recommendation
+            {product.rating ? (
+              <span className="bg-emerald-600 text-white text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded flex items-center gap-0.5 shadow-sm">
+                {product.rating} ★
+              </span>
+            ) : null}
+            <span className="bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700 text-[9px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+              {product.merchant || "Amazon"} Deal
             </span>
           </div>
 
           {/* Pricing detail */}
-          <div className="flex items-baseline gap-1 mt-2 sm:mt-3 flex-wrap">
-            <span className="text-xs sm:text-base font-extrabold text-slate-900 dark:text-white">
-              ₹{Number(price).toLocaleString("en-IN")}
-            </span>
-            {listedPrice > price && (
-              <span className="text-[10px] sm:text-xs text-slate-400 dark:text-zinc-500 line-through">
-                ₹{Number(listedPrice).toLocaleString("en-IN")}
+          <div className="mt-2 sm:mt-2.5">
+            {price && Number(price) > 0 ? (
+              <div className="flex items-baseline gap-1.5 flex-wrap">
+                <span className="text-xs sm:text-base font-extrabold text-slate-900 dark:text-white">
+                  ₹{Number(price).toLocaleString("en-IN")}
+                </span>
+                {listedPrice && listedPrice > price && (
+                  <span className="text-[10px] sm:text-xs text-slate-400 dark:text-zinc-500 line-through">
+                    ₹{Number(listedPrice).toLocaleString("en-IN")}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <span className="text-xs font-bold text-amber-600 dark:text-amber-400 block">
+                Check current price on merchant website
               </span>
             )}
           </div>
           
-          {/* Availability timestamp notice */}
-          <p className="text-[9px] sm:text-[10px] text-slate-400 dark:text-zinc-500 font-semibold mt-0.5 sm:mt-1 truncate">
-            {product.availabilityCheckedAt ? `Price: ${product.availabilityCheckedAt}` : "Check merchant for live price"}
+          {/* Availability disclaimer */}
+          <p className="text-[9px] text-slate-400 dark:text-zinc-500 font-medium mt-0.5 sm:mt-1 truncate">
+            Prices &amp; stock subject to merchant terms
           </p>
         </div>
 

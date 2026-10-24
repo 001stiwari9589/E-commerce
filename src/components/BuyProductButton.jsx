@@ -40,12 +40,30 @@ function BuyProductButton({
   const rawUrl = product.affiliateUrl || "";
   const isValid = isValidAffiliateUrl(rawUrl);
   const merchant = product.merchant || "Amazon";
-  const isAmazon = merchant.toLowerCase().includes("amazon") || !product.merchant || product.merchant === "ST Mart";
+  const isAmazon = merchant.toLowerCase().includes("amazon");
 
-  // If no direct ASIN URL, automatically fallback to a genuine Amazon search with Satyam's affiliate tag
-  const effectiveUrl = isValid
-    ? rawUrl
-    : `https://www.amazon.in/s?k=${encodeURIComponent(product.name)}&tag=stmart05-21`;
+  // Determine sizing
+  const sizeClasses = {
+    sm: "py-2 px-3.5 text-xs font-black rounded-xl",
+    md: "py-2.5 px-4 text-xs sm:text-sm font-black rounded-xl",
+    lg: "py-3.5 px-6 text-sm sm:text-base font-black rounded-2xl",
+  }[size] || "py-2.5 px-4 text-xs sm:text-sm font-black rounded-xl";
+
+  // If product does not have a verified affiliate link, disable the button
+  if (!isValid) {
+    return (
+      <button
+        type="button"
+        disabled
+        aria-disabled="true"
+        className={`inline-flex items-center justify-center gap-1.5 bg-slate-100 dark:bg-zinc-800 text-slate-400 dark:text-zinc-500 border border-slate-200 dark:border-zinc-700 cursor-not-allowed select-none font-extrabold ${sizeClasses} ${className}`}
+        title="Verified merchant affiliate link will be added soon"
+      >
+        <span>⏳</span>
+        <span>Affiliate link coming soon</span>
+      </button>
+    );
+  }
 
   const handleClick = () => {
     // Track outbound click locally for analytics
@@ -57,14 +75,7 @@ function BuyProductButton({
     });
   };
 
-  // Determine sizing
-  const sizeClasses = {
-    sm: "py-2 px-3.5 text-xs font-black rounded-xl",
-    md: "py-2.5 px-4 text-xs sm:text-sm font-black rounded-xl",
-    lg: "py-3.5 px-6 text-sm sm:text-base font-black rounded-2xl",
-  }[size] || "py-2.5 px-4 text-xs sm:text-sm font-black rounded-xl";
-
-  const defaultLabel = label || (isAmazon ? "Buy on Amazon (Verified Offer)" : `Buy on ${merchant}`);
+  const defaultLabel = label || (isAmazon ? "Buy on Amazon (Official Deal)" : `Buy on ${merchant}`);
 
   const themeStyle = isAmazon
     ? "bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 shadow-md shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40"
@@ -72,11 +83,11 @@ function BuyProductButton({
 
   return (
     <a
-      href={effectiveUrl}
+      href={rawUrl}
       target="_blank"
       rel="sponsored noopener noreferrer"
       onClick={handleClick}
-      aria-label={`Buy ${product.name} on ${isAmazon ? "Amazon" : merchant} (opens in a new tab)`}
+      aria-label={`Buy ${product.name} on ${merchant} (opens official merchant in new tab)`}
       className={`inline-flex items-center justify-center gap-2 transition-all duration-200 active:scale-98 cursor-pointer text-center group border border-amber-400/30 ${themeStyle} ${sizeClasses} ${className}`}
     >
       {/* Icon */}

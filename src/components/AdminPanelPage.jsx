@@ -40,22 +40,42 @@ export default function AdminPanelPage({ onBack, triggerToast, onAddProduct }) {
   });
 
   // Unlock Admin Panel handler
-  const handleUnlock = (e) => {
+  const handleUnlock = async (e) => {
     e.preventDefault();
-    if (pinInput === "1234" || pinInput === "admin" || pinInput === "admin123") {
+    const cleanPin = (pinInput || "").trim();
+    if (!cleanPin) {
+      setPinError("Please enter the security PIN or admin secret.");
+      return;
+    }
+
+    // 1. First attempt backend verification
+    const res = await apiService.verifyAdminLogin(cleanPin);
+    if (res && res.success) {
       setIsUnlocked(true);
       sessionStorage.setItem("stmart_admin_unlocked", "true");
       setPinError("");
-      if (triggerToast) triggerToast("Admin Panel Unlocked Successfully! 🔓", "success");
-    } else {
-      setPinError("Invalid Security PIN! Please use '1234'");
-      if (triggerToast) triggerToast("Incorrect PIN! Try '1234'", "error");
+      if (triggerToast) triggerToast("Admin Panel Authenticated via Server! 🔓", "success");
+      return;
     }
+
+    // 2. Local fallback if backend is offline and user enters correct session secret
+    const localSecret = sessionStorage.getItem("stmart_admin_token");
+    if (localSecret && cleanPin === localSecret) {
+      setIsUnlocked(true);
+      sessionStorage.setItem("stmart_admin_unlocked", "true");
+      setPinError("");
+      if (triggerToast) triggerToast("Admin Panel Unlocked 🔓", "success");
+      return;
+    }
+
+    setPinError(res.message || "Invalid Security PIN or Admin Secret!");
+    if (triggerToast) triggerToast(res.message || "Invalid Security Credentials!", "error");
   };
 
   const handleLock = () => {
     setIsUnlocked(false);
     sessionStorage.removeItem("stmart_admin_unlocked");
+    sessionStorage.removeItem("stmart_admin_token");
     if (triggerToast) triggerToast("Admin Panel Locked 🔒", "info");
   };
 
@@ -266,11 +286,11 @@ export default function AdminPanelPage({ onBack, triggerToast, onAddProduct }) {
           <div>
             <input
               type="password"
-              placeholder="Enter PIN (Default: 1234)"
+              placeholder="Enter Owner Security Secret / PIN"
               value={pinInput}
               onChange={(e) => setPinInput(e.target.value)}
-              maxLength={10}
-              className="w-full text-center text-2xl font-bold tracking-widest px-4 py-3 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500"
+              maxLength={32}
+              className="w-full text-center text-lg font-bold tracking-widest px-4 py-3 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500"
               autoFocus
             />
             {pinError && (
