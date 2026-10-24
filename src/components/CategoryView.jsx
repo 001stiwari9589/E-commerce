@@ -73,16 +73,25 @@ function CategoryView({
       </div>
 
       {filteredProducts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="flex flex-col items-center justify-center py-16 text-center max-w-md mx-auto">
+          <span className="text-5xl mb-3">🔍</span>
           <h3 className="text-lg font-bold text-slate-800 dark:text-zinc-200">
-            No products found
+            No products found in {activeCategory}
           </h3>
           <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1">
-            We couldn't find any matches. Reset the catalog selection.
+            Looking for more options in this category? Search verified deals on Amazon.
           </p>
+          <a
+            href={`https://www.amazon.in/s?k=${encodeURIComponent(activeCategory)}&tag=stmart05-21`}
+            target="_blank"
+            rel="sponsored noopener noreferrer"
+            className="mt-4 px-5 py-2.5 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 font-black text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+          >
+            Search "{activeCategory}" on Amazon ↗
+          </a>
           <button
             onClick={onResetCategory}
-            className="mt-5 px-5 py-2 bg-blue-600 text-white font-bold text-xs rounded-lg hover:bg-blue-700 cursor-pointer"
+            className="mt-3 text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-white underline cursor-pointer"
           >
             Reset Catalog
           </button>

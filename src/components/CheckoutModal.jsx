@@ -609,318 +609,123 @@ function CheckoutModal({ isOpen, onClose, cartItems, userEmail, onOrderSuccess, 
                 </span>
               </div>
 
-              {/* Clean Payment Mode Tabs (2 Simplified Options) */}
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { id: "upi", label: "UPI (GPay / PhonePe)", icon: "📱" },
-                  { id: "card", label: "Debit / Credit Card", icon: "💳" },
-                ].map((mode) => (
-                  <button
-                    key={mode.id}
-                    onClick={() => {
-                      setPaymentMode(mode.id);
-                      setPaymentError("");
-                    }}
-                    className={`p-3 rounded-2xl border flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${paymentMode === mode.id
-                      ? "border-blue-600 dark:border-amber-500 bg-blue-50 dark:bg-amber-950/30 text-blue-700 dark:text-amber-400 font-black shadow-sm ring-2 ring-blue-500/20 dark:ring-amber-500/20"
-                      : "border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700 text-slate-700 dark:text-zinc-300 bg-white dark:bg-zinc-800"
-                      }`}
-                  >
-                    <span className="text-xl">{mode.icon}</span>
-                    <span className="text-xs font-extrabold">{mode.label}</span>
-                  </button>
-                ))}
-              </div>
-
-              {/* Dynamic Payment Mode Body */}
+              {/* Clean Streamlined Direct QR Payment Interface */}
               <div className="bg-slate-50 dark:bg-zinc-850 p-5 rounded-2xl border border-gray-200 dark:border-zinc-800 space-y-4">
-
-                {/* SuperCoins Discount Card */}
-                <div className="bg-gradient-to-r from-amber-500/10 via-yellow-500/10 to-amber-500/10 p-3.5 rounded-2xl border border-amber-400/30 flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2.5">
-                    <span className="text-xl">⚡</span>
-                    <div>
-                      <h5 className="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
-                        ST SuperCoins Balance
-                        <span className="bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">250 Coins</span>
-                      </h5>
-                      <p className="text-[10px] text-slate-500 dark:text-zinc-400 font-medium">Use 50 SuperCoins &amp; get ₹50 extra instant checkout discount</p>
-                    </div>
-                  </div>
-                  <label className="flex items-center gap-2 cursor-pointer bg-white dark:bg-zinc-800 px-3 py-1.5 rounded-xl border border-amber-400/50 shadow-xs shrink-0">
-                    <input
-                      type="checkbox"
-                      checked={useSuperCoins}
-                      onChange={(e) => setUseSuperCoins(e.target.checked)}
-                      className="w-4 h-4 accent-amber-500 cursor-pointer"
-                    />
-                    <span className="text-xs font-extrabold text-amber-600 dark:text-amber-400">Apply ₹50</span>
-                  </label>
-                </div>
-
-                {paymentMode === "upi" && (
-                  <div className="flex flex-col gap-4">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-                        <span>📱</span> Full Working UPI Gateway (GPay, PhonePe, Paytm, BHIM)
-                      </h4>
-                      <button
-                        type="button"
-                        onClick={() => setIsMerchantSettingsOpen(true)}
-                        className="text-[11px] font-extrabold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800"
-                      >
-                        <span>⚙️</span> Merchant UPI Settings
-                      </button>
-                    </div>
-
-                    {/* Merchant Payee Account Card */}
-                    <div className="bg-gradient-to-r from-emerald-600 via-teal-700 to-slate-900 text-white p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm border border-emerald-500/30">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] uppercase font-black text-emerald-200 tracking-wider">Official Store Recipient</span>
-                          <span className="bg-emerald-400 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase flex items-center gap-0.5">
-                            ✓ Verified Store
-                          </span>
-                        </div>
-                        <h5 className="font-extrabold text-sm sm:text-base flex flex-wrap items-center gap-2 mt-1">
-                          ST MART
-                          <span className="text-[11px] font-mono bg-white/20 px-2.5 py-0.5 rounded-lg text-white border border-white/20">{paymentConfig.merchantUpiId}</span>
-                        </h5>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          navigator.clipboard.writeText(paymentConfig.merchantUpiId);
-                          setCopiedUpi(true);
-                          if (triggerToast) triggerToast("Merchant UPI ID Copied to Clipboard!", "success");
-                          setTimeout(() => setCopiedUpi(false), 2500);
-                        }}
-                        className="self-stretch sm:self-auto bg-white text-emerald-900 hover:bg-emerald-50 active:scale-95 font-black text-xs px-3.5 py-2 rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
-                      >
-                        {copiedUpi ? "✓ Copied!" : "📋 Copy UPI ID"}
-                      </button>
-                    </div>
-
-                    {/* NPCI Trust Note */}
-                    <div className="bg-emerald-50/70 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40 px-3 py-2 rounded-xl text-[11px] text-emerald-800 dark:text-emerald-300 flex items-start gap-2">
-                      <span className="text-xs shrink-0 mt-0.5">🛡️</span>
-                      <p className="leading-snug">
-                        <strong>Direct Merchant Credit:</strong> Payment is received directly by <strong>ST Mart Store</strong>. (Note: If your UPI app shows the bank KYC account holder name, this is standard NPCI verification).
-                      </p>
-                    </div>
-
-                    {/* Popular Working UPI Apps Grid */}
-                    <div>
-                      <label className="block text-xs font-extrabold text-slate-800 dark:text-zinc-200 mb-1.5">
-                        Select Payment App:
-                      </label>
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                        {UPI_APPS.map((app) => (
-                          <button
-                            key={app.id}
-                            type="button"
-                            onClick={() => {
-                              setSelectedUpiApp(app.id);
-                              setPaymentError("");
-                              if (address.phone) {
-                                setUpiId(`${address.phone}${app.vpaSuffix}`);
-                              }
-                            }}
-                            className={`p-3 rounded-xl border flex items-center justify-between gap-2 cursor-pointer transition-all ${selectedUpiApp === app.id
-                              ? "border-emerald-600 bg-emerald-600 text-white font-extrabold shadow-sm"
-                              : "border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-zinc-200 hover:border-emerald-400"
-                              }`}
-                          >
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-sm">{app.icon}</span>
-                              <span className="text-xs font-black">{app.name}</span>
-                            </div>
-                            <span className="text-[9px] font-mono opacity-80 bg-black/10 px-1.5 py-0.5 rounded">{app.vpaSuffix}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Direct Working App Payment Launcher */}
-                    <div className="bg-white dark:bg-zinc-800 p-3.5 rounded-2xl border border-gray-200 dark:border-zinc-700 flex flex-col sm:flex-row items-center justify-between gap-3">
-                      <div>
-                        <h5 className="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
-                          Pay ₹{finalPrice.toLocaleString("en-IN")} directly via {UPI_APPS.find(a => a.id === selectedUpiApp)?.name}
-                        </h5>
-                        <p className="text-[10px] text-slate-500 dark:text-zinc-400 font-medium">
-                          Launches your selected mobile app with exact payment amount prefilled.
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => handleLaunchUpiApp(selectedUpiApp)}
-                        className={`w-full sm:w-auto px-4 py-2.5 rounded-xl text-white font-extrabold text-xs shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0 ${UPI_APPS.find(a => a.id === selectedUpiApp)?.color || "bg-emerald-600"}`}
-                      >
-                        <span>📲</span> Pay ₹{finalPrice.toLocaleString("en-IN")} on {UPI_APPS.find(a => a.id === selectedUpiApp)?.name}
-                      </button>
-                    </div>
-
-                    {/* PhonePe Security Helper Notice */}
-                    <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800/50 p-2.5 rounded-xl flex items-center gap-2 text-[11px] text-amber-900 dark:text-amber-300 font-semibold">
-                      <span className="text-base shrink-0">💡</span>
-                      <span>
-                        <strong>PhonePe Tip:</strong> If PhonePe deep-link shows "Declined for security reasons", simply <strong>Scan the QR Code below</strong> or send to UPI ID <code className="bg-white/80 dark:bg-zinc-800 px-1 py-0.5 rounded font-mono font-bold">{paymentConfig.merchantUpiId}</code>. It succeeds instantly!
+                
+                {/* Official ST Mart Recipient UPI ID Card */}
+                <div className="bg-gradient-to-r from-emerald-600 via-teal-700 to-slate-900 text-white p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm border border-emerald-500/30">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] uppercase font-black text-emerald-200 tracking-wider">Official Store Recipient</span>
+                      <span className="bg-emerald-400 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase flex items-center gap-0.5">
+                        ✓ Verified Store
                       </span>
                     </div>
-
-                    <div className="mt-1 pt-3 border-t border-gray-200 dark:border-zinc-750 flex flex-col md:flex-row items-center gap-5">
-                      {/* Live Dynamic QR Code Card with ST Mart Store Branding */}
-                      <div className="bg-white dark:bg-zinc-800 p-4 rounded-3xl border border-gray-200 dark:border-zinc-700 shadow-lg flex flex-col items-center shrink-0 text-slate-900 dark:text-white">
-                        <div className="flex items-center gap-1.5 mb-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/50">
-                          <span>✓</span> ST MART STORE QR
-                        </div>
-                        <div className="relative bg-white p-2 rounded-2xl border border-gray-150 shadow-inner">
-                          <img
-                            src={getUpiQrCodeUrl({
-                              upiId: paymentConfig.merchantUpiId,
-                              name: "ST MART",
-                              amount: finalPrice,
-                              orderId: `STM-${Date.now().toString().slice(-5)}`,
-                              customQrUrl: paymentConfig.customQrUrl,
-                            })}
-                            alt="ST Mart Live Dynamic Payment QR Code"
-                            className="w-40 h-40 object-contain rounded-xl"
-                          />
-                        </div>
-                        <div className="mt-2 text-center">
-                          <span className="text-xs font-black text-emerald-700 dark:text-emerald-400 block">Scan &amp; Pay ₹{finalPrice.toLocaleString("en-IN")}</span>
-                          <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 block mt-0.5">Works with PhonePe, GPay, Paytm, BHIM</span>
-                        </div>
-                      </div>
-
-                      <div className="flex-1 w-full space-y-3">
-                        <div>
-                          <div className="flex items-center justify-between mb-1">
-                            <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100">
-                              Your UPI VPA Address
-                            </label>
-                            {upiId && (
-                              <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                                ✓ Verified ST Mart UPI
-                              </span>
-                            )}
-                          </div>
-                          <input
-                            type="text"
-                            placeholder="e.g. mobileNumber@ybl or username@okaxis"
-                            value={upiId}
-                            onChange={(e) => setUpiId(e.target.value)}
-                            className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                          />
-                        </div>
-
-                        {/* UTR Reference Input & Validation - PREVENTS UNPAID BOOKING */}
-                        <div>
-                          <div className="flex items-center justify-between mb-1">
-                            <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100">
-                              UTR / Transaction Ref No. (12 Digits) *
-                            </label>
-                            {utrNumber.length === 12 ? (
-                              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold flex items-center gap-1">
-                                <span>✓</span> 12-Digit UTR Entered
-                              </span>
-                            ) : (
-                              <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold">
-                                Required to confirm order
-                              </span>
-                            )}
-                          </div>
-                          <input
-                            type="text"
-                            maxLength={12}
-                            placeholder="e.g. 329104829104 (From UPI receipt)"
-                            value={utrNumber}
-                            onChange={(e) => {
-                              setUtrNumber(e.target.value.replace(/\D/g, ""));
-                              if (paymentError) setPaymentError("");
-                            }}
-                            className={`w-full px-3.5 py-2.5 rounded-xl border bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-mono text-xs focus:outline-none focus:ring-2 ${utrNumber.length === 12
-                              ? "border-emerald-500 ring-2 ring-emerald-500/20"
-                              : "border-gray-300 dark:border-zinc-700 focus:ring-emerald-500"
-                              }`}
-                          />
-                          <div className="mt-1.5 flex items-center justify-between">
-                            <p className="text-[10px] text-slate-500 dark:text-zinc-400 font-medium">
-                              Enter the 12-digit number from your app receipt after paying.
-                            </p>
-                            <button
-                              type="button"
-                              onClick={handleAutoFillDemoUtr}
-                              className="text-[10px] font-black text-blue-600 dark:text-amber-400 hover:underline cursor-pointer bg-blue-50 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-blue-200 dark:border-amber-800/60"
-                            >
-                              ⚡ Auto-Fill Demo UTR (Test)
-                            </button>
-                          </div>
-                        </div>
-
-                      </div>
-                    </div>
+                    <h5 className="font-extrabold text-sm sm:text-base flex flex-wrap items-center gap-2 mt-1">
+                      ST MART
+                      <span className="text-[11px] font-mono bg-white/20 px-2.5 py-0.5 rounded-lg text-white border border-white/20">{paymentConfig.merchantUpiId}</span>
+                    </h5>
                   </div>
-                )}
-
-                {paymentMode === "card" && (
-                  <div className="flex flex-col gap-3">
-                    <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                      Credit or Debit Card Details (Strict Validation)
-                    </h4>
-                    <div>
-                      <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1">
-                        Card Number (16 Digits) *
-                      </label>
-                      <input
-                        type="text"
-                        maxLength="19"
-                        placeholder="4532 0192 8492 1092"
-                        value={cardDetails.cardNumber}
-                        onChange={(e) => {
-                          setCardDetails({ ...cardDetails, cardNumber: e.target.value });
-                          if (paymentError) setPaymentError("");
-                        }}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-amber-500"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1">
-                          Expiry Date (MM/YY) *
-                        </label>
-                        <input
-                          type="text"
-                          maxLength="5"
-                          placeholder="MM/YY (e.g. 12/28)"
-                          value={cardDetails.expiry}
-                          onChange={(e) => {
-                            setCardDetails({ ...cardDetails, expiry: e.target.value });
-                            if (paymentError) setPaymentError("");
-                          }}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-amber-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-extrabold text-slate-900 dark:text-zinc-100 mb-1">
-                          CVV (3 Digits) *
-                        </label>
-                        <input
-                          type="password"
-                          maxLength="4"
-                          placeholder="***"
-                          value={cardDetails.cvv}
-                          onChange={(e) => {
-                            setCardDetails({ ...cardDetails, cvv: e.target.value });
-                            if (paymentError) setPaymentError("");
-                          }}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-amber-500"
-                        />
-                      </div>
-                    </div>
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(paymentConfig.merchantUpiId);
+                        setCopiedUpi(true);
+                        if (triggerToast) triggerToast("Merchant UPI ID Copied to Clipboard!", "success");
+                        setTimeout(() => setCopiedUpi(false), 2500);
+                      }}
+                      className="flex-1 sm:flex-initial bg-white text-emerald-900 hover:bg-emerald-50 active:scale-95 font-black text-xs px-3.5 py-2 rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
+                    >
+                      {copiedUpi ? "✓ Copied!" : "📋 Copy UPI ID"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsMerchantSettingsOpen(true)}
+                      className="p-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs text-white border border-white/20 cursor-pointer"
+                      title="Edit Merchant UPI Settings"
+                    >
+                      ⚙️
+                    </button>
                   </div>
-                )}
+                </div>
 
+                {/* Direct Scan & Pay QR Code Section */}
+                <div className="bg-white dark:bg-zinc-800 p-5 rounded-2xl border border-gray-200 dark:border-zinc-700 shadow-sm flex flex-col items-center text-center">
+                  <div className="inline-flex items-center gap-1.5 mb-3 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/50">
+                    <span>⚡</span> Instant Direct Payment QR
+                  </div>
+
+                  <div className="p-3 bg-white rounded-2xl border-2 border-emerald-500/30 shadow-md">
+                    <img
+                      src={getUpiQrCodeUrl({
+                        upiId: paymentConfig.merchantUpiId,
+                        name: "ST MART",
+                        amount: finalPrice,
+                        orderId: `STM-${Date.now().toString().slice(-5)}`,
+                        customQrUrl: paymentConfig.customQrUrl,
+                      })}
+                      alt="ST Mart Live Dynamic Payment QR Code"
+                      className="w-48 h-48 sm:w-56 sm:h-56 object-contain rounded-xl"
+                    />
+                  </div>
+
+                  <div className="mt-3">
+                    <div className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
+                      Scan &amp; Pay <span className="text-emerald-600 dark:text-emerald-400">₹{finalPrice.toLocaleString("en-IN")}</span>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5 font-medium">
+                      Open <strong>PhonePe, Google Pay, Paytm, or BHIM</strong> &amp; scan this QR code
+                    </p>
+                  </div>
+                </div>
+
+                {/* 12-Digit UTR Transaction Number Entry */}
+                <div className="bg-white dark:bg-zinc-800 p-4 rounded-2xl border border-gray-200 dark:border-zinc-700 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-black text-slate-900 dark:text-zinc-100">
+                      UTR / Transaction Ref No. (12 Digits) *
+                    </label>
+                    {utrNumber.length === 12 ? (
+                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold flex items-center gap-1">
+                        <span>✓</span> 12-Digit UTR Entered
+                      </span>
+                    ) : (
+                      <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold">
+                        Required to confirm order
+                      </span>
+                    )}
+                  </div>
+                  
+                  <input
+                    type="text"
+                    maxLength={12}
+                    placeholder="Enter 12-digit UTR from your UPI payment receipt"
+                    value={utrNumber}
+                    onChange={(e) => {
+                      setUtrNumber(e.target.value.replace(/\D/g, ""));
+                      if (paymentError) setPaymentError("");
+                    }}
+                    className={`w-full px-3.5 py-3 rounded-xl border bg-white dark:bg-zinc-850 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 font-mono text-sm font-bold focus:outline-none focus:ring-2 ${
+                      utrNumber.length === 12
+                        ? "border-emerald-500 ring-2 ring-emerald-500/20"
+                        : "border-gray-300 dark:border-zinc-700 focus:ring-emerald-500"
+                    }`}
+                  />
+                  
+                  <div className="flex items-center justify-between pt-1">
+                    <p className="text-[11px] text-slate-500 dark:text-zinc-400 font-medium">
+                      Enter the 12-digit number from your payment receipt.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleAutoFillDemoUtr}
+                      className="text-[11px] font-black text-blue-600 dark:text-amber-400 hover:underline cursor-pointer bg-blue-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-lg border border-blue-200 dark:border-amber-800/60"
+                    >
+                      ⚡ Auto-Fill Demo UTR
+                    </button>
+                  </div>
+                </div>
 
               </div>
 

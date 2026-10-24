@@ -298,6 +298,31 @@ function HomeView({
           ))}
         </div>
 
+        {/* Live Outbound Search Banner when user searches */}
+        {searchQuery && displayedProducts.length > 0 && (
+          <div className="bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border border-amber-400/30 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-900 dark:text-zinc-150">
+            <div className="flex items-center gap-2.5">
+              <span className="text-xl">🔍</span>
+              <div>
+                <p className="text-xs font-black">
+                  Want more variations for "{searchQuery}"?
+                </p>
+                <p className="text-[11px] text-slate-500 dark:text-zinc-400 font-medium">
+                  Search millions of live items on Amazon with instant discount deals.
+                </p>
+              </div>
+            </div>
+            <a
+              href={`https://www.amazon.in/s?k=${encodeURIComponent(searchQuery)}&tag=stmart05-21`}
+              target="_blank"
+              rel="sponsored noopener noreferrer"
+              className="bg-amber-400 hover:bg-amber-500 text-slate-950 font-black text-xs px-4 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1.5 shrink-0 whitespace-nowrap"
+            >
+              Search "{searchQuery}" on Amazon ↗
+            </a>
+          </div>
+        )}
+
         {/* Products List Grid */}
         {displayedProducts.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
@@ -315,20 +340,34 @@ function HomeView({
             ))}
           </div>
         ) : (
-          <div className="py-16 text-center flex flex-col items-center justify-center">
+          <div className="py-12 px-4 text-center flex flex-col items-center justify-center max-w-lg mx-auto bg-slate-50 dark:bg-zinc-850/60 rounded-3xl border border-dashed border-gray-300 dark:border-zinc-700">
             <span className="text-5xl mb-3">🔍</span>
-            <h3 className="text-lg font-bold text-slate-800 dark:text-white">
-              No products found
+            <h3 className="text-lg font-black text-slate-900 dark:text-white">
+              {searchQuery ? `No local results for "${searchQuery}"` : "No products found"}
             </h3>
-            <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1 max-w-sm">
-              Try adjusting your search keywords or clearing brand filters.
+            <p className="text-xs text-slate-600 dark:text-zinc-400 mt-1.5 leading-relaxed">
+              {searchQuery
+                ? `Don't worry! You can find "${searchQuery}" directly on Amazon India with fast delivery & verified pricing.`
+                : "Try adjusting your search keywords or clearing active filters."}
             </p>
+
+            {searchQuery ? (
+              <a
+                href={`https://www.amazon.in/s?k=${encodeURIComponent(searchQuery)}&tag=stmart05-21`}
+                target="_blank"
+                rel="sponsored noopener noreferrer"
+                className="mt-5 px-6 py-3 bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 font-black text-xs sm:text-sm rounded-2xl shadow-lg transition-transform transform active:scale-95 flex items-center gap-2 cursor-pointer"
+              >
+                <span>🚀 Search "{searchQuery}" on Amazon (Best Deals) ↗</span>
+              </a>
+            ) : null}
+
             <button
               onClick={() => {
                 setSelectedBrand("all");
                 setSortOption("featured");
               }}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl cursor-pointer"
+              className="mt-4 px-4 py-2 bg-slate-200 dark:bg-zinc-700 hover:bg-slate-300 dark:hover:bg-zinc-600 text-slate-800 dark:text-white text-xs font-bold rounded-xl cursor-pointer transition-colors"
             >
               Reset Filters
             </button>
