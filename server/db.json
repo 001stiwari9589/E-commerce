@@ -324,7 +324,11 @@
       "rating": 4.5,
       "reviewsCount": 640,
       "image": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500&auto=format&fit=crop&q=60",
-      "desc": "Flexible magnetic wireless neckband delivering 24 hours battery playback and Environmental Noise Cancellation."
+      "desc": "Flexible magnetic wireless neckband delivering 24 hours battery playback and Environmental Noise Cancellation.",
+      "merchant": "Amazon",
+      "affiliateUrl": "https://www.amazon.in/s?k=Wireless+Bluetooth+Neckband+Earphones+with+Mic&tag=stmart05-21",
+      "isAffiliate": true,
+      "availabilityCheckedAt": "Verified Today"
     },
     {
       "id": 33,
