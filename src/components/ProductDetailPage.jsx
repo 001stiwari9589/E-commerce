@@ -159,33 +159,40 @@ function ProductDetailPage({
               product={product}
               sourcePage="product_detail"
               size="lg"
-              className="w-full"
+              className="w-full text-base py-4 font-black"
             />
             
-            <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => addToCart(product)}
-                className="bg-blue-50 hover:bg-blue-600 dark:bg-zinc-800 dark:hover:bg-blue-600 text-blue-700 hover:text-white dark:text-zinc-200 dark:hover:text-white border border-blue-200 hover:border-blue-600 dark:border-zinc-700 dark:hover:border-blue-600 font-extrabold py-3 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all duration-200 cursor-pointer transform active:scale-95 text-xs sm:text-sm whitespace-nowrap min-w-0 shadow-xs"
+                className="flex-1 bg-blue-50 hover:bg-blue-600 dark:bg-zinc-800 dark:hover:bg-blue-600 text-blue-700 hover:text-white dark:text-zinc-200 dark:hover:text-white border border-blue-200 hover:border-blue-600 dark:border-zinc-700 dark:hover:border-blue-600 font-extrabold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer transform active:scale-95 text-xs sm:text-sm shadow-xs"
               >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 transition-colors" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                 </svg>
-                <span>Add to Cart</span>
+                <span>Add to Cart (Save Deal)</span>
               </button>
-              <button
-                onClick={() => onBuyNow(product)}
-                className="bg-emerald-50 hover:bg-emerald-600 dark:bg-zinc-800 dark:hover:bg-emerald-600 text-emerald-700 hover:text-white dark:text-zinc-200 dark:hover:text-white border border-emerald-200 hover:border-emerald-600 dark:border-zinc-700 dark:hover:border-emerald-600 font-extrabold py-3 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all duration-200 cursor-pointer transform active:scale-95 text-xs sm:text-sm whitespace-nowrap min-w-0 shadow-xs"
-              >
-                <svg className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 transition-colors" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" />
-                </svg>
-                <span>Local Checkout</span>
-              </button>
+
+              {/* Only show Local Checkout if the item is explicitly non-affiliate local stock */}
+              {!product.isAffiliate && !product.affiliateUrl && (
+                <button
+                  onClick={() => onBuyNow(product)}
+                  className="flex-1 bg-emerald-50 hover:bg-emerald-600 dark:bg-zinc-800 dark:hover:bg-emerald-600 text-emerald-700 hover:text-white dark:text-zinc-200 dark:hover:text-white border border-emerald-200 hover:border-emerald-600 dark:border-zinc-700 dark:hover:border-emerald-600 font-extrabold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer transform active:scale-95 text-xs sm:text-sm shadow-xs"
+                >
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 transition-colors" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" />
+                  </svg>
+                  <span>Direct QR Checkout</span>
+                </button>
+              )}
             </div>
 
-            <p className="text-[11px] text-slate-400 dark:text-zinc-500 text-center leading-snug">
-              🔒 Purchases through official partner links are protected by merchant buyer protection & warranty policies.
-            </p>
+            <div className="bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/40 rounded-xl p-3 text-[11px] text-emerald-800 dark:text-emerald-300 flex items-start gap-2">
+              <span className="text-sm shrink-0">🛡️</span>
+              <p className="leading-snug">
+                <strong>Zero Risk Fulfillment:</strong> Delivered directly by <strong>{product.merchant || "Amazon"}</strong> with 7-day replacement, genuine brand warranty, and fast doorstep delivery.
+              </p>
+            </div>
           </div>
         </div>
 
