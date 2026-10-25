@@ -245,9 +245,17 @@ function LoginPage({ onLoginSuccess, onBack }) {
                   <input
                     type="text"
                     required
+                    maxLength={/[a-zA-Z@]/.test(emailOrPhone) ? 60 : 10}
                     value={emailOrPhone}
                     onChange={(e) => {
-                      setEmailOrPhone(e.target.value);
+                      const val = e.target.value;
+                      const hasLetters = /[a-zA-Z@]/.test(val);
+                      if (!hasLetters) {
+                        const digits = val.replace(/\D/g, "");
+                        setEmailOrPhone(digits.slice(0, 10));
+                      } else {
+                        setEmailOrPhone(val.slice(0, 60));
+                      }
                       setError("");
                     }}
                     placeholder="name@example.com or 10-digit mobile"

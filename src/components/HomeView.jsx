@@ -72,13 +72,47 @@ function HomeView({
     .sort((a, b) => (b.discount || 0) - (a.discount || 0))
     .slice(0, 4);
 
+  const handleSubscriberInputChange = (e) => {
+    const raw = e.target.value;
+    const digitsOnly = raw.replace(/\D/g, "");
+    const hasLetters = /[a-zA-Z@]/.test(raw);
+
+    // If typing digits/phone number, strictly limit to 10 digits
+    if (!hasLetters) {
+      setSubscriberEmail(digitsOnly.slice(0, 10));
+    } else {
+      setSubscriberEmail(raw.slice(0, 60));
+    }
+  };
+
   const handleSubscribe = (e) => {
     e.preventDefault();
     const cleanInput = (subscriberEmail || "").trim();
     if (!cleanInput) {
-      if (triggerToast) triggerToast("Please enter your email or 10-digit WhatsApp number.", "warning");
+      if (triggerToast) triggerToast("Kripya apna 10-digit mobile number ya email enter karein.", "warning");
       return;
     }
+
+    const isEmail = cleanInput.includes("@");
+    const digits = cleanInput.replace(/\D/g, "");
+
+    if (!isEmail) {
+      if (digits.length !== 10) {
+        if (triggerToast) triggerToast("Mobile number poora 10 digits ka hona chahiye.", "warning");
+        return;
+      }
+      if (!/^[6-9]\d{9}$/.test(digits)) {
+        if (triggerToast) triggerToast("Kripya valid 10-digit mobile number enter karein (6, 7, 8, ya 9 se shuru).", "warning");
+        return;
+      }
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(cleanInput)) {
+        if (triggerToast) triggerToast("Kripya valid email address enter karein (jaise name@gmail.com).", "warning");
+        return;
+      }
+    }
+
     setIsSubscribed(true);
     const directUrl = notifyOfferSubscriptionWhatsApp(cleanInput, true);
     setWaDirectUrl(directUrl || "");
@@ -450,9 +484,10 @@ function HomeView({
               <input
                 type="text"
                 required
-                placeholder="Enter email or WhatsApp number"
+                maxLength={/[a-zA-Z@]/.test(subscriberEmail) ? 60 : 10}
+                placeholder="Enter 10-digit mobile or email"
                 value={subscriberEmail}
-                onChange={(e) => setSubscriberEmail(e.target.value)}
+                onChange={handleSubscriberInputChange}
                 className="px-4 py-3 rounded-2xl bg-white text-slate-900 placeholder:text-slate-400 text-xs font-semibold focus:outline-none w-full sm:w-72 shadow-inner"
               />
               <button
