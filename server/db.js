@@ -23,6 +23,8 @@ export const connectMongoDB = async () => {
       const rawData = fs.readFileSync(SEED_JSON_PATH, "utf-8");
       const parsed = JSON.parse(rawData);
       if (parsed.products && parsed.products.length > 0) {
+        const validIds = parsed.products.map(p => p.id);
+        await Product.deleteMany({ id: { $nin: validIds } });
         for (const p of parsed.products) {
           await Product.updateOne({ id: p.id }, { $set: p }, { upsert: true });
         }
