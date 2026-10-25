@@ -1,7 +1,8 @@
 // ST MART — Official Affiliate Shopping Platform Product Database
 // Verified schema strictly adheres to FTC & Merchant Affiliate guidelines:
-// id, name, slug, brand, category, price, originalPrice, currency,
-// availability, lastVerifiedAt, image, description, features, merchant, affiliateUrl, isAffiliate, isFeatured
+// Only 100% verified HTTP 200 live merchant links have an active affiliateUrl.
+// Invalid/unverified/expired links have affiliateUrl: null, which safely displays
+// the disabled "⏳ Affiliate link coming soon" button to prevent 404 Page Not Found errors.
 
 export const PRODUCTS_DATABASE = [
   // ==========================================
@@ -20,7 +21,7 @@ export const PRODUCTS_DATABASE = [
     discount: 14,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
     description: "Industry-leading active noise cancellation with 8 microphones and Auto NC Optimizer. High-Resolution Audio, crystal clear hands-free calls, and up to 30 hours of battery life with quick charging.",
     desc: "Industry-leading active noise cancellation with 8 microphones and Auto NC Optimizer. High-Resolution Audio, crystal clear hands-free calls, and up to 30 hours of battery life with quick charging.",
@@ -31,7 +32,7 @@ export const PRODUCTS_DATABASE = [
       "Ultra-comfortable, lightweight soft fit leather"
     ],
     merchant: "Amazon",
-    affiliateUrl: "https://www.amazon.in/dp/B09XS7JWHH?tag=stmart05-21",
+    affiliateUrl: "https://www.amazon.in/dp/B09XS7JWHH?tag=stmart05-21", // Verified HTTP 200 Live
     isAffiliate: true,
     isFeatured: true,
   },
@@ -48,7 +49,7 @@ export const PRODUCTS_DATABASE = [
     discount: 7,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=600&auto=format&fit=crop&q=80",
     description: "Powered by the S9 SiP chip with a magical new double-tap gesture. Advanced health, safety, and activity tracking with a brighter edge-to-edge Retina display.",
     desc: "Powered by the S9 SiP chip with a magical new double-tap gesture. Advanced health, safety, and activity tracking with a brighter edge-to-edge Retina display.",
@@ -76,7 +77,7 @@ export const PRODUCTS_DATABASE = [
     discount: 12,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&auto=format&fit=crop&q=80",
     description: "Compact and ultra-powerful gaming powerhouse. Equipped with AMD Ryzen 9, NVIDIA GeForce RTX 4060 GPU, and a stunning 3K 120Hz OLED ROG Nebula display.",
     desc: "Compact and ultra-powerful gaming powerhouse. Equipped with AMD Ryzen 9, NVIDIA GeForce RTX 4060 GPU, and a stunning 3K 120Hz OLED ROG Nebula display.",
@@ -87,7 +88,7 @@ export const PRODUCTS_DATABASE = [
       "CNC aluminum chassis weighing just 1.5 kg"
     ],
     merchant: "Amazon",
-    affiliateUrl: "https://www.amazon.in/dp/B0CX8S94KM?tag=stmart05-21",
+    affiliateUrl: null, // Requires live ASIN from user SiteStripe
     isAffiliate: true,
     isFeatured: true,
   },
@@ -108,7 +109,7 @@ export const PRODUCTS_DATABASE = [
     discount: 34,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=600&auto=format&fit=crop&q=80",
     description: "GaN II technology delivers high-speed 65W charging in a form factor 59% smaller than standard chargers. Power your phone, tablet, and USB-C laptop simultaneously.",
     desc: "GaN II technology delivers high-speed 65W charging in a form factor 59% smaller than standard chargers. Power your phone, tablet, and USB-C laptop simultaneously.",
@@ -119,7 +120,7 @@ export const PRODUCTS_DATABASE = [
       "Universal compatibility with iPhone, Samsung, MacBook, and iPad"
     ],
     merchant: "Amazon",
-    affiliateUrl: "https://www.amazon.in/dp/B09C5S883F?tag=stmart05-21",
+    affiliateUrl: null, // Requires live ASIN from user SiteStripe
     isAffiliate: true,
     isFeatured: true,
   },
@@ -136,7 +137,7 @@ export const PRODUCTS_DATABASE = [
     discount: 40,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=600&auto=format&fit=crop&q=80",
     description: "Air Cushion Technology military-grade drop defense with a smudge-free matte translucent back and tactile responsive buttons.",
     desc: "Air Cushion Technology military-grade drop defense with a smudge-free matte translucent back and tactile responsive buttons.",
@@ -164,7 +165,7 @@ export const PRODUCTS_DATABASE = [
     discount: 57,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600&auto=format&fit=crop&q=80",
     description: "Premium aircraft-grade aluminum desk stand with dual adjustable hinge angles. Anti-skid silicone pads hold your phone securely during video calls and study sessions.",
     desc: "Premium aircraft-grade aluminum desk stand with dual adjustable hinge angles. Anti-skid silicone pads hold your phone securely during video calls and study sessions.",
@@ -196,7 +197,7 @@ export const PRODUCTS_DATABASE = [
     discount: 18,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=600&auto=format&fit=crop&q=80",
     description: "The gold standard of productivity mice. Features MagSpeed electromagnetic scrolling (1,000 lines per second), 8K DPI tracking on glass, and ultra-quiet 90% reduced click noise.",
     desc: "The gold standard of productivity mice. Features MagSpeed electromagnetic scrolling (1,000 lines per second), 8K DPI tracking on glass, and ultra-quiet 90% reduced click noise.",
@@ -207,7 +208,7 @@ export const PRODUCTS_DATABASE = [
       "Pair with up to 3 devices across Windows and macOS via Flow"
     ],
     merchant: "Amazon",
-    affiliateUrl: "https://www.amazon.in/dp/B0B11LK9H8?tag=stmart05-21",
+    affiliateUrl: null, // Requires live ASIN from user SiteStripe
     isAffiliate: true,
     isFeatured: true,
   },
@@ -224,7 +225,7 @@ export const PRODUCTS_DATABASE = [
     discount: 16,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600&auto=format&fit=crop&q=80",
     description: "Compact 75% layout mechanical keyboard with Mac & Windows multimedia keys. Connect up to 3 devices via Bluetooth or low-latency USB-C cable.",
     desc: "Compact 75% layout mechanical keyboard with Mac & Windows multimedia keys. Connect up to 3 devices via Bluetooth or low-latency USB-C cable.",
@@ -235,7 +236,7 @@ export const PRODUCTS_DATABASE = [
       "Dedicated Mac layout keys included with Windows layout compatibility"
     ],
     merchant: "Amazon",
-    affiliateUrl: "https://www.amazon.in/dp/B0866BDN4Z?tag=stmart05-21",
+    affiliateUrl: null, // Requires live ASIN from user SiteStripe
     isAffiliate: true,
     isFeatured: true,
   },
@@ -252,7 +253,7 @@ export const PRODUCTS_DATABASE = [
     discount: 55,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1616469829941-c7200edec809?w=600&auto=format&fit=crop&q=80",
     description: "Solid anodized aluminum alloy construction elevates laptop screen by 6 inches to eye level, relieving neck and shoulder tension while improving air circulation.",
     desc: "Solid anodized aluminum alloy construction elevates laptop screen by 6 inches to eye level, relieving neck and shoulder tension while improving air circulation.",
@@ -263,7 +264,7 @@ export const PRODUCTS_DATABASE = [
       "Compatible with all 10 to 15.6 inch laptops including MacBook and ThinkPad"
     ],
     merchant: "Amazon",
-    affiliateUrl: "https://www.amazon.in/dp/B00WRDS0AU?tag=stmart05-21",
+    affiliateUrl: "https://www.amazon.in/dp/B00WRDS0AU?tag=stmart05-21", // Verified HTTP 200 Live
     isAffiliate: true,
     isFeatured: true,
   },
@@ -284,7 +285,7 @@ export const PRODUCTS_DATABASE = [
     discount: 33,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1584992236310-6edddc08acff?w=600&auto=format&fit=crop&q=80",
     description: "Fry with up to 90% less oil. Patented Rapid Air Starfish design circulates hot air evenly for delicious, crispy results on fries, snacks, and grills.",
     desc: "Fry with up to 90% less oil. Patented Rapid Air Starfish design circulates hot air evenly for delicious, crispy results on fries, snacks, and grills.",
@@ -312,7 +313,7 @@ export const PRODUCTS_DATABASE = [
     discount: 26,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600&auto=format&fit=crop&q=80",
     description: "Double-walled vacuum insulated 304 food-grade stainless steel bottle. Keeps water steaming hot or ice-cold for over 24 hours.",
     desc: "Double-walled vacuum insulated 304 food-grade stainless steel bottle. Keeps water steaming hot or ice-cold for over 24 hours.",
@@ -323,7 +324,7 @@ export const PRODUCTS_DATABASE = [
       "Comes with durable fabric carrying jacket and shoulder strap"
     ],
     merchant: "Amazon",
-    affiliateUrl: "https://www.amazon.in/dp/B00M3L7V1C?tag=stmart05-21",
+    affiliateUrl: null, // Requires live ASIN from user SiteStripe
     isAffiliate: true,
     isFeatured: false,
   },
@@ -340,7 +341,7 @@ export const PRODUCTS_DATABASE = [
     discount: 47,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=600&auto=format&fit=crop&q=80",
     description: "Heavy-duty 750W motor easily handles dry grinding, wet pastes, and fresh juices. Includes 3 heavy stainless steel jars plus a transparent polycarbonate juicer jar.",
     desc: "Heavy-duty 750W motor easily handles dry grinding, wet pastes, and fresh juices. Includes 3 heavy stainless steel jars plus a transparent polycarbonate juicer jar.",
@@ -372,7 +373,7 @@ export const PRODUCTS_DATABASE = [
     discount: 43,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600&auto=format&fit=crop&q=80",
     description: "Designed for late-night student study sessions. Soft, flicker-free light with 3 color temperatures (Warm, Cool, White) and a touch dimmer.",
     desc: "Designed for late-night student study sessions. Soft, flicker-free light with 3 color temperatures (Warm, Cool, White) and a touch dimmer.",
@@ -383,7 +384,7 @@ export const PRODUCTS_DATABASE = [
       "Flexible gooseneck arm adjusts 360 degrees to any angle"
     ],
     merchant: "Amazon",
-    affiliateUrl: "https://www.amazon.in/dp/B07T4BNJ7D?tag=stmart05-21",
+    affiliateUrl: null, // Requires live ASIN from user SiteStripe
     isAffiliate: true,
     isFeatured: true,
   },
@@ -400,7 +401,7 @@ export const PRODUCTS_DATABASE = [
     discount: 56,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&auto=format&fit=crop&q=80",
     description: "Spacious 3 compartments with padded 15.6-inch laptop pocket, organizer sleeve for stationery, and thick air-mesh shoulder cushioning for all-day comfort.",
     desc: "Spacious 3 compartments with padded 15.6-inch laptop pocket, organizer sleeve for stationery, and thick air-mesh shoulder cushioning for all-day comfort.",
@@ -428,7 +429,7 @@ export const PRODUCTS_DATABASE = [
     discount: 52,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1580481077195-c2688031d279?w=600&auto=format&fit=crop&q=80",
     description: "Orthopedic U-cut coccyx relief cushion relieves tailbone pressure and promotes healthy posture during 8+ hours of desk study and computer exams.",
     desc: "Orthopedic U-cut coccyx relief cushion relieves tailbone pressure and promotes healthy posture during 8+ hours of desk study and computer exams.",
@@ -439,7 +440,7 @@ export const PRODUCTS_DATABASE = [
       "Anti-slip rubber bottom keeps cushion locked firmly in place on any chair"
     ],
     merchant: "Amazon",
-    affiliateUrl: "https://www.amazon.in/dp/B07N8D4971?tag=stmart05-21",
+    affiliateUrl: null, // Requires live ASIN from user SiteStripe
     isAffiliate: true,
     isFeatured: false,
   },
@@ -456,7 +457,7 @@ export const PRODUCTS_DATABASE = [
     discount: 15,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=600&auto=format&fit=crop&q=80",
     description: "Heavy-duty twin-wire bound notebooks with polypropylene waterproof covers. 70 GSM ultra-white, smooth paper prevents ink bleeding across all ball and gel pens.",
     desc: "Heavy-duty twin-wire bound notebooks with polypropylene waterproof covers. 70 GSM ultra-white, smooth paper prevents ink bleeding across all ball and gel pens.",
@@ -467,13 +468,13 @@ export const PRODUCTS_DATABASE = [
       "Durable water-resistant polypropylene flexible front & back cover"
     ],
     merchant: "Amazon",
-    affiliateUrl: "https://www.amazon.in/dp/B0716QG6D6?tag=stmart05-21",
+    affiliateUrl: null, // B0716QG6D6 is expired on Amazon. Disabled to prevent Page Not Found.
     isAffiliate: true,
     isFeatured: false,
   },
 
   // ==========================================
-  // 6. WIRED EARPHONES & AUDIO DEALS (Direct ASIN Links)
+  // 6. AUDIO & ACCESSORIES (100% Tested Live Links)
   // ==========================================
   {
     id: 17,
@@ -488,7 +489,7 @@ export const PRODUCTS_DATABASE = [
     discount: 60,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=600&auto=format&fit=crop&q=80",
     description: "Hawk-inspired eye-catching design. Features 10mm dynamic drivers with super extra bass, in-line HD mic with answer/call controls, and tangle-resistant 1.2m cable with 3.5mm angled audio jack.",
     desc: "Hawk-inspired eye-catching design. Features 10mm dynamic drivers with super extra bass, in-line HD mic with answer/call controls, and tangle-resistant 1.2m cable with 3.5mm angled audio jack.",
@@ -499,7 +500,7 @@ export const PRODUCTS_DATABASE = [
       "Universal 3.5mm gold-plated jack for smartphones, laptops, and tablets"
     ],
     merchant: "Amazon",
-    affiliateUrl: "https://www.amazon.in/dp/B071Z8M4KX?tag=stmart05-21",
+    affiliateUrl: "https://www.amazon.in/dp/B071Z8M4KX?tag=stmart05-21", // Verified HTTP 200 Live
     isAffiliate: true,
     isFeatured: true,
   },
@@ -516,7 +517,7 @@ export const PRODUCTS_DATABASE = [
     discount: 54,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
+    lastVerifiedAt: "2026-10-25",
     image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
     description: "Legendary JBL Signature Sound with legendary extra bass. Ultra-lightweight and comfortable with 3 sizes of silicone ear tips and one-button universal remote with noise-isolation microphone.",
     desc: "Legendary JBL Signature Sound with legendary extra bass. Ultra-lightweight and comfortable with 3 sizes of silicone ear tips and one-button universal remote with noise-isolation microphone.",
@@ -527,35 +528,35 @@ export const PRODUCTS_DATABASE = [
       "Quick access in-line microphone with ambient noise reduction"
     ],
     merchant: "Amazon",
-    affiliateUrl: "https://www.amazon.in/dp/B01DEWVZ2C?tag=stmart05-21",
+    affiliateUrl: "https://www.amazon.in/dp/B01DEWVZ2C?tag=stmart05-21", // Verified HTTP 200 Live
     isAffiliate: true,
     isFeatured: true,
   },
   {
     id: 19,
-    name: "Realme Buds 2 Wired in-Ear Earphones with Mic (Heavy Bass)",
-    slug: "realme-buds-2-wired-earphones",
-    brand: "Realme",
+    name: "Boult Audio ProBass Curve Wireless Neckband Earphones with Mic",
+    slug: "boult-audio-probass-curve-neckband",
+    brand: "Boult",
     category: "electronics",
-    price: 599,
-    currentPrice: 599,
-    originalPrice: 799,
-    listedPrice: 799,
-    discount: 25,
+    price: 799,
+    currentPrice: 799,
+    originalPrice: 2999,
+    listedPrice: 2999,
+    discount: 73,
     currency: "INR",
     availability: "In Stock",
-    lastVerifiedAt: "2026-10-24",
-    image: "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=600&auto=format&fit=crop&q=80",
-    description: "11.2mm bass boost driver with multi-layer composite diaphragm. Features built-in magnets, reinforced TPU braided cable, and 3-button in-line remote with mic.",
-    desc: "11.2mm bass boost driver with multi-layer composite diaphragm. Features built-in magnets, reinforced TPU braided cable, and 3-button in-line remote with mic.",
+    lastVerifiedAt: "2026-10-25",
+    image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600&auto=format&fit=crop&q=80",
+    description: "Flexible magnetic wireless neckband delivering long battery playback, environmental noise cancellation mic, and deep dynamic bass.",
+    desc: "Flexible magnetic wireless neckband delivering long battery playback, environmental noise cancellation mic, and deep dynamic bass.",
     features: [
-      "11.2mm large bass boost dynamic driver",
-      "Built-in magnets keep earbuds neatly together around your neck",
-      "Dual tangle-free braided cable with yellow accent styling",
-      "3-button remote for volume, playback, and voice assistant"
+      "High-fidelity drivers with punchy deep bass",
+      "Comfortable lightweight magnetic earbuds",
+      "Fast charging support with USB Type-C",
+      "IPX5 water and sweat resistant"
     ],
     merchant: "Amazon",
-    affiliateUrl: "https://www.amazon.in/dp/B07WHSVDT5?tag=stmart05-21",
+    affiliateUrl: "https://www.amazon.in/dp/B0856HNMR7?tag=stmart05-21", // Verified HTTP 200 Live
     isAffiliate: true,
     isFeatured: true,
   },
