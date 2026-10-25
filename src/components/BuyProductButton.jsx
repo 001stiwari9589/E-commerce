@@ -42,12 +42,12 @@ function BuyProductButton({
   const merchant = product.merchant || "Amazon";
   const isAmazon = merchant.toLowerCase().includes("amazon");
 
-  // Determine sizing
+  // Determine sizing - compact and responsive
   const sizeClasses = {
-    sm: "py-2 px-3.5 text-xs font-black rounded-xl",
-    md: "py-2.5 px-4 text-xs sm:text-sm font-black rounded-xl",
-    lg: "py-3.5 px-6 text-sm sm:text-base font-black rounded-2xl",
-  }[size] || "py-2.5 px-4 text-xs sm:text-sm font-black rounded-xl";
+    sm: "h-9 px-3 text-[11px] sm:text-xs font-bold rounded-xl",
+    md: "h-10 px-4 text-xs sm:text-sm font-bold rounded-xl",
+    lg: "h-12 px-6 text-sm sm:text-base font-bold rounded-2xl",
+  }[size] || "h-9 px-3 text-[11px] sm:text-xs font-bold rounded-xl";
 
   // If product does not have a verified affiliate link, disable the button
   if (!isValid) {
@@ -56,11 +56,11 @@ function BuyProductButton({
         type="button"
         disabled
         aria-disabled="true"
-        className={`inline-flex items-center justify-center gap-1.5 bg-slate-100 dark:bg-zinc-800 text-slate-400 dark:text-zinc-500 border border-slate-200 dark:border-zinc-700 cursor-not-allowed select-none font-extrabold ${sizeClasses} ${className}`}
+        className={`w-full inline-flex items-center justify-center gap-1.5 bg-slate-100 dark:bg-zinc-800 text-slate-400 dark:text-zinc-500 border border-slate-200/80 dark:border-zinc-700/80 cursor-not-allowed select-none font-semibold ${sizeClasses} ${className}`}
         title="Verified merchant affiliate link will be added soon"
       >
         <span>⏳</span>
-        <span>Affiliate link coming soon</span>
+        <span className="truncate">Coming Soon</span>
       </button>
     );
   }
@@ -75,11 +75,12 @@ function BuyProductButton({
     });
   };
 
-  const defaultLabel = label || (isAmazon ? "Buy on Amazon (Official Deal)" : `Buy on ${merchant}`);
+  // Compact, modern labels that fit perfectly on mobile screens
+  const buttonText = label || (isAmazon ? "Buy on Amazon" : `Buy on ${merchant}`);
 
   const themeStyle = isAmazon
-    ? "bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 shadow-md shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40"
-    : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40";
+    ? "bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 shadow-sm hover:shadow-md shadow-amber-500/20 hover:scale-[1.01]"
+    : "bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-sm hover:shadow-md shadow-blue-500/20 hover:scale-[1.01]";
 
   return (
     <a
@@ -88,16 +89,20 @@ function BuyProductButton({
       rel="sponsored noopener noreferrer"
       onClick={handleClick}
       aria-label={`Buy ${product.name} on ${merchant} (opens official merchant in new tab)`}
-      className={`inline-flex items-center justify-center gap-2 transition-all duration-200 active:scale-98 cursor-pointer text-center group border border-amber-400/30 ${themeStyle} ${sizeClasses} ${className}`}
+      className={`w-full inline-flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-95 cursor-pointer text-center group ${themeStyle} ${sizeClasses} ${className}`}
     >
-      {/* Icon */}
-      <svg className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+      {/* External Link Arrow Icon */}
+      <svg
+        className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        viewBox="0 0 24 24"
+      >
         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
       </svg>
-      <span className="tracking-tight">{defaultLabel}</span>
-      <span className="text-[10px] bg-black/15 text-slate-950 font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider ml-1">
-        Official ↗
-      </span>
+      <span className="truncate tracking-tight">{buttonText}</span>
+      <span className="text-[10px] font-black opacity-80 shrink-0">↗</span>
     </a>
   );
 }
