@@ -76,11 +76,11 @@ function HomeView({
     e.preventDefault();
     const cleanInput = (subscriberEmail || "").trim();
     if (!cleanInput) {
-      if (triggerToast) triggerToast("Please enter your email or 10-digit mobile number.", "warning");
+      if (triggerToast) triggerToast("Please enter your email or 10-digit WhatsApp number.", "warning");
       return;
     }
     setIsSubscribed(true);
-    const directUrl = notifyOfferSubscriptionWhatsApp(cleanInput, "STMART500", true);
+    const directUrl = notifyOfferSubscriptionWhatsApp(cleanInput, true);
     setWaDirectUrl(directUrl || "");
     setShowClaimModal(true);
 
@@ -93,7 +93,7 @@ function HomeView({
     }
 
     if (triggerToast) {
-      triggerToast("🎉 Offer Claimed! Opening WhatsApp with Coupon STMART500...", "success");
+      triggerToast("🔥 Subscribed! You will receive daily Amazon & Flipkart loot deal alerts.", "success");
     }
   };
 
@@ -426,47 +426,48 @@ function HomeView({
         </div>
       </div>
 
-      {/* Newsletter & VIP Club Signup */}
+      {/* Daily Deals & Loot Alerts Club */}
       <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-800 dark:from-zinc-900 dark:via-zinc-850 dark:to-zinc-900 rounded-3xl p-6 sm:p-10 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border border-white/10">
         <div className="max-w-md">
           <span className="bg-amber-400 text-slate-950 text-[10px] font-black uppercase px-2.5 py-1 rounded-md tracking-wider">
-            ST Mart VIP Club
+            🔥 Daily Loot &amp; Price Drop Alerts
           </span>
           <h3 className="text-2xl font-black mt-2 text-white">
-            Get ₹500 Off Your Next Order!
+            Never Miss a Mega Price Drop!
           </h3>
           <p className="text-xs text-blue-100 dark:text-zinc-300 font-semibold mt-1">
-            Subscribe to our newsletter for exclusive flash sale alerts, coupons, and weekly tech deals.
+            Subscribe to get instant alerts for 50%+ discounts, lightning deals, and tech price drops from Amazon &amp; Flipkart before they sell out.
           </p>
         </div>
 
         <form onSubmit={handleSubscribe} className="w-full md:w-auto flex flex-col sm:flex-row gap-3">
           {isSubscribed ? (
             <div className="bg-emerald-500 text-white font-extrabold text-xs px-6 py-3 rounded-2xl flex items-center gap-2 shadow-lg">
-              <span>🎉</span> Coupon Code STMART500 Active! (₹500 Discount Saved)
+              <span>✅</span> Subscribed! You will receive daily Amazon &amp; Flipkart loot alerts.
             </div>
           ) : (
             <>
               <input
                 type="text"
                 required
-                placeholder="Enter your email or 10-digit mobile number"
+                placeholder="Enter email or WhatsApp number"
                 value={subscriberEmail}
                 onChange={(e) => setSubscriberEmail(e.target.value)}
                 className="px-4 py-3 rounded-2xl bg-white text-slate-900 placeholder:text-slate-400 text-xs font-semibold focus:outline-none w-full sm:w-72 shadow-inner"
               />
               <button
                 type="submit"
-                className="px-6 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs rounded-2xl transition-all cursor-pointer shadow-lg shrink-0 transform active:scale-95"
+                className="px-6 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs rounded-2xl transition-all cursor-pointer shadow-lg shrink-0 transform active:scale-95 flex items-center justify-center gap-1.5"
               >
-                Claim ₹500 Coupon
+                <span>Get Loot Alerts</span>
+                <span>⚡</span>
               </button>
             </>
           )}
         </form>
       </div>
 
-      {/* VIP Coupon Claim Successful Popup Modal */}
+      {/* Deal Alerts Subscription Successful Popup Modal */}
       {showClaimModal && (
         <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in">
           <div className="bg-white dark:bg-zinc-900 border border-amber-400/50 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center relative flex flex-col items-center gap-4 animate-zoom-in">
@@ -483,55 +484,37 @@ function HomeView({
 
             {/* Sparkle Banner Icon */}
             <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-300 text-blue-950 font-black text-3xl flex items-center justify-center shadow-xl animate-bounce">
-              🎉
+              🔥
             </div>
 
             <div className="flex flex-col gap-1">
               <span className="text-[11px] font-black uppercase tracking-widest text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 px-3.5 py-1 rounded-full border border-emerald-300 dark:border-emerald-800">
-                ✅ Claim Successful!
+                ✅ Subscription Active!
               </span>
               <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1">
-                ₹500 Off Discount Activated!
+                Loot Deals Alerts Activated
               </h3>
               <p className="text-xs text-slate-600 dark:text-zinc-300">
-                Coupon code activated for <span className="font-bold text-blue-600 dark:text-amber-400">{subscriberEmail}</span>. Use it at checkout for instant ₹500 discount!
+                Contact <span className="font-bold text-blue-600 dark:text-amber-400">{subscriberEmail}</span> added to ST Mart VIP Deals Broadcast. You will receive direct alerts on massive discounts!
               </p>
-            </div>
-
-            {/* Coupon Code Display Box */}
-            <div className="w-full bg-slate-100 dark:bg-zinc-800/90 border-2 border-dashed border-amber-400 rounded-2xl p-4 flex items-center justify-between gap-2 shadow-inner">
-              <div className="flex flex-col items-start">
-                <span className="text-[10px] text-slate-400 dark:text-zinc-400 font-bold uppercase tracking-wider">Your Discount Code</span>
-                <span className="text-xl font-black text-amber-500 tracking-wider">STMART500</span>
-              </div>
-
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText("STMART500");
-                  if (triggerToast) triggerToast("Coupon Code 'STMART500' Copied to Clipboard! 📋", "success");
-                }}
-                className="bg-amber-400 hover:bg-amber-300 text-blue-950 font-black text-xs px-4 py-2 rounded-xl transition shadow cursor-pointer active:scale-95"
-              >
-                Copy Code
-              </button>
             </div>
 
             {/* WhatsApp Direct Action Button */}
             <a
-              href={waDirectUrl || `https://wa.me/919589018011?text=${encodeURIComponent("🎉 Claim Successful! Coupon Code STMART500 (₹500 OFF) activated for ST Mart Store!")}`}
+              href={waDirectUrl || `https://wa.me/919589018011?text=${encodeURIComponent("🔥 I have subscribed to ST Mart Deals Alerts! Please send daily Amazon & Flipkart loot deals.")}`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full py-3.5 px-5 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs rounded-2xl flex items-center justify-center gap-2 shadow-lg transition active:scale-95 cursor-pointer"
             >
               <span>📲</span>
-              <span>Open WhatsApp & Receive Confirmation</span>
+              <span>Connect on WhatsApp for Instant Alerts</span>
             </a>
 
             <button
               onClick={() => setShowClaimModal(false)}
               className="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-zinc-300 font-bold underline cursor-pointer"
             >
-              Continue Shopping
+              Continue Browsing Deals
             </button>
           </div>
         </div>

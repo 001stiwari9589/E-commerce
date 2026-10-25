@@ -159,20 +159,20 @@ export const notifyLoginWhatsApp = (emailOrPhone, openDirect = false) => {
 /**
  * 5. Send Notification for VIP Coupon / Email Offer Subscription (Opens WhatsApp Direct)
  */
-export const notifyOfferSubscriptionWhatsApp = (emailOrPhone, couponCode = "STMART500", openDirectWhatsapp = true) => {
+export const notifyOfferSubscriptionWhatsApp = (emailOrPhone, openDirectWhatsapp = true) => {
   const time = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
   const cleanInput = (emailOrPhone || "").trim();
   const digits = cleanInput.replace(/\D/g, "");
   const isPhone = digits.length === 10;
   const targetNum = isPhone ? digits : OWNER_WHATSAPP_NUMBER;
 
-  const text = `🎁 *NEW VIP OFFER / COUPON CLAIM - ST MART* 🎁\n\n` +
-    `📧 *User Contact:* ${cleanInput}\n` +
-    `🎟️ *Coupon Code Claimed:* ${couponCode} (₹500 OFF)\n` +
+  const text = `🔥 *NEW DEALS & LOOT ALERTS SUBSCRIBER - ST MART* 🔥\n\n` +
+    `👤 *Subscriber Contact:* ${cleanInput}\n` +
+    `⚡ *Preferences:* Amazon & Flipkart Daily Price Drop & Deal Alerts\n` +
     `⏰ *Time:* ${time}\n` +
-    `🌟 *Status:* STMART500 Discount Code Active!`;
+    `🚀 *Status:* Subscribed to ST Mart Deals Broadcast!`;
 
-  sendSilentNotification("COUPON_EMAIL_CLAIM", text, { emailOrPhone: cleanInput, couponCode }, targetNum);
+  sendSilentNotification("DEAL_ALERTS_SUBSCRIPTION", text, { emailOrPhone: cleanInput }, targetNum);
 
   const whatsappUrl = `https://wa.me/${OWNER_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 
