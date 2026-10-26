@@ -72,6 +72,29 @@ function CategoryView({
         </div>
       </div>
 
+      {/* Amazon Live Category Deals Banner */}
+      <div className="mb-6 p-3 sm:p-4 rounded-2xl bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 dark:from-zinc-800 dark:via-zinc-800/80 dark:to-zinc-800 border border-amber-200/80 dark:border-amber-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+        <div className="flex items-center gap-3">
+          <span className="text-2xl sm:text-3xl">🛍️</span>
+          <div>
+            <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white capitalize">
+              Want more {activeCategory} deals?
+            </h3>
+            <p className="text-[11px] text-slate-500 dark:text-zinc-400">
+              Explore 10,000+ live products with Prime delivery & exclusive discount offers on Amazon India.
+            </p>
+          </div>
+        </div>
+        <a
+          href={`https://www.amazon.in/s?k=${encodeURIComponent(activeCategory)}&tag=stmart05-21`}
+          target="_blank"
+          rel="sponsored noopener noreferrer"
+          className="shrink-0 px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 font-black text-xs rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
+        >
+          <span>Explore All {activeCategory} on Amazon ↗</span>
+        </a>
+      </div>
+
       {filteredProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center max-w-md mx-auto">
           <span className="text-5xl mb-3">🔍</span>

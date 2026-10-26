@@ -21,6 +21,15 @@ function CategoryBar({ activeCategory, setActiveCategory }) {
       ),
     },
     {
+      id: "mobiles",
+      name: "Mobiles",
+      icon: (
+        <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+        </svg>
+      ),
+    },
+    {
       id: "electronics",
       name: "Electronics",
       icon: (
@@ -30,38 +39,30 @@ function CategoryBar({ activeCategory, setActiveCategory }) {
       ),
     },
     {
-      id: "mobile accessories",
-      name: "Mobile Accessories",
+      id: "fashion",
+      name: "Fashion",
       icon: (
         <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" />
         </svg>
       ),
     },
     {
-      id: "computer accessories",
-      name: "Computer Accessories",
+      id: "footwear",
+      name: "Footwear",
       icon: (
         <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M6 20.25h12m-7.5-3v3m3-3v3m-10.125-3h17.25c.621 0 1.125-.504 1.125-1.125V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18L9 11.25l4.5 4.5 7.5-7.5" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3.75L21.75 12 18 20.25H6L2.25 12z" />
         </svg>
       ),
     },
     {
-      id: "home and kitchen",
+      id: "home",
       name: "Home & Kitchen",
       icon: (
         <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-        </svg>
-      ),
-    },
-    {
-      id: "student essentials",
-      name: "Student Essentials",
-      icon: (
-        <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.636 50.636 0 00-2.658-.813A59.906 59.906 0 0112 3.493a59.903 59.903 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342" />
         </svg>
       ),
     },
@@ -75,8 +76,8 @@ function CategoryBar({ activeCategory, setActiveCategory }) {
       ),
     },
     {
-      id: "toys",
-      name: "Beauty & Toys",
+      id: "beauty",
+      name: "Beauty & Care",
       icon: (
         <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
@@ -85,7 +86,7 @@ function CategoryBar({ activeCategory, setActiveCategory }) {
     },
     {
       id: "grocery",
-      name: "Grocery & Food",
+      name: "Grocery",
       icon: (
         <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
@@ -94,7 +95,7 @@ function CategoryBar({ activeCategory, setActiveCategory }) {
     },
     {
       id: "sports",
-      name: "Sports & Fitness",
+      name: "Sports",
       icon: (
         <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.504-1.125-1.125-1.125h-6.75a1.125 1.125 0 00-1.125 1.125V18.75m9 0h1.5a1.5 1.5 0 001.5-1.5v-9a1.5 1.5 0 00-1.5-1.5h-1.5m-9 12H4.5A1.5 1.5 0 013 17.25v-9A1.5 1.5 0 014.5 6.75h1.5" />
@@ -103,7 +104,7 @@ function CategoryBar({ activeCategory, setActiveCategory }) {
     },
     {
       id: "books",
-      name: "Books & Stationery",
+      name: "Books",
       icon: (
         <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18c-2.305 0-4.408.867-6 2.292m0-14.25v14.25" />
@@ -111,18 +112,8 @@ function CategoryBar({ activeCategory, setActiveCategory }) {
       ),
     },
     {
-      id: "footwear",
-      name: "Footwear & Shoes",
-      icon: (
-        <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18L9 11.25l4.5 4.5 7.5-7.5" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3.75L21.75 12 18 20.25H6L2.25 12z" />
-        </svg>
-      ),
-    },
-    {
       id: "gaming",
-      name: "Gaming & Gear",
+      name: "Gaming",
       icon: (
         <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 6.087c0-.355.186-.676.401-.959.221-.29.498-.57.842-.782.686-.425 1.62-.646 2.757-.646 1.137 0 2.071.221 2.757.646.344.212.621.492.842.782.215.283.401.604.401.959v.5c0 .355-.186.676-.401.959-.221.29-.498.57-.842.782-.686.425-1.62.646-2.757.646-1.137 0-2.071-.221-2.757-.646-.344-.212-.621-.492-.842-.782-.215-.283-.401-.604-.401-.959v-.5z" />
@@ -132,7 +123,7 @@ function CategoryBar({ activeCategory, setActiveCategory }) {
     },
     {
       id: "jewelry",
-      name: "Jewelry & Watches",
+      name: "Watches",
       icon: (
         <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -141,7 +132,7 @@ function CategoryBar({ activeCategory, setActiveCategory }) {
     },
     {
       id: "automotive",
-      name: "Auto & Car Accessories",
+      name: "Auto & Car",
       icon: (
         <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM15.75 18.75a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />

@@ -32,7 +32,7 @@ import AdminPanelPage from "./AdminPanelPage";
 import DealsRecommendationsPage from "./DealsRecommendationsPage";
 import AffiliateDisclosurePage from "./AffiliateDisclosurePage";
 
-import { PRODUCTS_DATABASE } from "../data/products";
+import { PRODUCTS_DATABASE, matchCategory } from "../data/products";
 import { safeLocalStorage } from "../utils/localStorage";
 import { apiService } from "../services/api";
 import CheckoutModal from "./CheckoutModal";
@@ -89,7 +89,7 @@ function MainLayout() {
         // Fallback to PRODUCTS_DATABASE filtering if API is offline
         let fallback = PRODUCTS_DATABASE;
         if (activeCategory && activeCategory !== "all") {
-          fallback = fallback.filter((p) => (p.category || "").toLowerCase() === activeCategory.toLowerCase());
+          fallback = fallback.filter((p) => matchCategory(p.category, activeCategory));
         }
         if (searchQuery) {
           fallback = fallback.filter((p) => matchSearchQuery(p, searchQuery));

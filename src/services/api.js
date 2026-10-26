@@ -1,4 +1,5 @@
 import emailjs from "@emailjs/browser";
+import { matchCategory } from "../data/products";
 
 export const API_BASE_URL = typeof window !== "undefined" && window.location.hostname === "localhost"
   ? "http://localhost:5000/api"
@@ -228,9 +229,7 @@ export const apiService = {
 
     // Apply filtering if category or search query is specified
     if (category && category !== "all") {
-      combined = combined.filter(
-        (p) => (p.category || "").toLowerCase() === category.toLowerCase()
-      );
+      combined = combined.filter((p) => matchCategory(p.category, category));
     }
 
     if (search) {

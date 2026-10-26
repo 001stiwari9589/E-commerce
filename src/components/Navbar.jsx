@@ -37,18 +37,18 @@ function Navbar({
 
   const categories = [
     { id: "all", name: "All Products" },
-    { id: "mobiles", name: "Mobiles" },
-    { id: "electronics", name: "Electronics" },
-    { id: "fashion", name: "Fashion" },
-    { id: "home", name: "Home & Living" },
+    { id: "mobiles", name: "Mobiles & Accessories" },
+    { id: "electronics", name: "Electronics & Audio" },
+    { id: "fashion", name: "Fashion & Clothing" },
+    { id: "footwear", name: "Footwear & Shoes" },
+    { id: "home", name: "Home & Kitchen" },
     { id: "appliances", name: "Appliances" },
-    { id: "toys", name: "Beauty & Toys" },
+    { id: "beauty", name: "Beauty & Personal Care" },
     { id: "grocery", name: "Grocery & Food" },
     { id: "sports", name: "Sports & Fitness" },
     { id: "books", name: "Books & Stationery" },
-    { id: "footwear", name: "Footwear & Shoes" },
     { id: "gaming", name: "Gaming & Gear" },
-    { id: "jewelry", name: "Jewelry & Watches" },
+    { id: "jewelry", name: "Watches & Jewelry" },
     { id: "automotive", name: "Auto & Car Accessories" },
     { id: "pets", name: "Pet Supplies" },
   ];
@@ -198,6 +198,37 @@ function Navbar({
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
+              )}
+
+              {/* Search Suggestions & Live Amazon Search Link */}
+              {searchQuery && searchQuery.trim().length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700/80 rounded-2xl shadow-2xl p-2.5 z-50 text-slate-900 dark:text-white">
+                  <div className="flex items-center justify-between px-2 py-1 text-[11px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+                    <span>Live Amazon Deals Search</span>
+                    <span className="text-amber-500 font-extrabold lowercase">tag=stmart05-21</span>
+                  </div>
+                  <a
+                    href={`https://www.amazon.in/s?k=${encodeURIComponent(searchQuery.trim())}&tag=stmart05-21`}
+                    target="_blank"
+                    rel="sponsored noopener noreferrer"
+                    className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-zinc-800 dark:to-zinc-800/80 hover:from-amber-100 hover:to-orange-100 dark:hover:bg-zinc-750 border border-amber-200/80 dark:border-amber-500/20 transition-all group"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="text-lg">🔍</span>
+                      <div className="text-left truncate">
+                        <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">
+                          Search "<span className="text-amber-600 dark:text-amber-400 font-extrabold">{searchQuery}</span>" on Amazon India
+                        </p>
+                        <p className="text-[11px] text-slate-500 dark:text-zinc-400 truncate">
+                          Explore live prices, Prime delivery & verified discounts
+                        </p>
+                      </div>
+                    </div>
+                    <span className="shrink-0 px-3 py-1.5 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-black text-xs rounded-lg shadow-xs group-hover:scale-105 transition-transform flex items-center gap-1">
+                      Search Amazon ↗
+                    </span>
+                  </a>
+                </div>
               )}
             </div>
           </div>
