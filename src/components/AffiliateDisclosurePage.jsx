@@ -4,33 +4,34 @@ function AffiliateDisclosurePage({ onBack }) {
       {/* Header & Back */}
       <button
         onClick={onBack}
-        className="mb-6 flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-amber-500 hover:underline cursor-pointer"
+        className="mb-6 flex items-center gap-1.5 text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline cursor-pointer"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
         </svg>
-        Back to ST Mart
+        Back to SmartDeals
       </button>
 
       <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-10 shadow-sm">
-        <div className="inline-flex items-center gap-2 bg-blue-50 dark:bg-zinc-800 px-3 py-1 rounded-full text-blue-700 dark:text-amber-400 text-xs font-bold uppercase tracking-wider mb-4">
-          Transparency & Compliance
+        <div className="inline-flex items-center gap-2 bg-amber-500/10 dark:bg-amber-400/10 px-3 py-1 rounded-full text-amber-700 dark:text-amber-400 text-xs font-bold uppercase tracking-wider mb-4 border border-amber-500/20">
+          Transparency &amp; Compliance
         </div>
         
         <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
           Affiliate Program Disclosure
         </h1>
-        <p className="text-xs text-slate-400 dark:text-zinc-500 mt-1">
-          Last Updated: October 2026 • In compliance with FTC, Flipkart, and Amazon Associates policies
+        <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
+          Last Updated: October 2026 • In compliance with FTC and Amazon Associates policies
         </p>
 
-        <div className="mt-8 space-y-6 text-sm leading-relaxed text-slate-600 dark:text-zinc-300">
-          <section className="bg-slate-50 dark:bg-zinc-850 p-5 rounded-2xl border border-slate-150 dark:border-zinc-800">
-            <h2 className="text-base font-bold text-slate-900 dark:text-white mb-2">
-              1. What is ST Mart's Affiliate Model?
+        <div className="mt-8 space-y-6 text-sm leading-relaxed text-slate-700 dark:text-zinc-300">
+          {/* Section 1: Proper contrast container */}
+          <section className="bg-slate-100/90 dark:bg-zinc-800 p-5 rounded-2xl border border-slate-200 dark:border-zinc-700 shadow-xs">
+            <h2 className="text-base font-bold text-slate-900 dark:text-amber-400 mb-2">
+              1. What is SmartDeals' Affiliate Model?
             </h2>
-            <p>
-              ST Mart operates as a consumer-first curation and recommendation platform. We do not manufacture, stock, or directly ship third-party inventory. Instead, we research, test, and recommend products that provide high utility and value across categories such as <strong>Electronics, Mobile Accessories, Computer Accessories, Home & Kitchen, and Student Essentials</strong>.
+            <p className="text-slate-800 dark:text-zinc-200">
+              SmartDeals.in operates as an independent curation and price discovery recommendation platform. We do not manufacture, stock, or directly ship third-party inventory. Instead, we research, test, and recommend products that provide high utility and value across categories such as <strong>Electronics, Mobile Accessories, Computer Accessories, Home &amp; Kitchen, and Student Essentials</strong>.
             </p>
           </section>
 
@@ -39,12 +40,12 @@ function AffiliateDisclosurePage({ onBack }) {
               2. How Do We Earn Revenue?
             </h2>
             <p>
-              When you click on an external product link on ST Mart (such as links directed to <strong>Flipkart</strong> or <strong>Amazon India</strong>) and complete a qualifying purchase, the merchant pays us a small referral commission.
+              When you click on an external product link on SmartDeals (such as links directed to <strong>Amazon India</strong>) and complete a qualifying purchase, the merchant pays us a small referral commission.
             </p>
             <ul className="list-disc pl-5 mt-2 space-y-1.5 text-slate-700 dark:text-zinc-300">
               <li><strong>Zero Extra Cost to You:</strong> You pay the exact same price (or lower during sales) as any other regular customer visiting the merchant directly.</li>
               <li><strong>No Secret Markups:</strong> We never add any hidden fees or price inflation.</li>
-              <li><strong>Secure Merchant Transactions:</strong> Your payment, order processing, shipping, warranties, and returns are handled directly by the authorized merchant (e.g. Flipkart, Amazon).</li>
+              <li><strong>Secure Merchant Transactions:</strong> Your payment, order processing, shipping, warranties, and returns are handled directly by Amazon India.</li>
             </ul>
           </section>
 
@@ -52,23 +53,14 @@ function AffiliateDisclosurePage({ onBack }) {
             <h2 className="text-base font-bold text-slate-900 dark:text-white mb-2">
               3. Amazon Associates Statement
             </h2>
-            <p>
-              <em>"ST Mart is a participant in the Amazon Associates Program, an affiliate advertising program designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.in / Amazon.com."</em>
+            <p className="p-4 rounded-xl bg-slate-50 dark:bg-zinc-800/60 border border-slate-200 dark:border-zinc-700/60">
+              <em>"SmartDeals.in is a participant in the Amazon Associates Program, an affiliate advertising program designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.in."</em>
             </p>
           </section>
 
           <section>
             <h2 className="text-base font-bold text-slate-900 dark:text-white mb-2">
-              4. Flipkart Affiliate Program Statement
-            </h2>
-            <p>
-              Certain links on ST Mart are tracked affiliate links connected with the Flipkart Affiliate Program. When users navigate to Flipkart through our verified links and purchase qualifying items, ST Mart may receive remuneration according to Flipkart's current affiliate commission schedule.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-base font-bold text-slate-900 dark:text-white mb-2">
-              5. Editorial Independence & Price Verification
+              4. Editorial Independence &amp; Price Verification
             </h2>
             <p>
               Merchant commissions never influence whether a product is recommended. We do not invent ratings, fake discounts, or artificial reviews. All displayed product prices represent estimated or verified values at the time of catalog updates. Because prices change dynamically on e-commerce platforms, please always verify the current price directly on the merchant's landing page before completing your checkout.
@@ -77,10 +69,10 @@ function AffiliateDisclosurePage({ onBack }) {
 
           <section>
             <h2 className="text-base font-bold text-slate-900 dark:text-white mb-2">
-              6. Have Questions or Feedback?
+              5. Have Questions or Feedback?
             </h2>
             <p>
-              If you have any questions regarding our affiliate disclosures or product curation policies, feel free to contact us at: <a href="mailto:support@stmart.in" className="text-blue-600 dark:text-amber-400 font-semibold hover:underline">support@stmart.in</a>.
+              If you have any questions regarding our affiliate disclosures or product curation policies, feel free to contact us at: <a href="mailto:support@smartdeals.in" className="text-amber-600 dark:text-amber-400 font-semibold hover:underline">support@smartdeals.in</a>.
             </p>
           </section>
         </div>

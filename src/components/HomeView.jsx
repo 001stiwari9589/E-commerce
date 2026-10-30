@@ -26,6 +26,12 @@ function HomeView({
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [showClaimModal, setShowClaimModal] = useState(false);
   const [waDirectUrl, setWaDirectUrl] = useState("");
+  const [dismissAmazonBanner, setDismissAmazonBanner] = useState(false);
+
+  // Reset banner dismissal on new search query
+  useEffect(() => {
+    setDismissAmazonBanner(false);
+  }, [searchQuery]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -55,6 +61,10 @@ function HomeView({
 
   // Apply brand & budget filtering
   let displayedProducts = filteredProducts.filter((p) => {
+    // When actively searching by query, bypass brand/budget restrictions so all search results appear
+    if (searchQuery && searchQuery.trim()) {
+      return true;
+    }
     if (selectedBrand !== "all" && (p.brand || "").toLowerCase() !== selectedBrand.toLowerCase()) {
       return false;
     }
@@ -364,7 +374,7 @@ function HomeView({
         </div>
 
         {/* Live Outbound Search Banner when user searches */}
-        {searchQuery && displayedProducts.length > 0 && (
+        {searchQuery && !dismissAmazonBanner && displayedProducts.length > 0 && (
           <div className="bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border border-amber-400/30 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-900 dark:text-zinc-150">
             <div className="flex items-center gap-2.5">
               <span className="text-xl">🔍</span>
@@ -377,14 +387,24 @@ function HomeView({
                 </p>
               </div>
             </div>
-            <a
-              href={`https://www.amazon.in/s?k=${encodeURIComponent(searchQuery)}&tag=stmart05-21`}
-              target="_blank"
-              rel="sponsored noopener noreferrer"
-              className="bg-amber-400 hover:bg-amber-500 text-slate-950 font-black text-xs px-4 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1.5 shrink-0 whitespace-nowrap"
-            >
-              Search "{searchQuery}" on Amazon ↗
-            </a>
+            <div className="flex items-center gap-2 shrink-0">
+              <a
+                href={`https://www.amazon.in/s?k=${encodeURIComponent(searchQuery)}&tag=stmart05-21`}
+                target="_blank"
+                rel="sponsored noopener noreferrer"
+                className="bg-amber-400 hover:bg-amber-500 text-slate-950 font-black text-xs px-4 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1.5 shrink-0 whitespace-nowrap"
+              >
+                Search "{searchQuery}" on Amazon ↗
+              </a>
+              <button
+                type="button"
+                onClick={() => setDismissAmazonBanner(true)}
+                className="p-1.5 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors cursor-pointer text-xs font-black"
+                title="Dismiss banner"
+              >
+                ✕
+              </button>
+            </div>
           </div>
         )}
 

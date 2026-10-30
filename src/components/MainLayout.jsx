@@ -68,38 +68,29 @@ function MainLayout() {
   const [completedOrder, setCompletedOrder] = useState(null);
   const [userOrders, setUserOrders] = useState([]);
 
-  // Fetch products from backend server on mount or when category/search updates
+  // Fetch products from backend server on mount or when category updates
   useEffect(() => {
+    let isCancelled = false;
     const refreshProducts = async () => {
-      const apiProducts = await apiService.getProducts(activeCategory, searchQuery);
-      if (Array.isArray(apiProducts)) {
-        if (apiProducts.length > 0) {
+      try {
+        const apiProducts = await apiService.getProducts(activeCategory, "");
+        if (!isCancelled && Array.isArray(apiProducts) && apiProducts.length > 0) {
           setProductsList(apiProducts);
           setIsBackendConnected(true);
-        } else if (searchQuery) {
-          // Backend returned valid empty search result list
-          setProductsList([]);
-          setIsBackendConnected(true);
-        } else {
-          // Backend empty catalog fallback
-          setProductsList(PRODUCTS_DATABASE);
-          setIsBackendConnected(true);
+          return;
         }
-      } else {
-        // Fallback to PRODUCTS_DATABASE filtering if API is offline
-        let fallback = PRODUCTS_DATABASE;
-        if (activeCategory && activeCategory !== "all") {
-          fallback = fallback.filter((p) => matchCategory(p.category, activeCategory));
-        }
-        if (searchQuery) {
-          fallback = fallback.filter((p) => matchSearchQuery(p, searchQuery));
-        }
-        setProductsList(fallback);
-        setIsBackendConnected(false);
+      } catch (err) {
+        console.warn("Backend products fetch notice:", err.message);
+      }
+      if (!isCancelled) {
+        setProductsList(PRODUCTS_DATABASE);
       }
     };
     refreshProducts();
-  }, [activeCategory, searchQuery]);
+    return () => {
+      isCancelled = true;
+    };
+  }, [activeCategory]);
 
 
   // Apply dark mode class to html element
@@ -252,8 +243,9 @@ function MainLayout() {
     setIsReceiptOpen(true);
   };
 
-  // Filter products by active category & search query
-  const filteredProducts = productsList.filter((product) => {
+  // Filter products by active category & search query (instant client-side search)
+  const baseCatalog = productsList && productsList.length > 0 ? productsList : PRODUCTS_DATABASE;
+  const filteredProducts = baseCatalog.filter((product) => {
     if (!product || typeof product !== "object") return false;
 
     if (view === "wishlist") {
@@ -264,8 +256,10 @@ function MainLayout() {
     const prodCat = (product.category || "").toLowerCase();
     const activeCat = (activeCategory || "all").toLowerCase();
 
+    // If searching in the search bar, search globally across all categories
+    const hasSearch = Boolean(searchQuery && searchQuery.trim());
     const matchesCategory =
-      activeCat === "all" || prodCat === activeCat;
+      hasSearch || activeCat === "all" || prodCat === activeCat || matchCategory(prodCat, activeCat);
 
     const matchesSearch = matchSearchQuery(product, searchQuery);
 

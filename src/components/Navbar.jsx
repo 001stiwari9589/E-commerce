@@ -17,6 +17,8 @@ function Navbar({
 }) {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isDropdownDismissed, setIsDropdownDismissed] = useState(false);
 
   const handleBecomeSeller = () => {
     setView("seller");
@@ -192,8 +194,16 @@ function Navbar({
                 type="text"
                 placeholder="Search for products, brands, electronics and more..."
                 value={searchQuery}
+                onFocus={() => {
+                  setIsSearchFocused(true);
+                  setIsDropdownDismissed(false);
+                }}
+                onBlur={() => {
+                  setTimeout(() => setIsSearchFocused(false), 250);
+                }}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
+                  setIsDropdownDismissed(false);
                   if (view !== "home" && view !== "category") setView("home");
                 }}
                 className="w-full py-2.5 sm:py-3 pl-11 pr-10 text-slate-900 dark:text-white bg-slate-50 dark:bg-zinc-850 rounded-2xl placeholder-slate-400 dark:placeholder-zinc-500 font-semibold text-sm focus:bg-white dark:focus:bg-zinc-800 transition-all shadow-inner border border-transparent focus:border-yellow-400 dark:focus:border-amber-500 focus:ring-2 focus:ring-yellow-400/40 dark:focus:ring-amber-500/40 outline-hidden"
@@ -208,8 +218,21 @@ function Navbar({
               {/* Clear Search button */}
               {searchQuery && (
                 <button
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 p-1 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors"
+                  type="button"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setSearchQuery("");
+                    setIsDropdownDismissed(true);
+                    setIsSearchFocused(false);
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSearchQuery("");
+                    setIsDropdownDismissed(true);
+                    setIsSearchFocused(false);
+                  }}
+                  className="absolute right-3 p-1.5 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors cursor-pointer"
                   title="Clear search"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -219,11 +242,20 @@ function Navbar({
               )}
 
               {/* Search Suggestions & Live Amazon Search Link */}
-              {searchQuery && searchQuery.trim().length > 0 && (
+              {isSearchFocused && !isDropdownDismissed && searchQuery && searchQuery.trim().length > 0 && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700/80 rounded-2xl shadow-2xl p-2.5 z-50 text-slate-900 dark:text-white">
                   <div className="flex items-center justify-between px-2 py-1 text-[11px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
                     <span>Live Amazon Deals Search</span>
-                    <span className="text-amber-500 font-extrabold lowercase">tag=stmart05-21</span>
+                    <button
+                      type="button"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        setIsDropdownDismissed(true);
+                      }}
+                      className="text-[11px] font-bold text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer px-1.5 py-0.5 rounded hover:bg-slate-100 dark:hover:bg-zinc-800"
+                    >
+                      ✕ Close
+                    </button>
                   </div>
                   <a
                     href={`https://www.amazon.in/s?k=${encodeURIComponent(searchQuery.trim())}&tag=stmart05-21`}
@@ -238,7 +270,7 @@ function Navbar({
                           Search "<span className="text-amber-600 dark:text-amber-400 font-extrabold">{searchQuery}</span>" on Amazon India
                         </p>
                         <p className="text-[11px] text-slate-500 dark:text-zinc-400 truncate">
-                          Explore live prices, Prime delivery & verified discounts
+                          Explore live prices, Prime delivery &amp; verified discounts
                         </p>
                       </div>
                     </div>
