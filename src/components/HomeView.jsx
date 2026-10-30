@@ -20,6 +20,7 @@ function HomeView({
   // Live Countdown Timer state for Flash Deals
   const [timeLeft, setTimeLeft] = useState({ hours: 14, minutes: 32, seconds: 45 });
   const [selectedBrand, setSelectedBrand] = useState("all");
+  const [budgetFilter, setBudgetFilter] = useState("all");
   const [sortOption, setSortOption] = useState("featured");
   const [subscriberEmail, setSubscriberEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -40,20 +41,29 @@ function HomeView({
 
   const popularBrands = [
     { name: "All Brands", id: "all" },
+    { name: "boAt", id: "boAt" },
+    { name: "Portronics", id: "Portronics" },
+    { name: "SYSKA", id: "SYSKA" },
+    { name: "SanDisk", id: "SanDisk" },
+    { name: "Boldfit", id: "Boldfit" },
+    { name: "Fastrack", id: "Fastrack" },
+    { name: "Pigeon", id: "Pigeon" },
     { name: "Apple", id: "Apple" },
     { name: "Samsung", id: "Samsung" },
-    { name: "Sony", id: "Sony" },
-    { name: "Nike", id: "Nike" },
-    { name: "Bose", id: "Bose" },
-    { name: "Dyson", id: "Dyson" },
-    { name: "ASUS", id: "ASUS" },
-    { name: "LEGO", id: "LEGO" },
+    { name: "OnePlus", id: "OnePlus" },
   ];
 
-  // Apply brand filtering
+  // Apply brand & budget filtering
   let displayedProducts = filteredProducts.filter((p) => {
-    if (selectedBrand === "all") return true;
-    return (p.brand || "").toLowerCase() === selectedBrand.toLowerCase();
+    if (selectedBrand !== "all" && (p.brand || "").toLowerCase() !== selectedBrand.toLowerCase()) {
+      return false;
+    }
+    const price = Number(p.price || 0);
+    if (budgetFilter === "299" && price > 299) return false;
+    if (budgetFilter === "499" && price > 499) return false;
+    if (budgetFilter === "999" && price > 999) return false;
+    if (budgetFilter === "discount50" && Number(p.discount || 0) < 50) return false;
+    return true;
   });
 
   // Apply sorting
@@ -312,6 +322,32 @@ function HomeView({
               </select>
             </div>
           </div>
+        </div>
+
+        {/* Quick Budget Deals Filter Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+          <span className="text-xs font-black text-rose-600 dark:text-rose-400 shrink-0 mr-1 flex items-center gap-1">
+            <span>⚡</span> Budget Store:
+          </span>
+          {[
+            { id: "all", label: "All Items" },
+            { id: "299", label: "🔥 Under ₹299 (Super Budget)" },
+            { id: "499", label: "⚡ Under ₹499 (Loot Deals)" },
+            { id: "999", label: "✨ Under ₹999" },
+            { id: "discount50", label: "💥 50%+ OFF" },
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setBudgetFilter(item.id)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer border ${
+                budgetFilter === item.id
+                  ? "bg-rose-600 text-white border-rose-600 shadow-md scale-105"
+                  : "bg-rose-50/80 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-900/50 hover:bg-rose-100 dark:hover:bg-rose-900/50"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
 
         {/* Brand Selector Pills */}
