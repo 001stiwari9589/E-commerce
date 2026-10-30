@@ -1,5 +1,5 @@
 import emailjs from "@emailjs/browser";
-import { matchCategory } from "../data/products";
+import { matchCategory, PRODUCTS_DATABASE } from "../data/products";
 
 export const API_BASE_URL = typeof window !== "undefined" && window.location.hostname === "localhost"
   ? "http://localhost:5000/api"
@@ -214,18 +214,40 @@ export const apiService = {
       console.warn("API getProducts remote fetch notice:", error.message);
     }
 
-    // Merge remote database products with locally persisted custom seller products
-    const customLocal = getLocalCustomProducts();
-    let combined = [...remoteProducts];
+    // Always prioritize the official verified PRODUCTS_DATABASE catalog
+    // so every product has guaranteed Amazon affiliate links (tag=stmart05-21) and high-converting budget order
+    let combined = [...PRODUCTS_DATABASE];
 
+    // Merge any custom products added by sellers from local storage
+    const customLocal = getLocalCustomProducts();
     customLocal.forEach((customItem) => {
       const exists = combined.some(
         (p) => String(p.id || p._id) === String(customItem.id || customItem._id)
       );
       if (!exists) {
-        combined.unshift(customItem);
+        combined.unshift({
+          ...customItem,
+          merchant: "Amazon",
+          isAffiliate: true,
+          affiliateUrl: customItem.affiliateUrl || `https://www.amazon.in/s?k=${encodeURIComponent(customItem.name || "")}&tag=stmart05-21`
+        });
       }
     });
+
+    // If remote database contains custom seller products not in PRODUCTS_DATABASE, add them
+    if (remoteProducts.length > 0) {
+      remoteProducts.forEach((rp) => {
+        const exists = combined.some((p) => String(p.id) === String(rp.id) || (p.slug && p.slug === rp.slug));
+        if (!exists) {
+          combined.push({
+            ...rp,
+            merchant: "Amazon",
+            isAffiliate: true,
+            affiliateUrl: rp.affiliateUrl || `https://www.amazon.in/s?k=${encodeURIComponent(rp.name || "")}&tag=stmart05-21`
+          });
+        }
+      });
+    }
 
     // Apply filtering if category or search query is specified
     if (category && category !== "all") {

@@ -37,10 +37,12 @@ function BuyProductButton({
 }) {
   if (!product) return null;
 
-  const rawUrl = product.affiliateUrl || "";
-  const isValid = isValidAffiliateUrl(rawUrl);
-  const merchant = product.merchant || "Amazon";
-  const isAmazon = merchant.toLowerCase().includes("amazon");
+  const rawUrl = (product.affiliateUrl && product.affiliateUrl.trim().startsWith("https://"))
+    ? product.affiliateUrl.trim()
+    : `https://www.amazon.in/s?k=${encodeURIComponent(product.name || "deals")}&tag=stmart05-21`;
+  const isValid = true;
+  const merchant = "Amazon";
+  const isAmazon = true;
 
   // Determine sizing - compact and responsive
   const sizeClasses = {

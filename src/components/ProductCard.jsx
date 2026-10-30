@@ -122,44 +122,19 @@ function ProductCard({
           </p>
         </div>
 
-        {/* Action Button: Direct Affiliate Buy or Add to Cart */}
+        {/* Action Button: Always Direct Amazon Affiliate Link */}
         <div className="mt-2.5 sm:mt-4" onClick={(e) => e.stopPropagation()}>
-          {isAffiliate ? (
-            <BuyProductButton
-              product={product}
-              sourcePage="home_card"
-              size="sm"
-              className="w-full"
-            />
-          ) : cartQuantity > 0 ? (
-            <div className="w-full flex items-center justify-between bg-blue-50 dark:bg-zinc-800 border border-blue-200 dark:border-zinc-700 rounded-xl p-1 shadow-xs">
-              <button
-                type="button"
-                onClick={() => handleUpdateQty && handleUpdateQty(product.id, cartQuantity - 1)}
-                className="w-7 h-7 rounded-lg bg-white dark:bg-zinc-700 text-slate-800 dark:text-white font-black text-base flex items-center justify-center shadow-xs hover:bg-rose-50 hover:text-rose-600 transition-all cursor-pointer"
-              >
-                −
-              </button>
-              <div className="flex flex-col items-center">
-                <span className="text-[9px] text-blue-600 dark:text-amber-400 font-extrabold uppercase leading-none">In Cart</span>
-                <span className="text-xs font-black text-slate-900 dark:text-white leading-none mt-0.5">{cartQuantity}</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => addToCart && addToCart(product)}
-                className="w-7 h-7 rounded-lg bg-blue-600 text-white font-black text-base flex items-center justify-center shadow-xs hover:bg-blue-700 transition-all cursor-pointer"
-              >
-                +
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => addToCart && addToCart(product)}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] sm:text-xs w-full py-2 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1 shadow-xs"
-            >
-              <span>Add to Cart</span>
-            </button>
-          )}
+          <BuyProductButton
+            product={{
+              ...product,
+              merchant: "Amazon",
+              isAffiliate: true,
+              affiliateUrl: product.affiliateUrl || `https://www.amazon.in/s?k=${encodeURIComponent(product.name || "deals")}&tag=stmart05-21`
+            }}
+            sourcePage="home_card"
+            size="sm"
+            className="w-full"
+          />
         </div>
       </div>
     </div>
