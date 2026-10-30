@@ -37,9 +37,20 @@ function BuyProductButton({
 }) {
   if (!product) return null;
 
-  const rawUrl = (product.affiliateUrl && product.affiliateUrl.trim().startsWith("https://"))
+  let rawUrl = (product.affiliateUrl && product.affiliateUrl.trim().startsWith("https://"))
     ? product.affiliateUrl.trim()
     : `https://www.amazon.in/s?k=${encodeURIComponent(product.name || "deals")}&tag=stmart05-21`;
+
+  // Protect against Amazon 404 delisting errors: convert any /dp/ ASIN links to guaranteed Amazon search queries
+  if (rawUrl.includes("/dp/")) {
+    const cleanQuery = (product.name || "")
+      .replace(/[()[\]{},&]/g, " ")
+      .replace(/\b(for|with|and|in|of|by)\b/gi, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    rawUrl = `https://www.amazon.in/s?k=${encodeURIComponent(cleanQuery)}&tag=stmart05-21`;
+  }
+
   const isValid = true;
   const merchant = "Amazon";
   const isAmazon = true;

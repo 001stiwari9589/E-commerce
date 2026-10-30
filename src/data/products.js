@@ -58,7 +58,7 @@ export const PRODUCTS_DATABASE = [
       "Includes wireless IR remote controller and power supply adapter"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B081GV3B39?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=5-Meter%20RGB%20LED%20Strip%20Lights%20Remote%20Adapter%20Multi-Color&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -86,7 +86,7 @@ export const PRODUCTS_DATABASE = [
       "Easy to wrap and install on all cable thicknesses"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B07ZCYW4N3?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Lapster%20Spiral%20Cable%20Cord%20Protector%20Pack%2020%20Multi-Color&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -114,7 +114,7 @@ export const PRODUCTS_DATABASE = [
       "Universal Type-C compatibility with Android & Apple devices"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B08WRBG3XW?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Portronics%20Konnect%20L%203A%20Type-C%20Fast%20Charging%20Cable%201.2M%20Nylon%20Braided&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -142,7 +142,7 @@ export const PRODUCTS_DATABASE = [
       "Compatible with all 4 to 11 inch smartphones, iPads and tablets"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B07H83W97R?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Gizga%20Essentials%20Foldable%20Multi-Angle%20Mobile%20Tablet%20Desktop%20Stand&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -170,7 +170,7 @@ export const PRODUCTS_DATABASE = [
       "Pack of 2 genuine Syska LED bulbs with 1-year brand warranty"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B010GGEAYM?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=SYSKA%209-Watt%20B22%20LED%20Bulb%20Pack%202%20Crystal%20White&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -198,7 +198,7 @@ export const PRODUCTS_DATABASE = [
       "High reliability with 2-year warranty"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B00812F7O8?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=SanDisk%20Cruzer%20Blade%2032%20GB%20USB%202.0%20Flash%20Drive&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": false
   },
@@ -282,7 +282,7 @@ export const PRODUCTS_DATABASE = [
       "Elegant gift-worthy binding and typography"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/8192910911?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Ikigai%3A%20The%20Japanese%20Secret%20to%20a%20Long%20Happy%20Life&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": false
   },
@@ -310,7 +310,7 @@ export const PRODUCTS_DATABASE = [
       "Rust-proof and long lasting virgin plastic construction"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B07R451F5F?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Milton%20Spotless%20Toilet%20Floor%20Cleaner%20Brush%20Storage%20Caddy&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -338,7 +338,7 @@ export const PRODUCTS_DATABASE = [
       "Top bestseller on Amazon India Business & Economics charts"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/9390166268?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=The%20Psychology%20Money%20Morgan%20Housel&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -366,7 +366,7 @@ export const PRODUCTS_DATABASE = [
       "Must-read classic for book lovers of all ages"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/8172234988?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=The%20Alchemist%20Paulo%20Coelho&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -450,7 +450,7 @@ export const PRODUCTS_DATABASE = [
       "Built with high durability by Logitech quality standards"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B003L62T7W?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Logitech%20B100%20Wired%20USB%20Optical%20Mouse%20800%20DPI&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": false
   },
@@ -646,7 +646,7 @@ export const PRODUCTS_DATABASE = [
       "Regular fit silhouette suited for Indian weather"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B085V3G85N?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Wrogn%20Men's%20Solid%20Cotton%20Regular%20Fit%20Casual%20Polo%20T-Shirt&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -674,7 +674,7 @@ export const PRODUCTS_DATABASE = [
       "Universal 3.5mm gold-plated jack for all devices"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B071Z8M4KX?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=boAt%20Bassheads%20100%20Wired%20-Ear%20Earphones%20Mic%20Black&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -702,7 +702,7 @@ export const PRODUCTS_DATABASE = [
       "Quick access in-line microphone with ambient noise reduction"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B01DEWVZ2C?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=JBL%20C100SI%20Wired%20-Ear%20Headphones%20Mic%20Deep%20Bass%20Sound&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -730,7 +730,7 @@ export const PRODUCTS_DATABASE = [
       "Cordless 360-degree swivel base for easy pouring"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B07WMS7TWB?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Pigeon%201.5L%20Stainless%20Steel%20Electric%20Kettle%201500W&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -758,7 +758,7 @@ export const PRODUCTS_DATABASE = [
       "10-year limited manufacturer warranty"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B08L5HMJVW?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=SanDisk%20Ultra%2064GB%20MicroSDXC%20Memory%20Card%20140MB%2Fs%20A1&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": false
   },
@@ -814,7 +814,7 @@ export const PRODUCTS_DATABASE = [
       "Tangle-free flat PVC cable with gold-plated 3.5mm audio jack"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B015I54AN8?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=boAt%20Bassheads%20225%20-Ear%20Wired%20Earphones%20Super%20Extra%20Bass%20Mic&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -926,7 +926,7 @@ export const PRODUCTS_DATABASE = [
       "Crisp high-grade paper paperback print"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/1847941834?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Atomic%20Habits%20James%20Clear%20Paperback%20International%20Bestseller&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -1010,7 +1010,7 @@ export const PRODUCTS_DATABASE = [
       "Continuous heart rate and blood oxygen monitoring"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B0BF57RN3K?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Fire-Boltt%20Ninja%20Call%20Pro%20Plus%201.83%20inch%20Bluetooth%20Calling%20Smartwatch&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -1038,7 +1038,7 @@ export const PRODUCTS_DATABASE = [
       "Durable metallic case with skin-friendly silicone strap"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B0BDK62PDX?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Fire-Boltt%20Phoenix%20Bluetooth%20Calling%20Smartwatch%201.3%22%20Round%20Display&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -1066,7 +1066,7 @@ export const PRODUCTS_DATABASE = [
       "IP68 dust, sweat, and splash resistance rating"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B0B5B6PQCT?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=boAt%20Wave%20Call%20Smartwatch%20Bluetooth%20Calling%201.69%22%20HD%20Display&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -1094,7 +1094,7 @@ export const PRODUCTS_DATABASE = [
       "One-touch voice assistant support (Siri & Google Assistant)"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B08JQN8DGZ?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=boAt%20Airdopes%20131%20Truly%20Wireless%20Earbuds%20Active%20Black&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -1122,7 +1122,7 @@ export const PRODUCTS_DATABASE = [
       "IP68 waterproof rating for rain and workouts"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B09NVPSCQT?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Noise%20ColorFit%20Pulse%20Grand%20Smartwatch%201.69%20inch%20HD%20Display&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -1150,7 +1150,7 @@ export const PRODUCTS_DATABASE = [
       "Dual modes: Wireless Bluetooth v5.0 and wired 3.5mm AUX"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B0856HNMR7?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=boAt%20Rockerz%20450%20Bluetooth%20On-Ear%20Headphones%20Mic%20Luscious%20Black&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -1178,7 +1178,7 @@ export const PRODUCTS_DATABASE = [
       "110+ Sports modes & 24x7 health tracking suite"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B0C1NG7J12?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Fastrack%20Limitless%20FS1%20Pro%20Smartwatch%201.96%22%20Super%20AMOLED%20BT%20Calling&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -1206,7 +1206,7 @@ export const PRODUCTS_DATABASE = [
       "Compatible with all 10 to 15.6 inch laptops including MacBook"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B00WRDS0AU?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Amazon%20Basics%20Aluminum%20Adjustable%20Laptop%20Riser%20Cooling%20Stand&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -1234,7 +1234,7 @@ export const PRODUCTS_DATABASE = [
       "USB fast charging with washable attachments and travel pouch"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B08QCPV9SQ?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Vega%20Men%209-%20-1%20Multi%20Grooming%20All-%20-One%20Trimmer%20Kit&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -1318,7 +1318,7 @@ export const PRODUCTS_DATABASE = [
       "Universal 3.5mm jack compatible with PC, console, and mobile"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B09N3ZNHTY?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Cosmic%20Byte%20GS410%20Gaming%20Headphone%20Mic%20Multi-Color%20LED&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -1346,7 +1346,7 @@ export const PRODUCTS_DATABASE = [
       "Low power charging mode for smart bands and wireless earbuds"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B08HV83HL3?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Mi%2010000mAh%20Power%20Bank%203i%2018W%20Fast%20PD%20Charging&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -1654,7 +1654,7 @@ export const PRODUCTS_DATABASE = [
       "Splash-proof ergonomic design with gold-plated USB connector"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B07GBZ4Q68?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Redragon%20Kumara%20K552%20RGB%20Mechanical%20Gaming%20Keyboard&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -1682,7 +1682,7 @@ export const PRODUCTS_DATABASE = [
       "Compatible with all USB-C enabled Apple and Android devices"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B08N5WRWNW?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Apple%2020W%20USB-C%20Power%20Adapter%20iPhone%20iPad%20AirPods&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -1710,7 +1710,7 @@ export const PRODUCTS_DATABASE = [
       "A15 Bionic chip with 4-core GPU for lightning-fast performance"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B09G9BL5CP?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Apple%20iPhone%2013%20Starlight%20128%20GB&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -1738,7 +1738,7 @@ export const PRODUCTS_DATABASE = [
       "Durable color-infused glass and aerospace-grade aluminum design"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B0CHX1W1XY?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=Apple%20iPhone%2015%20Black%20128%20GB&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   },
@@ -1766,7 +1766,7 @@ export const PRODUCTS_DATABASE = [
       "Qualcomm Snapdragon 695 5G chipset"
     ],
     "merchant": "Amazon",
-    "affiliateUrl": "https://www.amazon.in/dp/B0BY8MCQ9S?tag=stmart05-21",
+    "affiliateUrl": "https://www.amazon.in/s?k=OnePlus%20Nord%20CE%203%20Lite%205G%20Pastel%20Lime%208GB%20RAM%20128GB%20Storage&tag=stmart05-21",
     "isAffiliate": true,
     "isFeatured": true
   }
