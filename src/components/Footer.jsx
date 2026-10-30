@@ -6,14 +6,14 @@ function Footer({ setView }) {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2 text-center sm:text-left cursor-pointer" onClick={() => setView && setView("home")}>
             <span className="text-xl font-black italic tracking-wide text-white">
-              ST <span className="text-amber-400">Mart</span>
+              Smart<span className="text-amber-400">Deals</span>
             </span>
             <span className="bg-amber-400/10 text-amber-400 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-amber-400/20 uppercase tracking-wider">
-              Plus✦ Store
+              Amazon Associate Hub
             </span>
           </div>
           <p className="text-xs font-semibold text-zinc-400 text-center sm:text-right">
-            India's Most Trusted Shopping & E-Commerce Destination 🚀
+            India's Trusted Amazon Verified Deals &amp; Loot Hub 🚀
           </p>
         </div>
       </div>
@@ -24,7 +24,7 @@ function Footer({ setView }) {
         {/* Column 1: About */}
         <div className="flex flex-col gap-2">
           <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider border-b border-zinc-800/80 pb-1.5 mb-1">
-            About ST Mart
+            About SmartDeals
           </h4>
           <button onClick={() => setView && setView("deals")} className="text-left text-xs text-amber-400 font-bold hover:text-amber-300 transition-colors cursor-pointer py-0.5">
             🔥 Deals &amp; Top Recommendations
@@ -155,8 +155,8 @@ function Footer({ setView }) {
       {/* Bottom Copyright & Extra Links Bar */}
       <div className="border-t border-zinc-800/80 py-4 px-4 sm:px-8 max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] sm:text-xs text-zinc-400">
         <div className="flex items-center gap-1.5 text-center sm:text-left">
-          <span className="font-extrabold italic text-amber-400">ST Mart✦</span>
-          <span>© 2026 ST Mart.com. All rights reserved.</span>
+          <span className="font-extrabold italic text-amber-400">SmartDeals.in✦</span>
+          <span>© 2026 SmartDeals.in. Amazon Associate Partner. All rights reserved.</span>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-4 font-bold text-zinc-300">
           <button onClick={() => setView && setView("seller")} className="hover:text-amber-400 cursor-pointer transition-colors">

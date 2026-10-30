@@ -7,7 +7,7 @@ function AffiliateDisclosureBanner({ setView, compact = false }) {
             Affiliate Notice:
           </span>
           <span className="truncate">
-            ST Mart earns commission from qualifying purchases on partner stores at zero extra cost to you.
+            SmartDeals.in earns commission from qualifying purchases on Amazon India at zero extra cost to you.
           </span>
         </div>
         {setView && (
@@ -35,7 +35,7 @@ function AffiliateDisclosureBanner({ setView, compact = false }) {
             Transparent Affiliate Disclosure
           </h4>
           <p className="text-xs text-slate-600 dark:text-zinc-400 mt-1 leading-relaxed">
-            ST Mart is an independent recommendation platform. When you click our partner links (such as Flipkart or Amazon) and make a qualifying purchase, we may earn an affiliate commission at <strong>no additional cost to you</strong>. Prices, discounts, and item availability are maintained directly by the merchant and are subject to change.
+            SmartDeals.in is an independent recommendation platform and participant in the Amazon Associates Program. When you click our partner links and make a qualifying purchase, we earn an affiliate commission at <strong>no additional cost to you</strong>. All orders, payments, and shipping are handled directly by Amazon India.
           </p>
           {setView && (
             <button

@@ -286,21 +286,16 @@ function HomeView({
         {/* Header & Controls */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-150 dark:border-zinc-850 pb-5">
           <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-                Recommended Products Catalog
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                <span>🔥</span> Verified Amazon Deals &amp; Loot Store
               </h2>
-              {setView && (
-                <button
-                  onClick={() => setView("deals")}
-                  className="hidden sm:inline-flex items-center gap-1 bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 text-xs font-bold px-2.5 py-1 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer"
-                >
-                  🔥 Curated Deals
-                </button>
-              )}
+              <span className="inline-flex items-center gap-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[11px] font-black px-2.5 py-0.5 rounded-full">
+                ✓ 100% Genuine Amazon Products
+              </span>
             </div>
             <p className="text-xs text-slate-500 dark:text-zinc-400 font-semibold mt-0.5">
-              Showing {displayedProducts.length} verified products with direct partner links
+              Showing {displayedProducts.length} verified deals • Fast Prime delivery &amp; 100% safe checkout directly on Amazon.in
             </p>
           </div>
 
@@ -452,7 +447,7 @@ function HomeView({
             Transparent Affiliate Shopping
           </span>
           <h3 className="text-2xl font-black mt-1 text-white">
-            How Shopping on ST Mart Works
+            How Shopping on SmartDeals Works
           </h3>
           <p className="text-xs text-zinc-400 mt-1.5 leading-relaxed">
             We help you discover verified electronics, accessories, and study essentials with direct links to official partner merchants.

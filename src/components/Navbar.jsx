@@ -55,32 +55,50 @@ function Navbar({
 
   return (
     <>
-      <nav className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 text-white sticky top-0 z-40 shadow-lg border-b border-white/10 dark:border-zinc-800/80 transition-all duration-300 px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 lg:py-4.5 min-h-[72px] sm:min-h-[78px] flex items-center">
+      {/* Top High-Trust Amazon Deals Strip */}
+      <div className="bg-slate-950 text-slate-300 text-[10px] sm:text-xs py-1.5 px-3 border-b border-white/10 text-center font-bold flex items-center justify-center gap-2 flex-wrap">
+        <span className="bg-amber-400 text-slate-950 px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider">
+          Amazon Associate
+        </span>
+        <span className="text-zinc-200">
+          🛡️ 100% Genuine Deals • Payments &amp; Delivery Directly Fulfilled by Amazon India
+        </span>
+      </div>
+
+      <nav className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 text-white sticky top-0 z-40 shadow-lg border-b border-white/10 dark:border-zinc-800/80 transition-all duration-300 px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5 lg:py-4 min-h-[68px] sm:min-h-[74px] flex items-center">
         <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-3 sm:gap-4 lg:gap-8">
 
           {/* Top Line: Brand Logo & Quick Action Toggle (Visible on Mobile/Tablet < 1024px) */}
           <div className="w-full flex items-center justify-between lg:w-auto shrink-0 px-1 sm:px-2">
-            {/* Logo - Shifted slightly right from screen edge */}
+            {/* Logo - SmartDeals.in */}
             <button
               onClick={() => {
                 setSearchQuery("");
                 setView("home");
                 setIsMobileMenuOpen(false);
               }}
-              className="flex flex-col items-start cursor-pointer group text-left transition-transform active:scale-98 ml-0.5 sm:ml-1"
+              className="flex items-center gap-2.5 cursor-pointer group text-left transition-transform active:scale-95 ml-0.5 sm:ml-1"
             >
-              <span className="text-2xl sm:text-3xl lg:text-3xl font-black italic tracking-wide flex items-center gap-1 leading-none text-white drop-shadow-md">
-                ST <span className="text-yellow-400 group-hover:text-yellow-300 transition-colors">Mart</span>
-              </span>
-              <span className="text-[10px] sm:text-[11px] font-bold italic text-blue-100 dark:text-zinc-400 flex items-center gap-1.5 group-hover:text-yellow-300 transition-colors leading-none mt-1">
-                Explore <span className="text-yellow-400 font-extrabold">Plus✦</span>
-                <span
-                  className={`w-2 h-2 rounded-full inline-block ${
-                    isBackendConnected ? "bg-emerald-400 animate-pulse shadow-sm" : "bg-amber-400"
-                  }`}
-                  title={isBackendConnected ? "Backend MongoDB Online" : "Local Mode"}
-                />
-              </span>
+              {/* Modern Amazon-style Shopping Badge */}
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-amber-400 p-0.5 shadow-md shadow-orange-500/25 flex items-center justify-center shrink-0">
+                <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                  <span className="text-xl">🛍️</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-start leading-none">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-2xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white font-sans drop-shadow-md">
+                    Smart<span className="text-amber-400">Deals</span>
+                  </span>
+                  <span className="text-[9px] font-black bg-amber-400 text-slate-950 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                    .IN
+                  </span>
+                </div>
+                <span className="text-[10px] font-bold text-amber-200/90 dark:text-zinc-400 flex items-center gap-1 leading-none mt-1">
+                  <span className="text-emerald-400 font-black">✓</span> Amazon Verified Deals Hub
+                </span>
+              </div>
             </button>
 
             {/* Quick Action Icons & Enlarged Hamburger Button - Shifted slightly left from screen edge */}

@@ -13,9 +13,9 @@ function ProductCard({
   const cartItem = cartItems.find((item) => item && item.id === product.id);
   const cartQuantity = cartItem ? cartItem.qty : 0;
 
-  const merchant = product.merchant || (product.brand?.toLowerCase().includes("apple") ? "Flipkart" : "Partner Store");
-  const isAmazon = merchant.toLowerCase().includes("amazon");
-  const isAffiliate = product.isAffiliate || Boolean(product.affiliateUrl);
+  const merchant = "Amazon";
+  const isAmazon = true;
+  const isAffiliate = true;
 
   const price = product.currentPrice || product.price || 0;
   const listedPrice = product.listedPrice || product.originalPrice || 0;
@@ -23,7 +23,7 @@ function ProductCard({
   return (
     <div
       onClick={() => onSelect(product)}
-      className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xs border border-gray-100 dark:border-zinc-800 p-2.5 sm:p-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between group"
+      className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xs border border-gray-150 dark:border-zinc-800 p-2.5 sm:p-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between group"
     >
       {/* Product Image & Wishlist Link */}
       <div className="relative bg-slate-50 dark:bg-zinc-850 rounded-xl p-2 sm:p-4 flex items-center justify-center h-36 sm:h-52 w-full overflow-hidden border border-slate-100 dark:border-zinc-800/50">
@@ -37,15 +37,9 @@ function ProductCard({
           className="max-h-full max-w-full object-contain rounded-lg transition-transform duration-500 group-hover:scale-105"
         />
 
-        {/* Merchant Partner Tag */}
-        <span
-          className={`absolute top-2 left-2 text-[9px] font-extrabold px-2 py-0.5 rounded-md shadow-xs ${
-            isAmazon
-              ? "bg-slate-950 text-amber-400"
-              : "bg-blue-600 text-white"
-          }`}
-        >
-          {merchant}
+        {/* Amazon Verified Deal Tag */}
+        <span className="absolute top-2 left-2 text-[10px] font-black px-2 py-0.5 rounded-lg shadow-md bg-slate-950/95 text-amber-400 border border-amber-400/40 flex items-center gap-1 backdrop-blur-xs">
+          <span>🛒</span> Amazon Deal
         </span>
 
         {/* Floating Wishlist Button */}
@@ -122,9 +116,9 @@ function ProductCard({
             )}
           </div>
           
-          {/* Availability disclaimer */}
-          <p className="text-[9px] text-slate-400 dark:text-zinc-500 font-medium mt-0.5 sm:mt-1 truncate">
-            Prices &amp; stock subject to merchant terms
+          {/* Trust disclaimer */}
+          <p className="text-[9px] text-emerald-600 dark:text-emerald-400 font-extrabold mt-0.5 sm:mt-1 truncate flex items-center gap-1">
+            <span>🛡️</span> Fulfilled directly by Amazon.in
           </p>
         </div>
 
