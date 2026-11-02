@@ -157,11 +157,36 @@ Thank you!
 SmartDeals.in Security Team`;
 }
 
+async function sendViaSmtp(toEmail, subject, htmlContent, textContent, emailFrom) {
+  const host = process.env.SMTP_HOST || "smtp.gmail.com";
+  const port = Number(process.env.SMTP_PORT) || 587;
+  const user = (process.env.SMTP_USER || "").trim();
+  const pass = (process.env.SMTP_PASS || "").trim();
+
+  const transporter = nodemailer.createTransport({
+    host,
+    port,
+    secure: port === 465,
+    auth: { user, pass },
+  });
+
+  const info = await transporter.sendMail({
+    from: emailFrom || `"SmartDeals.in" <${user}>`,
+    to: toEmail.trim(),
+    subject: subject,
+    text: textContent,
+    html: htmlContent,
+  });
+
+  console.log(`✅ [SMTP] Real OTP delivered to ${toEmail} (MessageId: ${info.messageId})`);
+  return { success: true, provider: "smtp", messageId: info.messageId };
+}
+
 /**
  * Dispatches real email using the configured provider:
  * 1. Resend API (RESEND_API_KEY)
  * 2. Brevo API (BREVO_API_KEY)
- * 3. Brevo SMTP / Custom SMTP (SMTP_HOST, SMTP_USER, SMTP_PASS)
+ * 3. Brevo SMTP / Gmail App Password (SMTP_HOST, SMTP_USER, SMTP_PASS)
  */
 export async function sendOtpEmail(toEmail, otp) {
   const subject = "Your Email Verification Code";
@@ -175,99 +200,92 @@ export async function sendOtpEmail(toEmail, otp) {
 
   // --- 1. RESEND API ---
   if (provider === "resend" || (!provider && resendApiKey)) {
-    if (!resendApiKey) {
-      throw new Error("RESEND_API_KEY is missing in your .env configuration.");
+    if (resendApiKey) {
+      try {
+        const res = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${resendApiKey.trim()}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            from: emailFrom,
+            to: [toEmail.trim()],
+            subject: subject,
+            html: htmlContent,
+            text: textContent,
+          }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          console.log(`✅ [Resend] Real OTP delivered to ${toEmail} (ID: ${data.id})`);
+          return { success: true, provider: "resend", messageId: data.id };
+        }
+
+        const errMsg = data?.message || data?.error?.message || "Resend API rejected request";
+        console.warn("⚠️ Resend notice:", errMsg);
+
+        // If Resend blocked because free sandbox only allows sending to the account owner:
+        if (errMsg.includes("only send testing emails to your own email address") || errMsg.includes("verify a domain")) {
+          if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+            console.log("🔄 Auto-fallback to SMTP...");
+            return await sendViaSmtp(toEmail, subject, htmlContent, textContent, emailFrom);
+          }
+          throw new Error("Resend free sandbox allows sending only to your registered email (001stiwari9589@gmail.com). To send to all users/friends, add Gmail App Password or Brevo in your Render Environment.");
+        }
+
+        throw new Error(`Resend Delivery Failed: ${errMsg}`);
+      } catch (err) {
+        if (!process.env.SMTP_USER && !brevoApiKey) {
+          throw err;
+        }
+      }
     }
-
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${resendApiKey.trim()}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: emailFrom,
-        to: [toEmail.trim()],
-        subject: subject,
-        html: htmlContent,
-        text: textContent,
-      }),
-    });
-
-    const data = await res.json();
-    if (!res.ok) {
-      const errMsg = data?.message || data?.error?.message || "Resend API rejected request";
-      console.error("❌ Resend error:", errMsg);
-      throw new Error(`Resend Delivery Failed: ${errMsg}`);
-    }
-
-    console.log(`✅ [Resend] Real OTP delivered to ${toEmail} (ID: ${data.id})`);
-    return { success: true, provider: "resend", messageId: data.id };
   }
 
   // --- 2. BREVO API ---
   if (provider === "brevo" || (!provider && brevoApiKey)) {
-    if (!brevoApiKey) {
-      throw new Error("BREVO_API_KEY is missing in your .env configuration.");
-    }
+    if (brevoApiKey) {
+      const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.EMAIL_FROM || "no-reply@smartdeals.in";
+      const senderName = process.env.BREVO_SENDER_NAME || "SmartDeals.in Security";
 
-    const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.EMAIL_FROM || "no-reply@smartdeals.in";
-    const senderName = process.env.BREVO_SENDER_NAME || "SmartDeals.in Security";
+      const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+          "api-key": brevoApiKey.trim(),
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: JSON.stringify({
+          sender: { name: senderName, email: senderEmail },
+          to: [{ email: toEmail.trim() }],
+          subject: subject,
+          htmlContent: htmlContent,
+          textContent: textContent,
+        }),
+      });
 
-    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
-      method: "POST",
-      headers: {
-        "api-key": brevoApiKey.trim(),
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
-      body: JSON.stringify({
-        sender: { name: senderName, email: senderEmail },
-        to: [{ email: toEmail.trim() }],
-        subject: subject,
-        htmlContent: htmlContent,
-        textContent: textContent,
-      }),
-    });
+      const data = await res.json();
+      if (res.ok) {
+        console.log(`✅ [Brevo] Real OTP delivered to ${toEmail} (MessageId: ${data.messageId})`);
+        return { success: true, provider: "brevo", messageId: data.messageId };
+      }
 
-    const data = await res.json();
-    if (!res.ok) {
       const errMsg = data?.message || "Brevo API rejected email request";
       console.error("❌ Brevo error:", errMsg);
       throw new Error(`Brevo Delivery Failed: ${errMsg}`);
     }
-
-    console.log(`✅ [Brevo] Real OTP delivered to ${toEmail} (MessageId: ${data.messageId})`);
-    return { success: true, provider: "brevo", messageId: data.messageId };
   }
 
-  // --- 3. SMTP (Brevo SMTP, Gmail App Password, or Custom SMTP) ---
-  if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST.trim(),
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: Number(process.env.SMTP_PORT) === 465,
-      auth: {
-        user: process.env.SMTP_USER.trim(),
-        pass: process.env.SMTP_PASS.trim(),
-      },
-    });
-
-    const info = await transporter.sendMail({
-      from: emailFrom || `"SmartDeals.in" <${process.env.SMTP_USER.trim()}>`,
-      to: toEmail.trim(),
-      subject: subject,
-      text: textContent,
-      html: htmlContent,
-    });
-
-    console.log(`✅ [SMTP] Real OTP delivered to ${toEmail} (MessageId: ${info.messageId})`);
-    return { success: true, provider: "smtp", messageId: info.messageId };
+  // --- 3. SMTP (Gmail App Password, Brevo SMTP, or Custom SMTP) ---
+  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+    return await sendViaSmtp(toEmail, subject, htmlContent, textContent, emailFrom);
   }
 
   // --- 4. NO PROVIDER CONFIGURED ---
   throw new Error(
-    "No Email Service configured! Please add BREVO_API_KEY, RESEND_API_KEY, or SMTP credentials in your .env file."
+    "No Email Service configured in Render Environment! Please add RESEND_API_KEY, BREVO_API_KEY, or SMTP credentials in your Render Dashboard."
   );
 }
 
