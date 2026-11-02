@@ -84,11 +84,12 @@ function LoginPage({ onLoginSuccess, onBack }) {
       setShowSmsToast(true);
       setStep("otp");
       setResendTimer(60);
+      window.scrollTo({ top: 0, behavior: "smooth" });
 
       // Native Browser OS Push Notification if permitted
       if ("Notification" in window && Notification.permission === "granted") {
         try {
-          new Notification(isEmail ? "💬 ST Mart Email OTP" : "📱 ST Mart SMS Security OTP", {
+          new Notification(isEmail ? "💬 SmartDeals Email OTP" : "📱 SmartDeals SMS Security OTP", {
             body: `Your 6-digit verification code for ${emailOrPhone} is ${code}`,
           });
         } catch (nErr) {
@@ -103,6 +104,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
       setStep("otp");
       setShowSmsToast(true);
       setResendTimer(60);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
       setIsSendingOtp(false);
     }
@@ -139,15 +141,15 @@ function LoginPage({ onLoginSuccess, onBack }) {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-slate-900 dark:bg-black relative overflow-hidden">
       
-      {/* Real-time Security Notification Toast Banner */}
+      {/* Real-time Security Notification Toast Banner (Positioned near bottom-right for instant access without scrolling up) */}
       {showSmsToast && receivedOtp && (
-        <div className="fixed top-5 right-5 z-50 max-w-sm w-[90%] sm:w-full bg-slate-900 dark:bg-zinc-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-700 dark:border-amber-500/40 animate-slide-down flex flex-col gap-2.5 pointer-events-auto">
+        <div className="fixed bottom-5 right-5 z-50 max-w-sm w-[90%] sm:w-full bg-slate-900/95 dark:bg-zinc-900/95 backdrop-blur-md text-white p-4 rounded-2xl shadow-2xl border-2 border-amber-400/80 dark:border-amber-500/60 animate-zoom-in flex flex-col gap-2.5 pointer-events-auto">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="p-1 bg-emerald-600 dark:bg-amber-500 text-white dark:text-slate-950 rounded-lg text-[10px] font-black uppercase flex items-center gap-1">
-                {emailOrPhone.includes("@") ? "💬 EMAIL OTP" : "📱 MOBILE SMS OTP"}
+                {emailOrPhone.includes("@") ? "💬 EMAIL OTP" : "📱 SMS OTP"}
               </span>
-              <span className="text-xs font-bold text-slate-200">ST-MART-SECURITY</span>
+              <span className="text-xs font-bold text-slate-200">SmartDeals Security</span>
               <span className="text-[10px] text-slate-400">Just now</span>
             </div>
             <button
@@ -169,7 +171,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
                 setOtp(receivedOtp);
                 setShowSmsToast(false);
               }}
-              className="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-black shadow-sm transition-all cursor-pointer transform active:scale-95 flex items-center gap-1"
+              className="px-3.5 py-1.5 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 rounded-xl text-xs font-black shadow-sm transition-all cursor-pointer transform active:scale-95 flex items-center gap-1"
             >
               ⚡ Auto-Fill 6-Digit OTP ({receivedOtp})
             </button>
@@ -201,10 +203,10 @@ function LoginPage({ onLoginSuccess, onBack }) {
 
             <div className="flex items-center gap-3 mb-6">
               <span className="text-3xl font-black italic tracking-wide text-white">
-                ST <span className="text-amber-400">Mart</span>
+                Smart<span className="text-amber-400">Deals</span><span className="text-sm font-sans font-black bg-amber-400 text-slate-950 px-1.5 py-0.5 rounded ml-1">.IN</span>
               </span>
               <span className="bg-amber-400/20 text-amber-300 text-[10px] font-black px-2.5 py-1 rounded-full border border-amber-400/30 uppercase tracking-widest">
-                Plus✦ Store
+                Official Deals Hub
               </span>
             </div>
 
@@ -212,13 +214,13 @@ function LoginPage({ onLoginSuccess, onBack }) {
               Fast, Secure & Seamless Login
             </h2>
             <p className="text-xs text-blue-100 leading-relaxed font-medium">
-              Access your orders, wishlist, personalized deals, and superfast 1-click checkout with ST Mart Security Auth.
+              Access your orders, wishlist, personalized deals, and superfast 1-click checkout with SmartDeals Security Auth.
             </p>
           </div>
 
           <div className="pt-4 border-t border-white/10 text-center lg:text-left">
             <span className="text-[11px] font-bold text-blue-200 uppercase tracking-wider">
-              ✦ 100% ST MART SECURITY GUARANTEE
+              ✦ 100% SMARTDEALS SECURITY GUARANTEE
             </span>
           </div>
         </div>
@@ -231,10 +233,10 @@ function LoginPage({ onLoginSuccess, onBack }) {
               <form onSubmit={handleRequestOtp} className="flex flex-col gap-6">
                 <div>
                   <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-                    Sign In to ST Mart
+                    Sign In to SmartDeals
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
-                    Enter your Email or Mobile Number to receive a 4-digit verification code.
+                    Enter your Email or Mobile Number to receive a 6-digit verification code.
                   </p>
                 </div>
 
@@ -279,17 +281,50 @@ function LoginPage({ onLoginSuccess, onBack }) {
 
               </form>
             ) : (
-              <form onSubmit={handleVerifyOtp} className="flex flex-col gap-6">
+              <form onSubmit={handleVerifyOtp} className="flex flex-col gap-5">
                 <div>
                   <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                     Enter 6-Digit Verification OTP
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
-                    Enter the 6-digit security code to verify and sign in.
+                    Enter the 6-digit security code sent to <strong className="text-slate-800 dark:text-zinc-200">{emailOrPhone}</strong>.
                   </p>
                 </div>
 
+                {/* INLINE CONTEXTUAL OTP POPUP CARD (Right next to input so user never has to scroll up) */}
+                {receivedOtp && (
+                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-zinc-850 dark:to-zinc-800/80 border-2 border-amber-400 dark:border-amber-500/70 rounded-2xl p-3.5 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-3 animate-zoom-in">
+                    <div className="flex items-center gap-2.5 w-full sm:w-auto">
+                      <div className="w-10 h-10 rounded-xl bg-amber-400 dark:bg-amber-500 text-slate-950 flex items-center justify-center font-black text-xl shrink-0 shadow-xs">
+                        📩
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded-md">
+                            Your Login OTP
+                          </span>
+                          <span className="text-[11px] text-slate-500 dark:text-zinc-400 font-semibold">
+                            Valid for 60 seconds
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs text-slate-600 dark:text-zinc-300 font-extrabold">Code:</span>
+                          <span className="text-xl font-black font-mono tracking-widest text-slate-950 dark:text-amber-400 px-3 py-0.5 bg-white dark:bg-zinc-900 rounded-lg border border-amber-300 dark:border-amber-500/40 shadow-inner">
+                            {receivedOtp}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
 
+                    <button
+                      type="button"
+                      onClick={() => setOtp(receivedOtp)}
+                      className="w-full sm:w-auto px-4 py-2.5 bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 font-black text-xs rounded-xl shadow-md transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
+                    >
+                      ⚡ Auto-Fill Code ({receivedOtp})
+                    </button>
+                  </div>
+                )}
 
                 <div className="flex flex-col gap-3">
                   <div className="flex justify-between items-center px-1">
@@ -363,7 +398,7 @@ function LoginPage({ onLoginSuccess, onBack }) {
 
           <div className="pt-6 border-t border-gray-100 dark:border-zinc-800 text-center">
             <p className="text-[10px] text-slate-400 dark:text-zinc-500 leading-relaxed">
-              By continuing, you agree to ST Mart's{" "}
+              By continuing, you agree to SmartDeals's{" "}
               <span className="text-blue-600 dark:text-amber-400 hover:underline cursor-pointer">Terms of Use</span>{" "}
               and{" "}
               <span className="text-blue-600 dark:text-amber-400 hover:underline cursor-pointer">Privacy Policy</span>.
