@@ -134,9 +134,9 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-fade-in">
       <div className="absolute inset-0 cursor-pointer" onClick={onClose}></div>
 
-      {/* Real-time Security Notification Toast Banner */}
+      {/* Real-time Security Notification Toast Banner (Mobile-Friendly Bottom Toast) */}
       {showSmsToast && receivedOtp && (
-        <div className="fixed top-5 right-5 z-50 max-w-sm w-[90%] sm:w-full bg-slate-900 dark:bg-zinc-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-700 dark:border-amber-500/40 animate-slide-down flex flex-col gap-2.5 pointer-events-auto">
+        <div className="fixed bottom-5 right-5 z-50 max-w-sm w-[90%] sm:w-full bg-slate-900 dark:bg-zinc-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-700 dark:border-amber-500/40 animate-slide-up flex flex-col gap-2.5 pointer-events-auto">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="p-1 bg-emerald-600 dark:bg-amber-500 text-white dark:text-slate-950 rounded-lg text-[10px] font-black uppercase flex items-center gap-1">
@@ -267,6 +267,38 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                     Enter the 6-digit security code to verify and sign in.
                   </p>
                 </div>
+
+                {/* INLINE OTP CARD (Right at eye level / near inputs, no scrolling needed) */}
+                {receivedOtp && (
+                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-zinc-800 dark:to-zinc-800/80 border-2 border-amber-400 dark:border-amber-500 rounded-2xl p-3 shadow-md flex flex-col sm:flex-row items-center justify-between gap-2.5 animate-zoom-in">
+                    <div className="flex items-center gap-2.5 w-full sm:w-auto">
+                      <div className="w-8 h-8 rounded-lg bg-amber-400 dark:bg-amber-500 text-slate-950 flex items-center justify-center font-black text-base shrink-0 shadow-xs">
+                        📩
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[9px] font-black uppercase tracking-wider bg-emerald-600 text-white px-1.5 py-0.5 rounded">
+                            Your Login OTP
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <span className="text-xs text-slate-600 dark:text-zinc-300 font-extrabold">Code:</span>
+                          <span className="text-lg font-black font-mono tracking-widest text-slate-950 dark:text-amber-400 px-2 py-0.5 bg-white dark:bg-zinc-900 rounded-lg border border-amber-300 dark:border-amber-500/40">
+                            {receivedOtp}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setOtp(receivedOtp)}
+                      className="w-full sm:w-auto px-3.5 py-2 bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 hover:from-amber-500 hover:to-orange-600 active:scale-95 text-slate-950 font-black text-xs rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-1 shrink-0"
+                    >
+                      ⚡ Auto-Fill Code
+                    </button>
+                  </div>
+                )}
 
 
 
