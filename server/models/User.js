@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   googleId: String,
   picture: String,
   provider: { type: String, default: "local" },
+  isVerified: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
 });
 

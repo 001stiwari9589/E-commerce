@@ -11,6 +11,15 @@ import { Product } from "./models/Product.js";
 import { User } from "./models/User.js";
 import { Order } from "./models/Order.js";
 import { Seller } from "./models/Seller.js";
+import { OtpVerification } from "./models/OtpVerification.js";
+import { sendOtpEmail } from "./services/emailService.js";
+import {
+  isValidEmail,
+  checkRateLimit,
+  createAndStoreOtp,
+  verifyUserOtp,
+  normalizeEmail,
+} from "./services/otpService.js";
 
 // Auto-load .env file if present
 try {
@@ -318,83 +327,166 @@ const normalizeKey = (emailOrPhone) => {
   return digits.length >= 10 ? digits.slice(-10) : digits;
 };
 
-// POST /api/auth/send-otp (Send real OTP to Email/SMS)
+// POST /api/auth/send-otp (Send real 6-digit OTP to Email via Brevo/Resend/SMTP)
 app.post("/api/auth/send-otp", async (req, res) => {
   try {
-    const { emailOrPhone } = req.body;
-    if (!emailOrPhone) {
-      return res.status(400).json({ success: false, message: "Email or Phone is required" });
+    const rawInput = req.body.email || req.body.emailOrPhone;
+    if (!rawInput) {
+      return res.status(400).json({ success: false, message: "Email address is required." });
     }
 
-    const key = normalizeKey(emailOrPhone);
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const email = normalizeEmail(rawInput);
+    if (!isValidEmail(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid email address (e.g. name@gmail.com).",
+      });
+    }
 
-    activeOtpStore.set(key, {
-      otp,
-      expiresAt: Date.now() + 10 * 60 * 1000,
+    // 1. Check Rate Limiting & 60-second cooldown
+    const rateCheck = checkRateLimit(email);
+    if (!rateCheck.allowed) {
+      return res.status(429).json({
+        success: false,
+        message: rateCheck.reason,
+        waitSeconds: rateCheck.waitSeconds,
+      });
+    }
+
+    // 2. Generate random 6-digit OTP, securely hash, and store in MongoDB (valid for 5 mins)
+    const { otp, expiresAt } = await createAndStoreOtp(email);
+
+    // 3. Dispatch real email via configured provider (Brevo API, Resend API, or SMTP)
+    try {
+      await sendOtpEmail(email, otp);
+    } catch (mailError) {
+      console.error("❌ Email dispatch failed:", mailError.message);
+      return res.status(500).json({
+        success: false,
+        message: `Failed to deliver verification email: ${mailError.message}. Please check your BREVO_API_KEY or RESEND_API_KEY in .env`,
+      });
+    }
+
+    // 4. Return success (NEVER expose the OTP in response!)
+    res.json({
+      success: true,
+      message: `A 6-digit verification code has been sent to ${email}.`,
+      expiresAt,
     });
+  } catch (error) {
+    console.error("send-otp error:", error);
+    res.status(500).json({ success: false, message: error.message || "Failed to process OTP request" });
+  }
+});
 
-    if (emailOrPhone.includes("@")) {
+// POST /api/auth/resend-otp (Resend fresh 6-digit OTP with 60s cooldown check)
+app.post("/api/auth/resend-otp", async (req, res) => {
+  try {
+    const rawInput = req.body.email || req.body.emailOrPhone;
+    if (!rawInput) {
+      return res.status(400).json({ success: false, message: "Email address is required." });
+    }
+
+    const email = normalizeEmail(rawInput);
+    if (!isValidEmail(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid email address.",
+      });
+    }
+
+    // Check 60-second cooldown
+    const rateCheck = checkRateLimit(email);
+    if (!rateCheck.allowed) {
+      return res.status(429).json({
+        success: false,
+        message: rateCheck.reason,
+        waitSeconds: rateCheck.waitSeconds,
+      });
+    }
+
+    // Generate new OTP and store
+    const { otp, expiresAt } = await createAndStoreOtp(email);
+
+    try {
+      await sendOtpEmail(email, otp);
+    } catch (mailError) {
+      console.error("❌ Resend email dispatch failed:", mailError.message);
+      return res.status(500).json({
+        success: false,
+        message: `Failed to deliver verification email: ${mailError.message}`,
+      });
+    }
+
+    res.json({
+      success: true,
+      message: `A fresh 6-digit verification code has been dispatched to ${email}.`,
+      expiresAt,
+    });
+  } catch (error) {
+    console.error("resend-otp error:", error);
+    res.status(500).json({ success: false, message: error.message || "Failed to resend OTP" });
+  }
+});
+
+// POST /api/auth/verify-otp (Verify user entered 6-digit OTP via secure hash comparison)
+app.post("/api/auth/verify-otp", async (req, res) => {
+  try {
+    const rawInput = req.body.email || req.body.emailOrPhone;
+    const { otp } = req.body;
+
+    if (!rawInput || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Email address and 6-digit OTP code are required.",
+      });
+    }
+
+    const email = normalizeEmail(rawInput);
+    const verification = await verifyUserOtp(email, otp);
+
+    if (!verification.success) {
+      return res.status(400).json(verification);
+    }
+
+    // Mark email verified in MongoDB User collection
+    let user = null;
+    const isMongoConnected = mongoose.connection.readyState === 1;
+    if (isMongoConnected) {
       try {
-        await mailTransporter.sendMail({
-          from: '"ST Mart Verification" <no-reply@stmart.com>',
-          to: emailOrPhone.trim(),
-          subject: `${otp} is your ST Mart Security Verification Code`,
-          html: `
-            <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f8;">
-              <div style="max-width: 500px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 12px; border: 1px solid #e0e0e0;">
-                <h2 style="color: #2563eb; margin-top: 0;">ST MART Security OTP</h2>
-                <p>Hello,</p>
-                <p>Your 6-digit security verification code for <strong>ST Mart</strong> is:</p>
-                <div style="font-size: 32px; font-weight: bold; color: #059669; letter-spacing: 4px; padding: 15px; background: #ecfdf5; border-radius: 8px; text-align: center; margin: 20px 0;">
-                  ${otp}
-                </div>
-                <p style="font-size: 12px; color: #6b7280;">This code is valid for 10 minutes. Please do not share this OTP with anyone.</p>
-              </div>
-            </div>
-          `,
-        });
-      } catch (mailErr) {
-        console.warn("Nodemailer dispatch notice:", mailErr.message);
+        user = await User.findOneAndUpdate(
+          { email },
+          {
+            $set: {
+              isVerified: true,
+              provider: "otp",
+            },
+            $setOnInsert: {
+              name: email.split("@")[0],
+              createdAt: new Date(),
+            },
+          },
+          { upsert: true, new: true }
+        );
+      } catch (uErr) {
+        console.warn("User update notice:", uErr.message);
       }
     }
 
     res.json({
       success: true,
-      message: `OTP sent successfully to ${emailOrPhone}`,
-      otp,
+      message: "Email verified successfully! Welcome to SmartDeals.",
+      user: {
+        id: user?._id || `user_${Date.now()}`,
+        email: email,
+        name: user?.name || email.split("@")[0],
+        isVerified: true,
+      },
+      token: `token_${Date.now()}_${Math.random().toString(36).slice(2)}`,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
-
-// POST /api/auth/verify-otp (Verify user entered OTP)
-app.post("/api/auth/verify-otp", async (req, res) => {
-  try {
-    const { emailOrPhone, otp } = req.body;
-    if (!emailOrPhone || !otp) {
-      return res.status(400).json({ success: false, message: "Email/Phone and OTP are required" });
-    }
-
-    const key = normalizeKey(emailOrPhone);
-    const storedData = activeOtpStore.get(key);
-
-    if (storedData && storedData.otp === otp.trim() && Date.now() < storedData.expiresAt) {
-      activeOtpStore.delete(key);
-      return res.json({
-        success: true,
-        message: "OTP Verified successfully!",
-        user: { email: key },
-      });
-    }
-
-    res.status(400).json({
-      success: false,
-      message: `Invalid OTP code! Please check your Email Inbox / SMS for the correct 6-digit verification code.`,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("verify-otp error:", error);
+    res.status(500).json({ success: false, message: error.message || "Verification failed" });
   }
 });
 

@@ -104,95 +104,87 @@ export const apiService = {
     }
   },
 
-  // Dispatch Real-time OTP to Email / Mobile
-  async sendOtp(emailOrPhone) {
-    const key = this.normalizeKey(emailOrPhone);
-    // Always generate a fresh random 6-digit OTP every single call
-    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    localOtpStore.set(key, generatedOtp);
-
-    // Fast 2-second timeout for backend API attempt so mobile app never hangs
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
+  // Dispatch Real-time OTP to Email
+  async sendOtp(email) {
+    const cleanEmail = this.normalizeKey(email);
 
     try {
       const response = await fetch(`${API_BASE_URL}/auth/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emailOrPhone: key }),
-        signal: controller.signal,
+        body: JSON.stringify({ email: cleanEmail }),
       });
-      clearTimeout(timeoutId);
-      if (response.ok) {
-        const data = await response.json();
-        if (data && data.success) {
-          // Enforce 6-digit length even if backend returned legacy 4-digit code
-          let finalOtp = (data.otp || "").toString();
-          if (finalOtp.length !== 6) {
-            finalOtp = generatedOtp;
-          }
-          localOtpStore.set(key, finalOtp);
-          return { ...data, otp: finalOtp };
-        }
+      const data = await safeJsonParse(response);
+      if (response.ok && data && data.success) {
+        return { success: true, message: data.message, expiresAt: data.expiresAt };
       }
+      return {
+        success: false,
+        message: data?.message || "Failed to dispatch verification email.",
+        waitSeconds: data?.waitSeconds,
+      };
     } catch (error) {
-      clearTimeout(timeoutId);
-      console.warn("Backend OTP API notice:", error.message);
+      console.warn("Backend OTP API error:", error.message);
+      return {
+        success: false,
+        message: "Unable to reach verification server. Please check your internet connection.",
+      };
     }
+  },
 
-    // Client-side Real EmailJS Dispatch if Email address (non-blocking)
-    if (emailOrPhone.includes("@")) {
-      try {
-        emailjs.send(
-          "service_stmart_auth",
-          "template_stmart_otp",
-          {
-            to_email: emailOrPhone.trim(),
-            to_name: emailOrPhone.trim().split("@")[0],
-            otp_code: generatedOtp,
-            app_name: "ST Mart",
-          },
-          "public_stmart_key"
-        ).catch(() => {});
-      } catch (err) {
-        console.warn("EmailJS notice:", err.message);
+  // Resend fresh OTP to Email
+  async resendOtp(email) {
+    const cleanEmail = this.normalizeKey(email);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/resend-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: cleanEmail }),
+      });
+      const data = await safeJsonParse(response);
+      if (response.ok && data && data.success) {
+        return { success: true, message: data.message, expiresAt: data.expiresAt };
       }
+      return {
+        success: false,
+        message: data?.message || "Failed to resend verification email.",
+        waitSeconds: data?.waitSeconds,
+      };
+    } catch (error) {
+      console.warn("Backend resend OTP error:", error.message);
+      return {
+        success: false,
+        message: "Unable to reach verification server. Please check your internet connection.",
+      };
     }
-
-    return {
-      success: true,
-      message: "Security OTP Code Dispatched",
-      otp: generatedOtp,
-    };
   },
 
   // Verify user entered OTP
-  async verifyOtp(emailOrPhone, inputOtp) {
-    const targetKey = this.normalizeKey(emailOrPhone);
+  async verifyOtp(email, inputOtp) {
+    const cleanEmail = this.normalizeKey(email);
 
-    // 1. Check local stored OTP first
-    const validOtp = localOtpStore.get(targetKey);
-    if (validOtp && validOtp === inputOtp.trim()) {
-      return { success: true, message: "OTP Verified successfully!" };
-    }
-
-    // 2. Try Backend Verification API
     try {
       const response = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emailOrPhone: targetKey, otp: inputOtp }),
+        body: JSON.stringify({ email: cleanEmail, otp: (inputOtp || "").trim() }),
       });
-      const data = await response.json();
-      if (data && data.success) return data;
+      const data = await safeJsonParse(response);
+      if (response.ok && data && data.success) {
+        return { success: true, message: data.message, user: data.user, token: data.token };
+      }
+      return {
+        success: false,
+        message: data?.message || "Invalid verification code. Please check your email.",
+      };
     } catch (error) {
-      console.warn("Backend verify OTP fallback:", error.message);
+      console.warn("Backend verify OTP error:", error.message);
+      return {
+        success: false,
+        message: "Verification server timeout. Please check your connection and try again.",
+      };
     }
-
-    return {
-      success: false,
-      message: `Invalid OTP code! Please enter the correct 6-digit code sent to ${emailOrPhone}.`,
-    };
   },
 
   // Fetch product catalog
