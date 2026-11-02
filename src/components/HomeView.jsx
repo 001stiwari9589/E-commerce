@@ -205,7 +205,7 @@ function HomeView({
 
       {/* Flash Deals with Ticking Timer */}
       {searchQuery === "" && (
-        <div className="bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 dark:from-rose-950 dark:via-zinc-900 dark:to-zinc-950 rounded-3xl p-5 sm:p-7 text-white shadow-xl border border-rose-400/30">
+        <div className="bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 dark:from-rose-950 dark:via-zinc-900 dark:to-zinc-950 rounded-2xl sm:rounded-3xl p-4 sm:p-7 text-white shadow-xl border border-rose-400/30">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/20 pb-4 mb-6">
             <div className="flex items-center gap-3">
               <span className="text-3xl animate-bounce">🔥</span>
@@ -287,11 +287,13 @@ function HomeView({
         </div>
       )}
 
-      {/* Affiliate Transparency Disclosure */}
-      <AffiliateDisclosureBanner setView={setView} />
+      {/* Desktop Only: Affiliate Transparency Disclosure */}
+      <div className="hidden md:block">
+        <AffiliateDisclosureBanner setView={setView} />
+      </div>
 
-      {/* Main Deals & Products Catalog */}
-      <div className="bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-3xl shadow-xs p-5 sm:p-7 transition-colors flex flex-col gap-6">
+      {/* Main Deals & Products Catalog (Positioned directly below Flash Deals on mobile screens) */}
+      <div className="bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-2xl sm:rounded-3xl shadow-xs p-4 sm:p-7 transition-colors flex flex-col gap-5 sm:gap-6">
         
         {/* Header & Controls */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-150 dark:border-zinc-850 pb-5">
@@ -458,6 +460,11 @@ function HomeView({
             </button>
           </div>
         )}
+      </div>
+
+      {/* Mobile Only: Affiliate Transparency Disclosure placed after the main products catalog */}
+      <div className="block md:hidden">
+        <AffiliateDisclosureBanner setView={setView} />
       </div>
 
       {/* Honest Shopping Guide Section (Replaces fabricated reviews) */}
