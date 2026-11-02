@@ -152,7 +152,7 @@ function CategoryBar({ activeCategory, setActiveCategory }) {
   ];
 
   return (
-    <div className="w-full bg-white dark:bg-zinc-900 border-b border-gray-150 dark:border-zinc-800 shadow-xs py-2.5 transition-colors">
+    <div className="w-full max-w-full bg-white dark:bg-zinc-900 border-b border-gray-150 dark:border-zinc-800 shadow-xs py-2.5 transition-colors overflow-hidden">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 relative flex items-center">
         {/* Left Carousel Nav Button */}
         <button

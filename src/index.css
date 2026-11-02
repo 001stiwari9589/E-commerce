@@ -145,6 +145,11 @@
 }
 
 /* Smooth active theme transition */
+html, body, #root {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
 html, body {
   transition: background-color 0.3s ease, color 0.3s ease;
   background-color: #f8fafc; /* bg-slate-50 light mode */

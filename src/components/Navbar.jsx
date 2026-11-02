@@ -58,20 +58,20 @@ function Navbar({
   return (
     <>
       {/* Top High-Trust Amazon Deals Strip */}
-      <div className="bg-slate-950 text-slate-300 text-[10px] sm:text-xs py-1.5 px-3 border-b border-white/10 text-center font-bold flex items-center justify-center gap-2 flex-wrap">
-        <span className="bg-amber-400 text-slate-950 px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider">
+      <div className="bg-slate-950 text-slate-300 text-[10px] sm:text-xs py-1.5 px-2.5 sm:px-3 border-b border-white/10 text-center font-bold flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap max-w-full overflow-hidden">
+        <span className="bg-amber-400 text-slate-950 px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-wider shrink-0">
           Amazon Associate
         </span>
-        <span className="text-zinc-200">
-          🛡️ 100% Genuine Deals • Payments &amp; Delivery Directly Fulfilled by Amazon India
+        <span className="text-zinc-200 truncate sm:whitespace-normal text-[10px] sm:text-xs">
+          🛡️ 100% Genuine Deals • Fulfilled by Amazon India
         </span>
       </div>
 
-      <nav className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 text-white sticky top-0 z-40 shadow-lg border-b border-white/10 dark:border-zinc-800/80 transition-all duration-300 px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5 lg:py-4 min-h-[68px] sm:min-h-[74px] flex items-center">
-        <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-3 sm:gap-4 lg:gap-8">
+      <nav className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 text-white sticky top-0 z-40 shadow-lg border-b border-white/10 dark:border-zinc-800/80 transition-all duration-300 px-2.5 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 lg:py-4 min-h-[60px] sm:min-h-[74px] flex items-center w-full max-w-full overflow-hidden">
+        <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-2.5 sm:gap-4 lg:gap-8">
 
           {/* Top Line: Brand Logo & Quick Action Toggle (Visible on Mobile/Tablet < 1024px) */}
-          <div className="w-full flex items-center justify-between lg:w-auto shrink-0 px-1 sm:px-2">
+          <div className="w-full flex items-center justify-between lg:w-auto shrink-0 gap-1.5 sm:gap-2">
             {/* Logo - SmartDeals.in */}
             <button
               onClick={() => {
@@ -79,44 +79,44 @@ function Navbar({
                 setView("home");
                 setIsMobileMenuOpen(false);
               }}
-              className="flex items-center gap-2.5 cursor-pointer group text-left transition-transform active:scale-95 ml-0.5 sm:ml-1"
+              className="flex items-center gap-1.5 sm:gap-2.5 cursor-pointer group text-left transition-transform active:scale-95 shrink-0"
             >
               {/* Modern Amazon-style Shopping Badge */}
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-amber-400 p-0.5 shadow-md shadow-orange-500/25 flex items-center justify-center shrink-0">
-                <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                  <span className="text-xl">🛍️</span>
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-amber-400 p-0.5 shadow-md shadow-orange-500/25 flex items-center justify-center shrink-0">
+                <div className="w-full h-full bg-slate-950 rounded-[9px] flex items-center justify-center">
+                  <span className="text-base sm:text-xl">🛍️</span>
                 </div>
               </div>
 
               <div className="flex flex-col items-start leading-none">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-2xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white font-sans drop-shadow-md">
+                <div className="flex items-center gap-1 sm:gap-1.5">
+                  <span className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white font-sans drop-shadow-md">
                     Smart<span className="text-amber-400">Deals</span>
                   </span>
-                  <span className="text-[9px] font-black bg-amber-400 text-slate-950 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                  <span className="text-[8px] sm:text-[9px] font-black bg-amber-400 text-slate-950 px-1 py-0.2 rounded uppercase tracking-wider">
                     .IN
                   </span>
                 </div>
-                <span className="text-[10px] font-bold text-amber-200/90 dark:text-zinc-400 flex items-center gap-1 leading-none mt-1">
-                  <span className="text-emerald-400 font-black">✓</span> Amazon Verified Deals Hub
+                <span className="text-[8px] sm:text-[10px] font-bold text-amber-200/90 dark:text-zinc-400 flex items-center gap-1 leading-none mt-0.5 sm:mt-1">
+                  <span className="text-emerald-400 font-black">✓</span> Amazon Verified Deals
                 </span>
               </div>
             </button>
 
-            {/* Quick Action Icons & Enlarged Hamburger Button - Shifted slightly left from screen edge */}
-            <div className="flex items-center gap-2.5 sm:gap-3.5 lg:hidden mr-0.5 sm:mr-1">
+            {/* Quick Action Icons & Responsive Hamburger Button */}
+            <div className="flex items-center gap-1.5 sm:gap-2.5 lg:hidden shrink-0">
               {/* Theme Toggle */}
               <button
                 onClick={toggleDarkMode}
-                className="p-2 sm:p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 dark:bg-zinc-800/80 text-white dark:text-amber-400 cursor-pointer transition-all backdrop-blur-xs active:scale-95"
+                className="p-1.5 sm:p-2.5 rounded-xl bg-white/10 hover:bg-white/20 dark:bg-zinc-800/80 text-white dark:text-amber-400 cursor-pointer transition-all backdrop-blur-xs active:scale-95 shrink-0"
                 title="Toggle Dark Mode"
               >
                 {isDarkMode ? (
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
                   </svg>
                 ) : (
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
                   </svg>
                 )}
@@ -125,16 +125,16 @@ function Navbar({
               {/* Wishlist Icon */}
               <button
                 onClick={() => setView("wishlist")}
-                className={`relative p-2 sm:p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 dark:bg-zinc-800/80 cursor-pointer transition-all backdrop-blur-xs active:scale-95 ${
+                className={`relative p-1.5 sm:p-2.5 rounded-xl bg-white/10 hover:bg-white/20 dark:bg-zinc-800/80 cursor-pointer transition-all backdrop-blur-xs active:scale-95 shrink-0 ${
                   view === "wishlist" ? "text-yellow-400" : "text-white hover:text-rose-300"
                 }`}
                 title="Wishlist"
               >
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 fill-current" viewBox="0 0 24 24">
+                <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
                   <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                 </svg>
                 {wishlistCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center animate-bounce shadow-md">
+                  <span className="absolute -top-1 -right-1 bg-rose-500 text-white font-black text-[9px] w-4.5 h-4.5 rounded-full flex items-center justify-center animate-bounce shadow-md">
                     {wishlistCount}
                   </span>
                 )}
@@ -143,44 +143,45 @@ function Navbar({
               {/* Cart Icon */}
               <button
                 onClick={() => setView("cart")}
-                className={`relative p-2 sm:p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 dark:bg-zinc-800/80 cursor-pointer transition-all backdrop-blur-xs active:scale-95 ${
+                className={`relative p-1.5 sm:p-2.5 rounded-xl bg-white/10 hover:bg-white/20 dark:bg-zinc-800/80 cursor-pointer transition-all backdrop-blur-xs active:scale-95 shrink-0 ${
                   view === "cart" ? "text-yellow-400" : "text-white hover:text-yellow-300"
                 }`}
                 title="Cart"
               >
-                <svg className="w-5.5 h-5.5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272" />
                 </svg>
                 {cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-yellow-400 text-blue-950 font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center animate-pulse shadow-md">
+                  <span className="absolute -top-1 -right-1 bg-yellow-400 text-blue-950 font-black text-[9px] w-4.5 h-4.5 rounded-full flex items-center justify-center animate-pulse shadow-md">
                     {cartCount}
                   </span>
                 )}
               </button>
 
-              {/* ENLARGED PROMINENT HAMBURGER MENU BUTTON */}
+              {/* RESPONSIVE COMPACT HAMBURGER MENU BUTTON */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className={`px-4 sm:px-5 py-2.5 rounded-2xl font-black text-xs sm:text-sm flex items-center gap-2 shadow-2xl border-2 transition-all active:scale-95 cursor-pointer ${
+                className={`p-1.5 sm:px-3 sm:py-2 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-md border transition-all active:scale-95 cursor-pointer shrink-0 ${
                   isMobileMenuOpen
                     ? "bg-rose-600 border-rose-400 text-white shadow-rose-950/40"
                     : "bg-yellow-400 hover:bg-yellow-300 border-yellow-200 text-blue-950 shadow-yellow-950/30"
                 }`}
                 title={isMobileMenuOpen ? "Close Menu" : "Open Menu"}
+                aria-label={isMobileMenuOpen ? "Close Menu" : "Open Menu"}
               >
                 {isMobileMenuOpen ? (
                   <>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                    <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
-                    <span className="tracking-wide">CLOSE</span>
+                    <span className="hidden sm:inline tracking-wide font-black">CLOSE</span>
                   </>
                 ) : (
                   <>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                    <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                     </svg>
-                    <span className="tracking-wide">MENU</span>
+                    <span className="hidden sm:inline tracking-wide font-black">MENU</span>
                   </>
                 )}
               </button>

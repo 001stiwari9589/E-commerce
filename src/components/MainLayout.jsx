@@ -297,7 +297,7 @@ function MainLayout() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-zinc-950 text-slate-800 dark:text-zinc-150 transition-colors font-sans">
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-zinc-950 text-slate-800 dark:text-zinc-150 transition-colors font-sans w-full max-w-full overflow-x-hidden">
       
       {/* Top Header Navbar (Hidden on Login screen) */}
       {view !== "login" && (
