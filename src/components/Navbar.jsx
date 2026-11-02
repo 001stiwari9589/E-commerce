@@ -56,7 +56,7 @@ function Navbar({
   ];
 
   return (
-    <>
+    <header className="sticky top-0 z-50 w-full shadow-md">
       {/* Top High-Trust Amazon Deals Strip */}
       <div className="bg-slate-950 text-slate-300 text-[10px] sm:text-xs py-1.5 px-2.5 sm:px-3 border-b border-white/10 text-center font-bold flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap max-w-full overflow-hidden">
         <span className="bg-amber-400 text-slate-950 px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-wider shrink-0">
@@ -67,7 +67,7 @@ function Navbar({
         </span>
       </div>
 
-      <nav className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 text-white sticky top-0 z-40 shadow-lg border-b border-white/10 dark:border-zinc-800/80 transition-all duration-300 px-2.5 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 lg:py-4 min-h-[60px] sm:min-h-[74px] flex items-center w-full max-w-full overflow-hidden">
+      <nav className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 text-white border-b border-white/10 dark:border-zinc-800/80 transition-all duration-300 px-2.5 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 lg:py-4 min-h-[60px] sm:min-h-[74px] flex items-center w-full max-w-full">
         <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-2.5 sm:gap-4 lg:gap-8">
 
           {/* Top Line: Brand Logo & Quick Action Toggle (Visible on Mobile/Tablet < 1024px) */}
@@ -470,7 +470,7 @@ function Navbar({
 
         {/* MOBILE & TABLET RESPONSIVE HAMBURGER DRAWER MENU (< 1024px) */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden fixed top-[72px] left-0 right-0 bottom-0 bg-slate-950/60 backdrop-blur-sm z-50 animate-fade-in p-4 overflow-y-auto">
+          <div className="lg:hidden fixed top-[92px] sm:top-[106px] left-0 right-0 bottom-0 bg-slate-950/60 backdrop-blur-sm z-50 animate-fade-in p-4 overflow-y-auto">
             <div className="max-w-xl mx-auto bg-blue-700/95 dark:bg-zinc-900/95 backdrop-blur-md border border-white/15 dark:border-zinc-800 rounded-3xl p-5 shadow-2xl text-white flex flex-col gap-4 animate-slide-down">
               
               {/* Header row with user info & Close button */}
@@ -720,7 +720,7 @@ function Navbar({
         )}
 
       </nav>
-    </>
+    </header>
   );
 }
 
