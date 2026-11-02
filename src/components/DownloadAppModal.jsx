@@ -26,7 +26,6 @@ function DownloadAppModal({ isOpen, onClose }) {
       window.deferredInstallPrompt = e;
     };
 
-    // If already captured globally
     if (window.deferredInstallPrompt) {
       setDeferredPrompt(window.deferredInstallPrompt);
     }
@@ -40,7 +39,7 @@ function DownloadAppModal({ isOpen, onClose }) {
       window.deferredInstallPrompt = null;
       setTimeout(() => {
         if (onClose) onClose();
-      }, 2500);
+      }, 2000);
     };
 
     window.addEventListener("appinstalled", handleAppInstalled);
@@ -55,7 +54,6 @@ function DownloadAppModal({ isOpen, onClose }) {
 
   const handleInstallClick = async () => {
     if (deferredPrompt) {
-      // Trigger official native Android / Chrome installation prompt
       try {
         deferredPrompt.prompt();
         const choiceResult = await deferredPrompt.userChoice;
@@ -70,144 +68,96 @@ function DownloadAppModal({ isOpen, onClose }) {
       } catch (err) {
         console.warn("Install prompt notice:", err);
       }
-    } else if (isIOS) {
-      setShowIOSInstructions(true);
     } else {
-      // Browser fallback instructions
-      setShowIOSInstructions(true);
+      setShowIOSInstructions(!showIOSInstructions);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-xs animate-fade-in">
-      <div
-        className="absolute inset-0 cursor-pointer"
-        onClick={onClose}
-        title="Dismiss popup"
-      ></div>
-
-      {/* Main Popup Modal Card */}
-      <div className="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl border-2 border-amber-400/80 dark:border-amber-500/60 p-5 sm:p-7 text-slate-900 dark:text-white animate-zoom-in overflow-hidden z-10">
+    // Compact Top Floating Popup (No background dim, sleek & non-blocking)
+    <div className="fixed top-3 right-3 sm:top-4 sm:right-6 z-50 max-w-sm w-[92%] sm:w-[370px] pointer-events-auto animate-slide-down">
+      <div className="bg-slate-950/95 dark:bg-zinc-900/95 backdrop-blur-md text-white rounded-2xl p-3 sm:p-3.5 shadow-2xl border-2 border-amber-400 dark:border-amber-500/80 flex flex-col gap-2">
         
-        {/* Ambient Top Glow */}
-        <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500"></div>
-
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-800 dark:hover:text-white p-1 rounded-full hover:bg-slate-100 dark:hover:bg-zinc-800 transition cursor-pointer"
-          title="Close popup"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-
-        {installSuccess ? (
-          <div className="py-6 flex flex-col items-center justify-center text-center">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950/60 border-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-3xl font-black mb-3 shadow-lg animate-bounce">
-              ✓
-            </div>
-            <h3 className="text-xl font-black text-slate-900 dark:text-white">
-              App Installed Successfully!
-            </h3>
-            <p className="text-xs text-slate-600 dark:text-zinc-400 mt-1 max-w-xs">
-              SmartDeals icon has been added to your phone home screen for instant 1-click access.
-            </p>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-4">
-            {/* App Header & Brand Info */}
-            <div className="flex items-center gap-3.5 pr-6">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-500 to-amber-400 p-0.5 shadow-lg shadow-orange-500/20 shrink-0">
-                <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-2xl">
-                  🛍️
-                </div>
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <h3 className="text-lg sm:text-xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
-                    SmartDeals<span className="text-amber-500">.in</span>
-                  </h3>
-                  <span className="bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 text-[10px] font-black px-1.5 py-0.5 rounded border border-emerald-500/30 uppercase">
-                    Official App
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-500 dark:text-zinc-400 font-semibold truncate mt-0.5">
-                  Verified Amazon Deals & Loot Offers
-                </p>
-                <div className="flex items-center gap-2 mt-1 text-[11px] font-bold text-slate-600 dark:text-zinc-300">
-                  <span className="text-amber-500 font-black flex items-center gap-0.5">
-                    ★ 4.9
-                  </span>
-                  <span>•</span>
-                  <span>15K+ Downloads</span>
-                  <span>•</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-black">Free (2.4 MB)</span>
-                </div>
+        {/* Top Header Row */}
+        <div className="flex items-center justify-between gap-2.5">
+          {/* App Icon + Title */}
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-amber-400 p-0.5 shadow-md shadow-orange-500/30 shrink-0">
+              <div className="w-full h-full bg-slate-950 rounded-[9px] flex items-center justify-center text-base">
+                🛍️
               </div>
             </div>
 
-            {/* Feature Highlights Banner */}
-            <div className="bg-slate-50 dark:bg-zinc-800/80 rounded-2xl p-3 border border-slate-200 dark:border-zinc-750 flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-zinc-200">
-                <span className="text-amber-500">⚡</span>
-                <span>Instant Flash Sale & 50%+ Loot Deal Alerts</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-zinc-200">
-                <span className="text-emerald-500">🚀</span>
-                <span>10x Faster 1-Click Access from Phone Home Screen</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-zinc-200">
-                <span className="text-blue-500">🛡️</span>
-                <span>100% Genuine Products Fulfilled by Amazon India</span>
-              </div>
-            </div>
-
-            {/* Step-by-step Guide for iOS or fallback browsers */}
-            {showIOSInstructions && (
-              <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-500/50 rounded-2xl p-3 text-xs text-slate-800 dark:text-amber-200 flex flex-col gap-1.5 animate-fade-in">
-                <span className="font-black text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                  <span>📱</span> To install on your phone:
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="font-black text-xs sm:text-sm text-white tracking-tight truncate">
+                  SmartDeals<span className="text-amber-400">.in</span>
                 </span>
-                {isIOS ? (
-                  <ol className="list-decimal pl-4 space-y-1 font-semibold text-[11px]">
-                    <li>Tap the <strong>Share</strong> button <span className="inline-block px-1 bg-white dark:bg-zinc-900 rounded shadow-xs">📤</span> at the bottom of Safari.</li>
-                    <li>Scroll down and tap <strong>'Add to Home Screen'</strong> <span className="inline-block px-1 bg-white dark:bg-zinc-900 rounded shadow-xs">➕</span>.</li>
-                    <li>Tap <strong>'Add'</strong> in the top right corner.</li>
-                  </ol>
-                ) : (
-                  <ol className="list-decimal pl-4 space-y-1 font-semibold text-[11px]">
-                    <li>Tap the <strong>3 dots menu (⋮)</strong> at the top right of your browser.</li>
-                    <li>Tap <strong>'Install app'</strong> or <strong>'Add to Home screen'</strong>.</li>
-                    <li>Confirm <strong>'Install'</strong> to download on phone!</li>
-                  </ol>
-                )}
+                <span className="bg-emerald-500/20 text-emerald-300 text-[9px] font-black px-1.5 py-0.2 rounded border border-emerald-500/30 uppercase">
+                  App
+                </span>
               </div>
-            )}
-
-            {/* CTA Download & Action Buttons */}
-            <div className="flex flex-col gap-2 pt-1">
-              <button
-                type="button"
-                onClick={handleInstallClick}
-                className="w-full py-3.5 bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 hover:from-amber-500 hover:to-orange-600 active:scale-98 text-slate-950 font-black text-sm rounded-2xl shadow-xl shadow-amber-500/25 transition-all cursor-pointer flex items-center justify-center gap-2"
-              >
-                <span className="text-base">📥</span>
-                <span>Download & Install App (Free)</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={onClose}
-                className="w-full py-2.5 text-xs font-bold text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-white transition-colors cursor-pointer"
-              >
-                Continue in Browser
-              </button>
+              <p className="text-[10px] text-zinc-300 font-semibold truncate">
+                ⚡ 1-Click Amazon Loot Deals &amp; Alerts
+              </p>
             </div>
+          </div>
+
+          {/* Dismiss Button */}
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition cursor-pointer shrink-0"
+            title="Close"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Action Row */}
+        <div className="flex items-center justify-between gap-2 pt-1 border-t border-white/10">
+          <div className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-300">
+            <span className="text-amber-400 font-black">★ 4.9</span>
+            <span>•</span>
+            <span className="text-emerald-400 font-black">Free (2.4 MB)</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-[11px] font-bold text-zinc-400 hover:text-white px-2 py-1 transition cursor-pointer"
+            >
+              Not now
+            </button>
+            <button
+              type="button"
+              onClick={handleInstallClick}
+              className="px-3.5 py-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 hover:from-amber-500 hover:to-orange-600 active:scale-95 text-slate-950 font-black text-xs rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <span>📥 Install</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Step-by-step Tip for iOS / fallback */}
+        {showIOSInstructions && (
+          <div className="bg-amber-400/15 border border-amber-400/40 rounded-xl p-2 text-[10px] font-semibold text-amber-200 animate-fade-in">
+            {isIOS ? (
+              <span>📲 Safari mein neeche <strong>Share (📤)</strong> dabayein &rarr; <strong>'Add to Home Screen (➕)'</strong> chunein.</span>
+            ) : (
+              <span>📲 Browser menu <strong>(⋮)</strong> dabayein &rarr; <strong>'Install app'</strong> ya <strong>'Add to Home screen'</strong> chunein.</span>
+            )}
           </div>
         )}
 
+        {installSuccess && (
+          <div className="bg-emerald-500 text-white rounded-xl p-2 text-center text-xs font-bold animate-bounce">
+            ✓ App Installed Successfully!
+          </div>
+        )}
       </div>
     </div>
   );

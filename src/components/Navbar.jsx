@@ -405,15 +405,6 @@ function Navbar({
               <span>🔥 Deals</span>
             </button>
 
-            {/* Download App (Desktop) */}
-            <button
-              onClick={onOpenDownloadApp}
-              className="flex items-center gap-1.5 text-xs sm:text-sm font-black cursor-pointer transition-all py-1.5 px-3 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 text-slate-950 hover:brightness-110 shadow-sm active:scale-95"
-              title="Download & Install SmartDeals App"
-            >
-              <span>📲 App</span>
-            </button>
-
             {/* Become a Seller */}
             <button
               onClick={handleBecomeSeller}
