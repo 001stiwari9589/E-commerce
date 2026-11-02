@@ -50,6 +50,17 @@ function DownloadAppModal({ isOpen, onClose }) {
     };
   }, [onClose]);
 
+  // Auto dismiss popup after 5 seconds so it disappears on its own without user having to close it
+  useEffect(() => {
+    if (!isOpen || showIOSInstructions) return;
+
+    const timer = setTimeout(() => {
+      if (onClose) onClose();
+    }, 5000); // 5 seconds auto-dismiss
+
+    return () => clearTimeout(timer);
+  }, [isOpen, showIOSInstructions, onClose]);
+
   if (!isOpen || isStandalone) return null;
 
   const handleInstallClick = async () => {
@@ -140,6 +151,11 @@ function DownloadAppModal({ isOpen, onClose }) {
               <span>📥 Install</span>
             </button>
           </div>
+        </div>
+
+        {/* 5-Second Auto-Dismiss Indicator Bar */}
+        <div className="w-full bg-white/10 h-0.5 rounded-full overflow-hidden mt-0.5">
+          <div className="bg-gradient-to-r from-amber-400 to-orange-500 h-full w-full animate-shrink-bar"></div>
         </div>
 
         {/* Step-by-step Tip for iOS / fallback */}
