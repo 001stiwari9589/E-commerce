@@ -37,6 +37,7 @@ import { safeLocalStorage } from "../utils/localStorage";
 import { apiService } from "../services/api";
 import CheckoutModal from "./CheckoutModal";
 import ReceiptModal from "./ReceiptModal";
+import DownloadAppModal from "./DownloadAppModal";
 import { notifyAddToCartEmail, notifyOrderBookedEmail } from "../services/emailNotificationService";
 
 function MainLayout() {
@@ -67,6 +68,23 @@ function MainLayout() {
   const [activeCheckoutItems, setActiveCheckoutItems] = useState([]);
   const [completedOrder, setCompletedOrder] = useState(null);
   const [userOrders, setUserOrders] = useState([]);
+  const [isDownloadAppOpen, setIsDownloadAppOpen] = useState(false);
+
+  // Auto-show Download App popup when opening website (after 1.2s delay)
+  useEffect(() => {
+    const isStandalone =
+      typeof window !== "undefined" &&
+      (window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true);
+    if (isStandalone) return;
+
+    // Show popup shortly after page loads so user gets prompt to download app
+    const timer = setTimeout(() => {
+      setIsDownloadAppOpen(true);
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Fetch products from backend server on mount or when category updates
   useEffect(() => {
@@ -315,6 +333,7 @@ function MainLayout() {
           isBackendConnected={isBackendConnected}
           activeCategory={activeCategory}
           setActiveCategory={setActiveCategory}
+          onOpenDownloadApp={() => setIsDownloadAppOpen(true)}
         />
       )}
 
@@ -528,9 +547,18 @@ function MainLayout() {
       </main>
 
       {/* Footer Area (Render everywhere except LoginPage) */}
-      {view !== "login" && <Footer setView={setView} />}
+      {view !== "login" && (
+        <Footer
+          setView={setView}
+          onOpenDownloadApp={() => setIsDownloadAppOpen(true)}
+        />
+      )}
 
-
+      {/* Official SmartDeals App Download / Install Popup Modal */}
+      <DownloadAppModal
+        isOpen={isDownloadAppOpen}
+        onClose={() => setIsDownloadAppOpen(false)}
+      />
 
       {/* Tax Invoice & Order Receipt Modal (Printable) */}
       <ReceiptModal

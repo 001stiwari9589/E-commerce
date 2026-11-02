@@ -8,3 +8,13 @@ createRoot(document.getElementById("root")).render(
     <App />
   </StrictMode>,
 );
+
+// Register PWA Service Worker for Mobile & Desktop App Installation
+if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then((reg) => console.log("SmartDeals PWA Service Worker Active:", reg.scope))
+      .catch((err) => console.warn("PWA Service Worker notice:", err));
+  });
+}

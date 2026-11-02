@@ -1,16 +1,33 @@
 {
-  "name": "ST Mart",
-  "short_name": "ST Mart",
-  "description": "ST Mart - Premium Online Shopping Platform",
+  "name": "SmartDeals.in - Verified Amazon Deals & Loot",
+  "short_name": "SmartDeals",
+  "description": "SmartDeals.in Official App - Verified Amazon Deals, Loot Discounts & Price Drop Alerts",
+  "id": "/?source=pwa",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#0f172a",
   "theme_color": "#2563eb",
   "icons": [
     {
       "src": "/st-mart-web-logo.png",
-      "sizes": "192x192 512x512",
-      "type": "image/png"
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/st-mart-web-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/st-mart-web-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "categories": ["shopping", "lifestyle", "business"]
 }

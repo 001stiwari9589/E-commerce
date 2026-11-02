@@ -14,6 +14,7 @@ function Navbar({
   isBackendConnected = false,
   activeCategory,
   setActiveCategory,
+  onOpenDownloadApp,
 }) {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -404,6 +405,15 @@ function Navbar({
               <span>🔥 Deals</span>
             </button>
 
+            {/* Download App (Desktop) */}
+            <button
+              onClick={onOpenDownloadApp}
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-black cursor-pointer transition-all py-1.5 px-3 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 text-slate-950 hover:brightness-110 shadow-sm active:scale-95"
+              title="Download & Install SmartDeals App"
+            >
+              <span>📲 App</span>
+            </button>
+
             {/* Become a Seller */}
             <button
               onClick={handleBecomeSeller}
@@ -541,6 +551,34 @@ function Navbar({
                   </div>
                 </div>
               )}
+
+              {/* Download App Prominent Mobile Action Card */}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  if (onOpenDownloadApp) onOpenDownloadApp();
+                }}
+                className="w-full p-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 text-slate-950 shadow-lg flex items-center justify-between gap-3 cursor-pointer active:scale-98 transition-transform"
+              >
+                <div className="flex items-center gap-2.5 text-left">
+                  <div className="w-9 h-9 rounded-xl bg-slate-950 text-white flex items-center justify-center text-lg shrink-0">
+                    🛍️
+                  </div>
+                  <div>
+                    <p className="font-black text-xs text-slate-950 leading-tight">
+                      Download SmartDeals App
+                    </p>
+                    <p className="text-[10px] font-bold text-slate-900/80 mt-0.5">
+                      Fast 1-click access &amp; instant loot alerts
+                    </p>
+                  </div>
+                </div>
+                <span className="px-2.5 py-1 bg-slate-950 text-amber-400 font-black text-[10px] rounded-lg shrink-0 flex items-center gap-1 shadow-xs">
+                  <span>Install</span>
+                  <span>📥</span>
+                </span>
+              </button>
 
               {/* Main Navigation Links Grid */}
               <div className="grid grid-cols-2 gap-2.5 text-xs font-bold">

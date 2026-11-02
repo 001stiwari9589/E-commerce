@@ -1,4 +1,4 @@
-function Footer({ setView }) {
+function Footer({ setView, onOpenDownloadApp }) {
   return (
     <footer className="bg-zinc-950 text-zinc-400 text-xs mt-12 border-t border-zinc-800/80">
       {/* Top Banner Brand Bar */}
@@ -12,9 +12,18 @@ function Footer({ setView }) {
               Amazon Associate Hub
             </span>
           </div>
-          <p className="text-xs font-semibold text-zinc-400 text-center sm:text-right">
-            India's Trusted Amazon Verified Deals &amp; Loot Hub 🚀
-          </p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => onOpenDownloadApp && onOpenDownloadApp()}
+              className="px-3 py-1 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-black text-xs rounded-xl shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <span>📲</span>
+              <span>Download App</span>
+            </button>
+            <p className="text-xs font-semibold text-zinc-400 text-center sm:text-right hidden sm:block">
+              100% Verified Deals &amp; Price Drops • Fulfilled by Amazon.in
+            </p>
+          </div>
         </div>
       </div>
 
