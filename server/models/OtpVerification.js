@@ -38,3 +38,4 @@ const otpVerificationSchema = new mongoose.Schema({
 export const OtpVerification =
   mongoose.models.OtpVerification ||
   mongoose.model("OtpVerification", otpVerificationSchema);
+

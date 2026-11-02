@@ -270,3 +270,4 @@ export async function sendOtpEmail(toEmail, otp) {
     "No Email Service configured! Please add BREVO_API_KEY, RESEND_API_KEY, or SMTP credentials in your .env file."
   );
 }
+
